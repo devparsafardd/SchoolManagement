@@ -33,6 +33,7 @@ public class ProfileDto
     public string? Mobile { get; set; }
     public string? Email { get; set; }
     public string Username { get; set; } = null!;
+    public string? PhotoPath { get; set; }
     public DateTime? LastLoginAt { get; set; }
     public List<string> Roles { get; set; } = new();
 }

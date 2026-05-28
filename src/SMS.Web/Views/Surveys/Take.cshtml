@@ -1,0 +1,87 @@
+@using SMS.Application.DTOs
+@model List<SurveyQuestionDto>
+@{
+    var survey = (SurveyDto)ViewBag.Survey;
+    ViewData["Title"] = survey.Title;
+}
+
+<div class="page-header">
+    <div>
+        <h1>📝 @survey.Title</h1>
+        @if (!string.IsNullOrEmpty(survey.Description))
+        { <div class="subtitle">@survey.Description</div> }
+    </div>
+</div>
+
+<form method="post" asp-action="Submit">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="SurveyId" value="@survey.SurveyId" />
+
+    @for (int i = 0; i < Model.Count; i++)
+    {
+        var q = Model[i];
+        <div class="card" style="margin-bottom:14px">
+            <div class="card-body">
+                <h3 style="margin:0 0 10px">
+                    @(i + 1). @q.Text
+                    @if (q.IsRequired) { <span class="text-danger">*</span> }
+                </h3>
+                <input type="hidden" name="Answers[@i].QuestionId" value="@q.QuestionId" />
+
+                @if (q.QuestionType == "Text")
+                {
+                    <textarea name="Answers[@i].AnswerText" class="form-control" rows="3" @(q.IsRequired ? "required" : "")></textarea>
+                }
+                else if (q.QuestionType == "YesNo")
+                {
+                    <label style="display:block; padding:8px"><input type="radio" name="Answers[@i].AnswerText" value="بله" @(q.IsRequired ? "required" : "") /> بله</label>
+                    <label style="display:block; padding:8px"><input type="radio" name="Answers[@i].AnswerText" value="خیر" /> خیر</label>
+                }
+                else if (q.QuestionType == "Rating")
+                {
+                    <div style="display:flex; gap:8px">
+                        @for (int r = 1; r <= 5; r++)
+                        {
+                            <label style="padding:8px 14px; border:1px solid #ddd; border-radius:6px; cursor:pointer">
+                                <input type="radio" name="Answers[@i].AnswerText" value="@r" @(q.IsRequired ? "required" : "") /> @r ⭐
+                            </label>
+                        }
+                    </div>
+                }
+                else if (q.QuestionType == "SingleChoice")
+                {
+                    foreach (var opt in q.OptionsList)
+                    {
+                        <label style="display:block; padding:6px">
+                            <input type="radio" name="Answers[@i].AnswerText" value="@opt" @(q.IsRequired ? "required" : "") /> @opt
+                        </label>
+                    }
+                }
+                else if (q.QuestionType == "MultipleChoice")
+                {
+                    <p class="text-muted" style="font-size:0.85em">می‌توانید چند گزینه انتخاب کنید (گزینه‌ها با , جدا میشوند)</p>
+                    <input type="hidden" name="Answers[@i].AnswerText" id="answer_@i" value="" />
+                    foreach (var opt in q.OptionsList)
+                    {
+                        <label style="display:block; padding:6px">
+                            <input type="checkbox" value="@opt" onchange="updateMC(@i)" /> @opt
+                        </label>
+                    }
+                }
+            </div>
+        </div>
+    }
+
+    <button class="btn btn-success" type="submit">📤 ثبت پاسخ‌ها</button>
+    <a asp-action="Index" class="btn btn-secondary">انصراف</a>
+</form>
+
+@section Scripts {
+    <script>
+        function updateMC(i) {
+            var inp = document.getElementById('answer_' + i);
+            var checks = inp.closest('.card-body').querySelectorAll('input[type=checkbox]:checked');
+            inp.value = Array.from(checks).map(c => c.value).join(',');
+        }
+    </script>
+}

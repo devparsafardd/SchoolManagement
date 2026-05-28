@@ -90,3 +90,13 @@ public class ExamCreateValidator : AbstractValidator<ExamCreateDto>
             .WithMessage("برای آزمون توصیفی باید مقیاس انتخاب شود");
     }
 }
+
+
+public class ExamTypeDto
+{
+    public int ExamTypeId { get; set; }
+    public string Name { get; set; } = null!;
+    public string? Code { get; set; }
+    public decimal DefaultWeight { get; set; }
+    public bool IsFinal { get; set; }
+}

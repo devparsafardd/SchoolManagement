@@ -1,0 +1,51 @@
+@using SMS.Application.DTOs
+@using SMS.Shared.Helpers
+@model List<HomeworkDto>
+@{ ViewData["Title"] = "تکالیف من"; Layout = "_TeacherLayout"; }
+
+<div class="page-header">
+    <h1>📝 تکالیف من</h1>
+    @if (ViewBag.ClassSubjectId != null)
+    {
+        <a class="btn btn-success" asp-action="Create" asp-route-classSubjectId="@ViewBag.ClassSubjectId">➕ تکلیف جدید</a>
+    }
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <table class="data-table enhanced">
+            <thead>
+                <tr>
+                    <th>عنوان</th><th>کلاس / درس</th><th>تاریخ ارائه</th><th>مهلت</th>
+                    <th>نمره کل</th><th>تحویل‌ها</th><th>عملیات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var h in Model)
+                {
+                    <tr>
+                        <td><strong>@h.Title</strong></td>
+                        <td>@h.ClassroomName | @h.SubjectName</td>
+                        <td>@PersianDate.ToPersian(h.AssignedDate)</td>
+                        <td class="@(h.IsOverdue ? "text-danger" : "")">@PersianDate.ToPersian(h.DueDate)</td>
+                        <td>@(h.MaxScore.HasValue ? PersianDate.ToPersianDigits(h.MaxScore.Value.ToString("0.#")) : "—")</td>
+                        <td>
+                            @PersianDate.ToPersianDigits(h.SubmissionsCount.ToString()) / @PersianDate.ToPersianDigits(h.TotalStudents.ToString())
+                            @if (h.GradedCount > 0)
+                            {
+                                <small class="text-success">(@PersianDate.ToPersianDigits(h.GradedCount.ToString()) نمره داده شد)</small>
+                            }
+                        </td>
+                        <td>
+                            <a class="btn btn-sm btn-primary" asp-action="Submissions" asp-route-id="@h.HomeworkId">📋 تحویل‌ها</a>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="7" class="empty-state">تکلیفی ثبت نشده.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

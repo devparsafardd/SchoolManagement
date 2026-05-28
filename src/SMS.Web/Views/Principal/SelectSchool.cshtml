@@ -1,0 +1,18 @@
+@using SMS.Application.DTOs
+@model object
+@{ ViewData["Title"] = "انتخاب مدرسه";  }
+
+<div class="page-header">
+    <h1>🏫 لطفاً مدرسه‌ای را برای ورود انتخاب کنید</h1>
+</div>
+
+<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:16px">
+    @foreach (var s in (List<SchoolDto>)ViewBag.Schools)
+    {
+        <a asp-action="Dashboard" asp-route-schoolId="@s.SchoolId" class="card" style="text-decoration:none; padding:20px; transition:transform .2s">
+            <div style="font-size:32px; margin-bottom:8px">🏫</div>
+            <h2 style="margin:0 0 4px">@s.Name</h2>
+            <div class="text-muted">کد: @s.Code</div>
+        </a>
+    }
+</div>

@@ -8,7 +8,10 @@
         <form method="post">
             @Html.AntiForgeryToken()
             <input type="hidden" asp-for="ClassSubjectId" />
-            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            }
 
             <div class="form-group"><label>عنوان آزمون *</label><input asp-for="Title" class="form-control" placeholder="مثلاً: آزمون فصل دوم" /></div>
 
@@ -33,7 +36,8 @@
                         }
                     </select>
                 </div>
-                <div class="form-group"><label>تاریخ آزمون</label><input asp-for="ExamDate" class="form-control" type="date" /></div>
+                <div class="form-group"><label>تاریخ آزمون</label><input asp-for="ExamDate" id="examDateInput" type="hidden" />
+                    <input id="examDatePersian" class="form-control persian-date" placeholder="1404/03/15" /></div>
             </div>
 
             <div class="form-row">
@@ -45,12 +49,12 @@
             <div class="form-row">
                 <div class="form-group">
                     <label>نوع نمره‌دهی</label>
-                    <select asp-for="IsDescriptive" class="form-control" id="descSelect" onchange="document.getElementById('scaleBox').style.display = this.value === 'True' ? 'block' : 'none'">
+                    <select asp-for="IsDescriptive" class="form-control" id="descSelect" onchange="document.getElementById('scaleBox').style.display = this.value.toLowerCase() === 'true' ? 'block' : 'none'">
                         <option value="false">عددی (مثلاً 17.5)</option>
                         <option value="true">توصیفی (خیلی خوب / خوب / ...)</option>
                     </select>
                 </div>
-                <div class="form-group" id="scaleBox" style="display:none">
+                <div class="form-group" id="scaleBox" style="display:@(Model.IsDescriptive ? "block" : "none")">
                     <label>مقیاس توصیفی</label>
                     <select asp-for="GradeScaleId" class="form-control">
                         <option value="">انتخاب</option>
@@ -69,3 +73,25 @@
         </form>
     </div>
 </div>
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var initDate = '@(Model.ExamDate.ToString("yyyy-MM-dd"))';
+            $('#examDatePersian').smsPersianDatePicker({
+                initialValue: false,
+                onSelect: function (unix) {
+                    var pd = new persianDate(unix).toCalendar('gregorian').toLocale('en');
+                    $('#examDateInput').val(pd.format('YYYY-MM-DD'));
+                }
+            });
+            // پر کردن مقدار اولیه به شمسی
+            if (initDate) {
+                var d = new persianDate(new Date(initDate)).format('YYYY/MM/DD');
+                $('#examDatePersian').val(d);
+                $('#examDateInput').val(initDate);
+            }
+        });
+    </script>
+}

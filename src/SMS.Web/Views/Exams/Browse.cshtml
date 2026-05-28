@@ -37,7 +37,7 @@
 
         @if (ViewBag.ClassSubjects is List<ClassSubjectTeacherDto> list && list.Any())
         {
-            <table class="data-table" style="margin-top:16px">
+            <table class="data-table enhanced" style="margin-top:16px">
                 <thead><tr><th>درس</th><th>معلم</th><th>عملیات</th></tr></thead>
                 <tbody>
                     @foreach (var cs in list)

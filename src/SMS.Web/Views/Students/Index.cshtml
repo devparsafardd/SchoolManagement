@@ -6,7 +6,11 @@
     <div>
         <h1>👥 دانش‌آموزان (@PersianDate.ToPersianDigits(Model.TotalCount.ToString()))</h1>
     </div>
-    <a asp-action="Create" class="btn btn-success">➕ افزودن دانش‌آموز</a>
+    <div>
+        <a asp-controller="Export" asp-action="StudentsExcel" asp-route-schoolId="@ViewBag.SchoolId" asp-route-search="@ViewBag.Search" class="btn btn-success">📊 Excel</a>
+        <a asp-controller="Export" asp-action="StudentsPdf" asp-route-schoolId="@ViewBag.SchoolId" asp-route-search="@ViewBag.Search" target="_blank" class="btn btn-danger">📄 PDF</a>
+        <a asp-action="Create" class="btn btn-primary">➕ افزودن دانش‌آموز</a>
+    </div>
 </div>
 
 <div class="card">
@@ -35,14 +39,14 @@
                 </select>
             </div>
             <div class="form-group" style="flex:1">
-                <label>جستجو</label>
-                <input name="search" value="@ViewBag.Search" class="form-control" placeholder="نام / کد دانش‌آموزی / کد ملی" />
+                <label>جستجوی سرور (نام / کد / کد ملی)</label>
+                <input name="search" value="@ViewBag.Search" class="form-control" placeholder="جستجو در کل دیتابیس" />
             </div>
             <button class="btn btn-primary">🔍</button>
         </form>
 
-        <table class="data-table">
-            <thead><tr><th>کد</th><th>نام</th><th>نام پدر</th><th>کلاس فعلی</th><th>مدرسه</th><th>حساب</th><th>عملیات</th></tr></thead>
+        <table class="data-table enhanced" id="studentsTable">
+            <thead><tr><th>کد</th><th>نام</th><th>نام پدر</th><th>کلاس فعلی</th><th>مدرسه</th><th>حساب</th><th class="no-export">عملیات</th></tr></thead>
             <tbody>
                 @foreach (var s in Model.Items)
                 {
@@ -60,17 +64,17 @@
                         </td>
                         <td>
                             <a asp-action="Details" asp-route-id="@s.StudentId" class="btn btn-outline btn-sm">👁</a>
+                            <a asp-controller="Analytics" asp-action="Student" asp-route-id="@s.StudentId" class="btn btn-info btn-sm" title="گزارش جامع">📊</a>
                             <a asp-action="Edit" asp-route-id="@s.StudentId" class="btn btn-primary btn-sm">✏️</a>
                         </td>
                     </tr>
                 }
-                @if (!Model.Items.Any()) { <tr><td colspan="7" class="empty-state">دانش‌آموزی یافت نشد</td></tr> }
             </tbody>
         </table>
 
         @if (Model.TotalPages > 1)
         {
-            <div class="pagination">
+            <div class="pagination" style="margin-top:14px">
                 @for (int i = 1; i <= Model.TotalPages; i++)
                 {
                     if (i == Model.Page) { <span class="active">@PersianDate.ToPersianDigits(i.ToString())</span> }
@@ -80,3 +84,4 @@
         }
     </div>
 </div>
+

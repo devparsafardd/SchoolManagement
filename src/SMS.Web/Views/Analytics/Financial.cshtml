@@ -1,0 +1,142 @@
+@using SMS.Application.DTOs
+@using SMS.Shared.Helpers
+@model FinancialAnalyticsDto
+@{ ViewData["Title"] = "تحلیل مالی"; }
+
+@section Styles { <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script> }
+
+<div class="page-header">
+    <h1>💰 تحلیل مالی</h1>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="get" class="filters-bar">
+            <div class="form-group">
+                <label>مدرسه</label>
+                <select name="schoolId" class="form-control">
+                    <option value="">همه</option>
+                    @foreach (var s in (List<SchoolDto>)ViewBag.Schools)
+                    { var sel = (int?)ViewBag.SchoolId == s.SchoolId ? "selected" : ""; @Html.Raw($"<option value='{s.SchoolId}' {sel}>{s.Name}</option>") }
+                </select>
+            </div>
+            <div class="form-group">
+                <label>سال تحصیلی</label>
+                <select name="academicYearId" class="form-control">
+                    <option value="">همه</option>
+                    @foreach (var y in (List<LookupDto>)ViewBag.AcademicYears)
+                    { var sel = (int?)ViewBag.AcademicYearId == y.Id ? "selected" : ""; @Html.Raw($"<option value='{y.Id}' {sel}>{y.Name}</option>") }
+                </select>
+            </div>
+            <div class="form-group"><label>از تاریخ</label><input name="fromDate" value="@ViewBag.FromDate" class="form-control persian-date" autocomplete="off" style="width:120px" /></div>
+            <div class="form-group"><label>تا تاریخ</label><input name="toDate" value="@ViewBag.ToDate" class="form-control persian-date" autocomplete="off" style="width:120px" /></div>
+            <button class="btn btn-primary">🔍 مشاهده</button>
+        </form>
+    </div>
+</div>
+
+<div class="stats-grid" style="margin-top:16px">
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">کل صورت‌حساب</div>
+            <div class="stat-number">@PersianDate.ToPersianDigits(Model.TotalInvoiced.ToString("N0"))</div>
+            <div class="stat-trend text-muted">تومان</div>
+        </div>
+        <div class="stat-icon bg-primary">📄</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">دریافت‌شده</div>
+            <div class="stat-number text-success">@PersianDate.ToPersianDigits(Model.TotalPaid.ToString("N0"))</div>
+            <div class="stat-trend">@PersianDate.ToPersianDigits(Model.CollectionRate.ToString("0.0"))%</div>
+        </div>
+        <div class="stat-icon bg-success">💵</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">معوقات</div>
+            <div class="stat-number text-danger">@PersianDate.ToPersianDigits(Model.TotalOutstanding.ToString("N0"))</div>
+            <div class="stat-trend text-muted">تومان</div>
+        </div>
+        <div class="stat-icon bg-danger">⚠️</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">سررسید گذشته</div>
+            <div class="stat-number text-warning">@PersianDate.ToPersianDigits(Model.OverdueAmount.ToString("N0"))</div>
+            <div class="stat-trend">@PersianDate.ToPersianDigits(Model.OverdueInvoiceCount.ToString()) فاکتور</div>
+        </div>
+        <div class="stat-icon bg-warning">⏰</div>
+    </div>
+</div>
+
+<div class="card" style="margin-top:16px">
+    <div class="card-header"><h2>📈 درآمد ماهانه</h2></div>
+    <div class="card-body"><canvas id="monthlyChart" height="80"></canvas></div>
+</div>
+
+<div class="row" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-top:16px">
+    <div class="card">
+        <div class="card-header"><h2>📊 به تفکیک نوع شهریه</h2></div>
+        <div class="card-body"><canvas id="feeTypeChart" height="200"></canvas></div>
+    </div>
+    <div class="card">
+        <div class="card-header"><h2>💳 روش پرداخت</h2></div>
+        <div class="card-body"><canvas id="methodChart" height="200"></canvas></div>
+    </div>
+    <div class="card">
+        <div class="card-header"><h2>🔴 برترین بدهکاران</h2></div>
+        <div class="card-body" style="max-height:300px; overflow-y:auto">
+            <table class="data-table" style="font-size:0.85em">
+                <thead><tr><th>دانش‌آموز</th><th>بدهی</th></tr></thead>
+                <tbody>
+                    @foreach (var d in Model.TopDebtors)
+                    {
+                        <tr>
+                            <td><strong>@d.StudentName</strong><br /><small>@d.ClassroomName</small></td>
+                            <td class="text-danger">@PersianDate.ToPersianDigits(d.TotalDebt.ToString("N0"))</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () { $('.persian-date').smsPersianDatePicker(); });
+    </script>
+    <script>
+        new Chart(document.getElementById('monthlyChart'), {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MonthlyCollection.Select(m => m.MonthLabel))),
+                datasets: [
+                    { label: 'صورت‌حساب', data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MonthlyCollection.Select(m => m.Invoiced))), backgroundColor:'#0d6efd' },
+                    { label: 'دریافت', data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MonthlyCollection.Select(m => m.Collected))), backgroundColor:'#198754' }
+                ]
+            },
+            options: { responsive:true, plugins:{ legend:{ position:'bottom' } } }
+        });
+
+        new Chart(document.getElementById('feeTypeChart'), {
+            type: 'pie',
+            data: {
+                labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ByFeeType.Select(f => f.FeeTypeName))),
+                datasets: [{ data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ByFeeType.Select(f => f.Amount))), backgroundColor:['#0d6efd','#198754','#ffc107','#dc3545','#6f42c1','#fd7e14'] }]
+            },
+            options: { responsive:true, plugins:{ legend:{ position:'bottom' } } }
+        });
+
+        new Chart(document.getElementById('methodChart'), {
+            type: 'doughnut',
+            data: {
+                labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ByPaymentMethod.Select(m => m.Method))),
+                datasets: [{ data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ByPaymentMethod.Select(m => m.Amount))), backgroundColor:['#0d6efd','#198754','#ffc107','#dc3545'] }]
+            },
+            options: { responsive:true, plugins:{ legend:{ position:'bottom' } } }
+        });
+    </script>
+}
+

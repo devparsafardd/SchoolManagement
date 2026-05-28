@@ -1,0 +1,42 @@
+@using SMS.Application.DTOs
+@using SMS.Shared.Helpers
+@model List<ClassroomDto>
+@{ ViewData["Title"] = "برنامه هفتگی کلاس‌ها"; }
+
+<div class="page-header">
+    <div>
+        <h1>📅 برنامه هفتگی کلاس‌ها</h1>
+        <div class="subtitle">روی هر کلاس کلیک کنید تا برنامه‌اش را ببینید یا تغییر دهید</div>
+    </div>
+    <a asp-action="Periods" class="btn btn-primary">⏰ مدیریت زنگ‌ها</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        @if (!Model.Any())
+        {
+            <p class="empty-state">کلاسی ثبت نشده.</p>
+        }
+        else
+        {
+            <table class="data-table enhanced">
+                <thead><tr><th>کلاس</th><th>پایه</th><th>مدرسه</th><th>دانش‌آموزان</th><th>عملیات</th></tr></thead>
+                <tbody>
+                    @foreach (var c in Model)
+                    {
+                        <tr>
+                            <td><strong>@c.Name</strong></td>
+                            <td>@c.GradeName</td>
+                            <td>@c.SchoolName</td>
+                            <td>@PersianDate.ToPersianDigits((c.CurrentStudentCount).ToString())</td>
+                            <td>
+                                <a asp-action="Classroom" asp-route-classroomId="@c.ClassroomId" class="btn btn-sm btn-primary">📅 برنامه</a>
+                                <a asp-controller="Analytics" asp-action="Classroom" asp-route-id="@c.ClassroomId" class="btn btn-sm btn-info">📊 گزارش</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>

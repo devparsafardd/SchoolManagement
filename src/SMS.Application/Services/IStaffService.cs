@@ -56,21 +56,13 @@ public interface IExamService
     Task<Result> UpdateAsync(long id, ExamCreateDto dto);
     Task<Result> DeleteAsync(long id);
     Task<Result> FinalizeAsync(long id);
+    Task<Result> UnfinalizeAsync(long id);
 
     Task<List<ExamScoreRow>> GetScoresAsync(long examId);
     Task<Result> SaveScoresAsync(EnterScoresDto dto, int enteredByStaffId);
 
     Task<List<GradeScaleDto>> GetGradeScalesAsync();
     Task<List<ExamTypeDto>> GetExamTypesAsync();
-}
-
-public class ExamTypeDto
-{
-    public int ExamTypeId { get; set; }
-    public string Name { get; set; } = null!;
-    public string? Code { get; set; }
-    public decimal DefaultWeight { get; set; }
-    public bool IsFinal { get; set; }
 }
 
 public interface IDisciplineService

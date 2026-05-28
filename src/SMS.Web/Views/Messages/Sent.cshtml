@@ -1,0 +1,34 @@
+@using SMS.Application.DTOs
+@using SMS.Shared.Helpers
+@model List<MessageDto>
+@{ ViewData["Title"] = "پیام‌های ارسال شده"; }
+
+<div class="page-header">
+    <h1>📤 ارسال شده</h1>
+    <a class="btn btn-outline" asp-action="Index">📥 صندوق دریافت</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <table class="data-table enhanced">
+            <thead>
+                <tr><th>گیرنده</th><th>موضوع</th><th>تاریخ</th><th>وضعیت خواندن</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var m in Model)
+                {
+                    <tr>
+                        <td>@m.ToUserName</td>
+                        <td><a asp-action="View" asp-route-id="@m.MessageId">@(string.IsNullOrEmpty(m.Subject) ? "(بدون موضوع)" : m.Subject)</a></td>
+                        <td>@PersianDate.ToPersian(m.SentAt)</td>
+                        <td>@(m.IsRead ? Html.Raw("<span class='badge badge-success'>خوانده شد</span>") : Html.Raw("<span class='badge badge-warning'>خوانده نشده</span>"))</td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="4" class="empty-state">پیام ارسالی وجود ندارد.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

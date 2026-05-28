@@ -112,6 +112,8 @@ public class MyPortalController : Controller
         if (!await CheckAccess(studentId)) return Forbid();
         var r = await _reportSvc.GenerateAsync(studentId, termId);
         if (!r.Success) { TempData["Error"] = r.Errors.FirstOrDefault(); return RedirectToAction(nameof(Dashboard), new { studentId }); }
+        ViewBag.StudentId = studentId;
+        ViewBag.TermId = termId;
         return View(r.Data);
     }
 

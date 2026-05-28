@@ -1,0 +1,117 @@
+@using SMS.Application.DTOs
+@using SMS.Shared.Helpers
+@model TeacherAnalyticsDto
+@{ ViewData["Title"] = "گزارش معلم " + Model.TeacherName; }
+
+@section Styles { <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script> }
+
+<div class="page-header">
+    <div>
+        <h1>👨‍🏫 @Model.TeacherName</h1>
+        <div class="subtitle">کد پرسنلی: @(string.IsNullOrEmpty(Model.PersonnelCode) ? "—" : PersianDate.ToPersianDigits(Model.PersonnelCode))</div>
+    </div>
+    <form method="get" style="display:flex; gap:6px; align-items:flex-end">
+        <input type="hidden" name="id" value="@Model.StaffId" />
+        <div class="form-group" style="margin:0">
+            <label>نوبت</label>
+            <select name="termId" class="form-control" onchange="this.form.submit()">
+                <option value="">همه</option>
+                @foreach (var t in (List<LookupDto>)ViewBag.Terms)
+                { var sel = (int?)ViewBag.TermId == t.Id ? "selected" : ""; @Html.Raw($"<option value='{t.Id}' {sel}>{t.Name}</option>") }
+            </select>
+        </div>
+    </form>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-info"><div class="stat-label">کلاس‌ها</div><div class="stat-number">@PersianDate.ToPersianDigits(Model.TotalClasses.ToString())</div></div>
+        <div class="stat-icon bg-primary">📚</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info"><div class="stat-label">دانش‌آموزان</div><div class="stat-number">@PersianDate.ToPersianDigits(Model.TotalStudents.ToString())</div></div>
+        <div class="stat-icon bg-success">👥</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info"><div class="stat-label">آزمون‌ها</div><div class="stat-number">@PersianDate.ToPersianDigits(Model.TotalExams.ToString())</div>
+            <div class="stat-trend text-muted">@PersianDate.ToPersianDigits(Model.TotalScoredExams.ToString()) نمره‌گذاری شده</div>
+        </div>
+        <div class="stat-icon bg-info">📝</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">میانگین کلی نمرات</div>
+            <div class="stat-number">@(Model.OverallAverage.HasValue ? PersianDate.ToPersianDigits(Model.OverallAverage.Value.ToString("0.00")) : "—")</div>
+        </div>
+        <div class="stat-icon bg-warning">📊</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">ثبت حضور و غیاب</div>
+            <div class="stat-number">@PersianDate.ToPersianDigits(Model.AttendanceRecordsTaken.ToString())</div>
+            <div class="stat-trend text-muted">رکورد</div>
+        </div>
+        <div class="stat-icon bg-info">✅</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">تکالیف</div>
+            <div class="stat-number">@PersianDate.ToPersianDigits(Model.HomeworksAssigned.ToString())</div>
+            <div class="stat-trend text-muted">@PersianDate.ToPersianDigits(Model.HomeworksGraded.ToString()) تصحیح شده</div>
+        </div>
+        <div class="stat-icon bg-success">📝</div>
+    </div>
+</div>
+
+<div class="card" style="margin-top:16px">
+    <div class="card-header"><h2>📚 عملکرد در هر کلاس</h2></div>
+    <div class="card-body">
+        <table class="data-table">
+            <thead><tr><th>کلاس</th><th>درس</th><th>دانش‌آموز</th><th>آزمون</th><th>میانگین</th><th>درصد قبولی</th></tr></thead>
+            <tbody>
+                @foreach (var c in Model.Classes)
+                {
+                    <tr>
+                        <td><strong>@c.ClassroomName</strong></td>
+                        <td>@c.SubjectName</td>
+                        <td>@PersianDate.ToPersianDigits(c.StudentCount.ToString())</td>
+                        <td>@PersianDate.ToPersianDigits(c.ExamCount.ToString())</td>
+                        <td>@(c.Average.HasValue ? PersianDate.ToPersianDigits(c.Average.Value.ToString("0.00")) : "—")</td>
+                        <td>
+                            <div style="background:#eee; border-radius:10px; overflow:hidden; height:18px; position:relative">
+                                <div style="background:@(c.PassRate >= 80 ? "#198754" : c.PassRate >= 60 ? "#ffc107" : "#dc3545"); width:@(c.PassRate)%; height:100%"></div>
+                                <span style="position:absolute; left:50%; transform:translateX(-50%); top:0; font-size:0.85em; color:white; font-weight:bold">@PersianDate.ToPersianDigits(c.PassRate.ToString())%</span>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@if (Model.Classes.Any())
+{
+    <div class="card" style="margin-top:16px">
+        <div class="card-header"><h2>📊 مقایسه میانگین کلاس‌ها</h2></div>
+        <div class="card-body"><canvas id="cmpChart" height="80"></canvas></div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        @if (Model.Classes.Any())
+        {
+            <text>
+            new Chart(document.getElementById('cmpChart'), {
+                type: 'bar',
+                data: {
+                    labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Classes.Select(c => c.ClassroomName + " - " + c.SubjectName))),
+                    datasets: [{ label:'میانگین', data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Classes.Select(c => c.Average ?? 0))), backgroundColor:'#0d6efd' }]
+                },
+                options: { responsive:true, plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true, max:20 } } }
+            });
+            </text>
+        }
+    </script>
+}

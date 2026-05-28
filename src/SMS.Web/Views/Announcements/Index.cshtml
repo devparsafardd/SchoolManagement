@@ -4,12 +4,18 @@
 
 <div class="page-header">
     <h1>📢 اعلان‌ها و اطلاعیه‌ها</h1>
-    <a asp-action="Create" class="btn btn-success">➕ اعلان جدید</a>
+    @{
+        var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("SchoolAdmin") || User.IsInRole("Principal") || User.IsInRole("VicePrincipal");
+    }
+    @if (canManage)
+    {
+        <a asp-action="Create" class="btn btn-success">➕ اعلان جدید</a>
+    }
 </div>
 
 <div class="card">
     <div class="card-body">
-        <table class="data-table">
+        <table class="data-table enhanced">
             <thead><tr><th>عنوان</th><th>مخاطب</th><th>تاریخ انتشار</th><th>پایان</th><th>وضعیت</th><th></th></tr></thead>
             <tbody>
                 @foreach (var a in Model.Items)
@@ -29,10 +35,13 @@
                         <td>@(a.ExpiryDate.HasValue ? PersianDate.ToPersian(a.ExpiryDate.Value) : "-")</td>
                         <td>@(a.IsActive ? Html.Raw("<span class='badge badge-success'>فعال</span>") : Html.Raw("<span class='badge badge-secondary'>غیرفعال</span>"))</td>
                         <td>
-                            <form method="post" asp-action="Delete" asp-route-id="@a.AnnouncementId" style="display:inline" onsubmit="return confirm('حذف شود؟');">
-                                @Html.AntiForgeryToken()
-                                <button class="btn btn-danger btn-sm">🗑</button>
-                            </form>
+                            @if (canManage)
+                            {
+                                <form method="post" asp-action="Delete" asp-route-id="@a.AnnouncementId" style="display:inline" onsubmit="return confirm('حذف شود؟');">
+                                    @Html.AntiForgeryToken()
+                                    <button class="btn btn-danger btn-sm">🗑</button>
+                                </form>
+                            }
                         </td>
                     </tr>
                 }

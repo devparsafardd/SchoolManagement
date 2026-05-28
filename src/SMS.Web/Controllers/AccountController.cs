@@ -14,11 +14,12 @@ public class AccountController : Controller
 {
     private readonly IAuthService _auth;
     private readonly IAccountService _accountSvc;
+    private readonly SMS.Web.Services.IFileUploadService _fileUpload;
     private readonly ICurrentUserService _currentUser;
 
-    public AccountController(IAuthService auth, IAccountService accountSvc, ICurrentUserService currentUser)
+    public AccountController(IAuthService auth, IAccountService accountSvc, ICurrentUserService currentUser, SMS.Web.Services.IFileUploadService fileUpload)
     {
-        _auth = auth; _accountSvc = accountSvc; _currentUser = currentUser;
+        _auth = auth; _accountSvc = accountSvc; _fileUpload = fileUpload; _currentUser = currentUser;
     }
 
     [HttpGet, AllowAnonymous]
@@ -62,16 +63,67 @@ public class AccountController : Controller
             return Redirect(returnUrl);
 
         // ریدایرکت بر اساس نقش
-        if (data.Roles.Contains(RoleNames.Student) || data.Roles.Contains(RoleNames.Parent))
+        if (data.Roles.Contains(RoleNames.Parent))
+            return RedirectToAction("Dashboard", "Parent");
+        if (data.Roles.Contains(RoleNames.Student))
             return RedirectToAction("Index", "MyPortal");
+        if (data.Roles.Contains(RoleNames.Teacher) || data.Roles.Contains(RoleNames.Counselor))
+            return RedirectToAction("Dashboard", "Teacher");
+        if (data.Roles.Contains(RoleNames.Principal) || data.Roles.Contains(RoleNames.VicePrincipal))
+            return RedirectToAction("Index", "Principal");
 
         return RedirectToAction("Index", "Home");
+    }
+
+    [Authorize, HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> UploadPhoto(IFormFile? photo)
+    {
+        if (photo == null || photo.Length == 0)
+        {
+            TempData["Error"] = "فایلی انتخاب نشده";
+            return RedirectToAction(nameof(Profile));
+        }
+        var ext = System.IO.Path.GetExtension(photo.FileName).ToLowerInvariant();
+        var allowed = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+        if (!allowed.Contains(ext))
+        {
+            TempData["Error"] = "فقط فرمت‌های تصویر مجاز است (jpg, png, gif, webp)";
+            return RedirectToAction(nameof(Profile));
+        }
+        if (photo.Length > 3 * 1024 * 1024)
+        {
+            TempData["Error"] = "حداکثر حجم عکس ۳ مگابایت";
+            return RedirectToAction(nameof(Profile));
+        }
+        try
+        {
+            var path = await _fileUpload.UploadAsync(photo, "profiles", 3 * 1024 * 1024);
+            if (path == null) { TempData["Error"] = "خطا در آپلود"; return RedirectToAction(nameof(Profile)); }
+            var personId = _currentUser.PersonId ?? 0;
+            var r = await _accountSvc.UpdatePhotoAsync(personId, path);
+            TempData[r.Success ? "Success" : "Error"] = r.Message ?? r.Errors.FirstOrDefault();
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = ex.Message;
+        }
+        return RedirectToAction(nameof(Profile));
+    }
+
+    [Authorize, HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> RemovePhoto()
+    {
+        var personId = _currentUser.PersonId ?? 0;
+        var r = await _accountSvc.RemovePhotoAsync(personId);
+        TempData[r.Success ? "Success" : "Error"] = r.Message ?? r.Errors.FirstOrDefault();
+        return RedirectToAction(nameof(Profile));
     }
 
     [Authorize]
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        HttpContext.Session.Clear();
         return RedirectToAction("Login");
     }
 
@@ -116,8 +168,14 @@ public class AccountController : Controller
 
     private IActionResult RedirectToHome()
     {
-        if (User.IsInRole(RoleNames.Student) || User.IsInRole(RoleNames.Parent))
+        if (User.IsInRole(RoleNames.Parent))
+            return RedirectToAction("Dashboard", "Parent");
+        if (User.IsInRole(RoleNames.Student))
             return RedirectToAction("Index", "MyPortal");
+        if (User.IsInRole(RoleNames.Teacher) || User.IsInRole(RoleNames.Counselor))
+            return RedirectToAction("Dashboard", "Teacher");
+        if (User.IsInRole(RoleNames.Principal) || User.IsInRole(RoleNames.VicePrincipal))
+            return RedirectToAction("Index", "Principal");
         return RedirectToAction("Index", "Home");
     }
 }

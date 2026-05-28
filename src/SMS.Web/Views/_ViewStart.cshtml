@@ -1,3 +1,24 @@
+@using SMS.Shared.Constants
 @{
-    Layout = "_Layout";
+    // انتخاب خودکار Layout بر اساس نقش کاربر فعلی
+    // اولویت: Student/Parent → پنل‌های اختصاصی، Teacher → سبز، Principal → بنفش، بقیه → ادمین
+    var user = Context.User;
+    if (user?.Identity?.IsAuthenticated == true)
+    {
+        if (user.IsInRole(RoleNames.Student))
+            Layout = "_PortalLayout";
+        else if (user.IsInRole(RoleNames.Parent))
+            Layout = "_ParentLayout";
+        else if (user.IsInRole(RoleNames.Teacher) || user.IsInRole(RoleNames.Counselor))
+            Layout = "_TeacherLayout";
+        else if ((user.IsInRole(RoleNames.Principal) || user.IsInRole(RoleNames.VicePrincipal))
+                 && !user.IsInRole(RoleNames.SuperAdmin) && !user.IsInRole(RoleNames.SchoolAdmin))
+            Layout = "_PrincipalLayout";
+        else
+            Layout = "_Layout";
+    }
+    else
+    {
+        Layout = "_Layout";
+    }
 }

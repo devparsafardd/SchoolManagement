@@ -1,0 +1,158 @@
+@using SMS.Shared.Helpers
+@model SMS.Application.DTOs.TeacherClassDetailDto
+@{ ViewData["Title"] = $"کلاس {Model.ClassroomName} - {Model.SubjectName}"; }
+
+<div class="page-header">
+    <div>
+        <h1>📚 @Model.SubjectName</h1>
+        <div class="subtitle">
+            🏫 @Model.SchoolName | @Model.ClassroomName | @Model.GradeName | سال @Model.AcademicYearTitle
+        </div>
+    </div>
+    <div>
+        <a class="btn btn-success" asp-action="Attendance" asp-route-classSubjectId="@Model.ClassSubjectId">✅ ثبت حضور</a>
+        <a class="btn btn-info" asp-action="CreateExam" asp-route-classSubjectId="@Model.ClassSubjectId">➕ آزمون جدید</a>
+    </div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">تعداد دانش‌آموزان</div>
+            <div class="stat-number">@PersianDate.ToPersianDigits(Model.Students.Count.ToString())</div>
+        </div>
+        <div class="stat-icon bg-primary">👥</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">تعداد آزمون‌ها</div>
+            <div class="stat-number">@PersianDate.ToPersianDigits(Model.Exams.Count.ToString())</div>
+        </div>
+        <div class="stat-icon bg-info">📝</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">میانگین کلاس</div>
+            <div class="stat-number">
+                @{ var avg = Model.Students.Where(s => s.AverageScore.HasValue).Select(s => s.AverageScore!.Value).DefaultIfEmpty(0).Average(); }
+                @PersianDate.ToPersianDigits(avg.ToString("0.00"))
+            </div>
+        </div>
+        <div class="stat-icon bg-success">📊</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">ساعت هفتگی</div>
+            <div class="stat-number">@(Model.WeeklyHours.HasValue ? PersianDate.ToPersianDigits(Model.WeeklyHours.Value.ToString("0.#")) : "—")</div>
+        </div>
+        <div class="stat-icon bg-warning">⏰</div>
+    </div>
+</div>
+
+<div class="row" style="display:grid; grid-template-columns:2fr 1fr; gap:16px; margin-top:16px">
+
+    <!-- لیست دانش‌آموزان -->
+    <div class="card">
+        <div class="card-header"><h2>👥 دانش‌آموزان</h2></div>
+        <div class="card-body">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>نام</th>
+                        <th>کد دانش‌آموزی</th>
+                        <th>میانگین</th>
+                        <th>غیبت</th>
+                        <th>تاخیر</th>
+                        <th>انضباطی</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ var i = 1; }
+                    @foreach (var s in Model.Students)
+                    {
+                        <tr>
+                            <td>@PersianDate.ToPersianDigits((i++).ToString())</td>
+                            <td>@s.FullName</td>
+                            <td>@PersianDate.ToPersianDigits(s.StudentCode)</td>
+                            <td>
+                                @if (s.AverageScore.HasValue)
+                                {
+                                    var cls = s.AverageScore >= 17 ? "text-success" : s.AverageScore >= 10 ? "" : "text-danger";
+                                    <strong class="@cls">@PersianDate.ToPersianDigits(s.AverageScore.Value.ToString("0.00"))</strong>
+                                }
+                                else { <span>—</span> }
+                            </td>
+                            <td>@PersianDate.ToPersianDigits(s.AbsenceCount.ToString())</td>
+                            <td>@PersianDate.ToPersianDigits(s.TardyCount.ToString())</td>
+                            <td>
+                                <span class="text-success">+@PersianDate.ToPersianDigits(s.DisciplineRewards.ToString())</span>
+                                /
+                                <span class="text-danger">-@PersianDate.ToPersianDigits(s.DisciplinePunishments.ToString())</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- آزمون‌ها + حضور و غیاب اخیر -->
+    <div>
+        <div class="card">
+            <div class="card-header"><h2>📝 آزمون‌های اخیر</h2></div>
+            <div class="card-body">
+                @if (!Model.Exams.Any())
+                {
+                    <p class="text-muted">آزمونی ثبت نشده.</p>
+                }
+                else
+                {
+                    <ul style="list-style:none; padding:0">
+                        @foreach (var e in Model.Exams.Take(8))
+                        {
+                            <li style="padding:8px 0; border-bottom:1px solid #eee">
+                                <a asp-action="ExamScores" asp-route-examId="@e.ExamId"><strong>@e.Title</strong></a>
+                                <div class="text-muted" style="font-size:0.85em">
+                                    @PersianDate.ToPersian(e.ExamDate) | @e.ExamTypeName
+                                    | نمرات: @PersianDate.ToPersianDigits(e.ScoredCount.ToString())/@PersianDate.ToPersianDigits(e.TotalStudents.ToString())
+                                    @if (e.ClassAverage.HasValue)
+                                    {
+                                        <span>| میانگین: @PersianDate.ToPersianDigits(e.ClassAverage.Value.ToString("0.00"))</span>
+                                    }
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+            <div class="card-header"><h2>📊 حضور و غیاب اخیر</h2></div>
+            <div class="card-body">
+                @if (!Model.RecentAttendance.Any())
+                {
+                    <p class="text-muted">ثبتی موجود نیست.</p>
+                }
+                else
+                {
+                    <table class="data-table" style="font-size:0.9em">
+                        <thead><tr><th>تاریخ</th><th>حاضر</th><th>غایب</th><th>تاخیر</th></tr></thead>
+                        <tbody>
+                            @foreach (var d in Model.RecentAttendance)
+                            {
+                                <tr>
+                                    <td>@PersianDate.ToPersian(d.Date)</td>
+                                    <td class="text-success">@PersianDate.ToPersianDigits(d.PresentCount.ToString())</td>
+                                    <td class="text-danger">@PersianDate.ToPersianDigits(d.AbsentCount.ToString())</td>
+                                    <td class="text-warning">@PersianDate.ToPersianDigits(d.TardyCount.ToString())</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+</div>

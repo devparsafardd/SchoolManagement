@@ -1,0 +1,73 @@
+@using SMS.Application.DTOs
+@{ ViewData["Title"] = "نوتیفیکیشن و پیامک‌های خودکار"; }
+
+<div class="page-header">
+    <div>
+        <h1>📲 ارسال نوتیفیکیشن‌های خودکار</h1>
+        <div class="subtitle">یادآوری دسته‌جمعی به ولی‌ها از طریق پیامک و پیام داخلی</div>
+    </div>
+    <a asp-controller="Settings" asp-action="Index" class="btn btn-outline">⚙ تنظیمات</a>
+</div>
+
+<div class="alert alert-info">
+    💡 <strong>نکته:</strong> برای فعال‌سازی پیامک خودکار، در <a asp-controller="Settings" asp-action="Index">تنظیمات</a> این کلیدها رو true کنید:
+    <code>AutoNotifyAbsence</code>, <code>AutoNotifyInvoice</code>, <code>AutoNotifyPayment</code>, <code>AutoNotifyDiscipline</code>
+</div>
+
+<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:16px">
+
+    <div class="card">
+        <div class="card-header"><h2>💰 یادآوری معوقات</h2></div>
+        <div class="card-body">
+            <p>ارسال پیامک به همه ولی‌هایی که فاکتور سررسید گذشته دارن.</p>
+            <form method="post" asp-action="SendOverdueReminder">
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label>محدوده مدرسه (اختیاری)</label>
+                    <select name="schoolId" class="form-control">
+                        <option value="">همه مدارس</option>
+                        @foreach (var s in (List<SchoolDto>)ViewBag.Schools)
+                        {
+                            <option value="@s.SchoolId">@s.Name</option>
+                        }
+                    </select>
+                </div>
+                <button class="btn btn-warning" onclick="return confirm('پیامک به همه بدهکاران ارسال شود؟')">📤 ارسال یادآوری</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header"><h2>📚 یادآوری تکالیف فردا</h2></div>
+        <div class="card-body">
+            <p>ارسال پیام داخلی به ولی‌های دانش‌آموزانی که فردا تکلیف تحویل دارن.</p>
+            <form method="post" asp-action="SendUpcomingHomeworks">
+                @Html.AntiForgeryToken()
+                <button class="btn btn-info">📤 ارسال یادآوری</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card" style="background:#f8f9fa">
+        <div class="card-header"><h2>📅 ارسال غیبت‌های امروز</h2></div>
+        <div class="card-body">
+            <p class="text-muted">این قابلیت با Background Job در نسخه آینده ساخته میشه. الان غیبت‌های به‌صورت دستی توسط معلم در صفحه ثبت حضور قابل ارسال هستن.</p>
+        </div>
+    </div>
+</div>
+
+<div class="card" style="margin-top:16px">
+    <div class="card-header"><h2>ℹ️ راهنمای پیامک خودکار</h2></div>
+    <div class="card-body">
+        <h3>چه‌زمانی پیامک ارسال می‌شه؟</h3>
+        <ul style="line-height:1.9">
+            <li>🔴 <strong>غیبت:</strong> هنگام ثبت غیبت توسط معلم (اگر <code>AutoNotifyAbsence=true</code>)</li>
+            <li>💰 <strong>صدور فاکتور:</strong> هنگام ساخت فاکتور توسط حسابدار (اگر <code>AutoNotifyInvoice=true</code>)</li>
+            <li>✅ <strong>پرداخت:</strong> هنگام ثبت پرداخت (اگر <code>AutoNotifyPayment=true</code>)</li>
+            <li>⭐ <strong>انضباطی:</strong> هنگام ثبت تشویق/تنبیه (اگر <code>AutoNotifyDiscipline=true</code>)</li>
+            <li>📝 <strong>نمره نهایی:</strong> هنگام نهایی‌سازی آزمون (اگر <code>AutoNotifyExamScore=true</code>)</li>
+        </ul>
+        <h3>تنظیم Provider پیامک:</h3>
+        <p>در حال حاضر از <strong>FakeSmsSender</strong> استفاده می‌شه که پیامک‌ها رو در لاگ ثبت می‌کنه. برای فعال کردن Provider واقعی، پکیج Kavenegar یا ملی‌پیامک رو نصب و در <code>FakeSmsSender</code> جایگزین کنید.</p>
+    </div>
+</div>

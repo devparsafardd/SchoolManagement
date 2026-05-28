@@ -1,0 +1,69 @@
+@using SMS.Application.DTOs
+@model HomeworkCreateDto
+@{ ViewData["Title"] = "تکلیف جدید"; Layout = "_TeacherLayout"; }
+
+<div class="page-header"><h1>➕ تکلیف جدید</h1></div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="ClassSubjectId" />
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            }
+
+            <div class="form-group">
+                <label>عنوان تکلیف *</label>
+                <input asp-for="Title" class="form-control" required />
+            </div>
+
+            <div class="form-group">
+                <label>شرح کامل تکلیف</label>
+                <textarea asp-for="Description" class="form-control" rows="6"></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>مهلت تحویل (شمسی) *</label>
+                    <input asp-for="DueDate" id="dueDateInput" type="hidden" />
+                    <input id="dueDatePersian" class="form-control persian-date" placeholder="1404/03/15" required />
+                </div>
+                <div class="form-group">
+                    <label>نمره کل (اختیاری)</label>
+                    <input asp-for="MaxScore" class="form-control" type="number" step="0.5" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>📎 فایل ضمیمه (اختیاری) — حداکثر ۱۰ مگابایت</label>
+                <input type="file" name="attachment" class="form-control" />
+                <small class="text-muted">قابل قبول: PDF، Word، Excel، تصویر، ZIP</small>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <input asp-for="AllowFileSubmission" type="checkbox" /> اجازه آپلود فایل توسط دانش‌آموز
+                </label>
+            </div>
+
+            <button class="btn btn-success">💾 ثبت تکلیف</button>
+            <a asp-action="Teacher" class="btn btn-secondary">انصراف</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#dueDatePersian').smsPersianDatePicker({
+                initialValue: false,
+                onSelect: function (unix) {
+                    var d = new persianDate(unix).toCalendar('gregorian').toLocale('en');
+                    $('#dueDateInput').val(d.format('YYYY-MM-DD'));
+                }
+            });
+        });
+    </script>
+}

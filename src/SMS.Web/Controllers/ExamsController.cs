@@ -95,6 +95,18 @@ public class ExamsController : Controller
         return RedirectToAction(nameof(Scores), new { id });
     }
 
+    /// <summary>بازگشایی آزمون نهایی شده برای ویرایش - فقط مدیر یا مدیر مدرسه</summary>
+    [HttpPost, ValidateAntiForgeryToken]
+    [Authorize(Roles = RoleNames.AdminGroup)]
+    public async Task<IActionResult> Unfinalize(long id, int? classSubjectId)
+    {
+        var r = await _svc.UnfinalizeAsync(id);
+        TempData[r.Success ? "Success" : "Error"] = r.Message ?? r.Errors.FirstOrDefault();
+        if (classSubjectId.HasValue)
+            return RedirectToAction(nameof(Index), new { classSubjectId });
+        return RedirectToAction(nameof(Scores), new { id });
+    }
+
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(long id, int classSubjectId)
     {

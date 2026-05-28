@@ -1,0 +1,144 @@
+@*
+    اسکریپت‌های پیشرفته مشترک:
+      - jQuery
+      - DataTables (با ترجمه فارسی + جستجو + صفحه‌بندی + خروجی Excel/CSV/Print)
+      - Persian DatePicker (تقویم شمسی برای ورودی تاریخ)
+    
+    نحوه استفاده در هر View:
+        @section Scripts {
+            @await Html.PartialAsync("_AdvancedScripts")
+            <script>
+                $(document).ready(function() {
+                    $('.dt-table').smsDataTable();      // فعال کردن DataTable
+                    $('.persian-date').smsPersianDatePicker();  // تقویم شمسی
+                });
+            </script>
+        }
+*@
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<!-- DataTables -->
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.min.css" />
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.0/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.print.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<!-- Persian DatePicker (babakhani - معروف‌ترین کتابخانه فارسی) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/css/persian-datepicker.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/persian-date@1.1.0/dist/persian-date.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/js/persian-datepicker.min.js"></script>
+
+<style>
+    .dataTables_wrapper .dataTables_filter input,
+    .dataTables_wrapper .dataTables_length select {
+        padding: 6px 10px; border: 1px solid #ddd; border-radius: 6px;
+    }
+    .dataTables_wrapper .dt-button {
+        padding: 6px 14px; margin-left: 4px; border-radius: 6px;
+        background: #0d6efd; color: white; border: none; cursor: pointer;
+    }
+    .dataTables_wrapper .dt-button:hover { background: #0a58ca; }
+    .dataTables_wrapper .dt-button.buttons-print { background: #6c757d; }
+    .dataTables_wrapper .dt-button.buttons-excel { background: #198754; }
+    .dataTables_wrapper .dt-button.buttons-csv { background: #fd7e14; }
+    table.dataTable thead th { background: #f8f9fa; border-bottom: 2px solid #dee2e6; }
+    .pwt-datepicker-input-element { direction: ltr; text-align: center; }
+    @@media print {
+        .topbar, .sidebar, .alert, .filters-bar, .dataTables_filter,
+        .dataTables_length, .dataTables_paginate, .dataTables_info,
+        .dt-buttons, button, .btn { display: none !important; }
+        .main-content { margin: 0 !important; padding: 10px !important; }
+        body.no-sidebar, body { padding: 0 !important; }
+    }
+</style>
+
+<script>
+    // ===== Helper: DataTable با تنظیمات فارسی =====
+    (function ($) {
+        if (!$ || !$.fn.DataTable) return;
+        $.fn.smsDataTable = function (opts) {
+            var defaults = {
+                language: {
+                    decimal: '.',
+                    emptyTable: 'داده‌ای موجود نیست',
+                    info: 'نمایش _START_ تا _END_ از _TOTAL_ ردیف',
+                    infoEmpty: 'هیچ ردیفی نمایش داده نمی‌شود',
+                    infoFiltered: '(فیلتر شده از _MAX_ ردیف)',
+                    lengthMenu: 'نمایش _MENU_ ردیف',
+                    loadingRecords: 'در حال بارگذاری...',
+                    processing: 'در حال پردازش...',
+                    search: 'جستجو:',
+                    zeroRecords: 'موردی یافت نشد',
+                    paginate: { first: 'اول', last: 'آخر', next: 'بعدی', previous: 'قبلی' }
+                },
+                pageLength: 25,
+                lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, 'همه']],
+                order: [],
+                dom: '<"top"Bflp>rt<"bottom"ip>',
+                buttons: [
+                    { extend: 'excelHtml5', text: '📊 Excel', title: document.title || 'گزارش', exportOptions: { columns: ':not(.no-export)' } },
+                    { extend: 'csvHtml5', text: '📄 CSV', title: document.title || 'گزارش', exportOptions: { columns: ':not(.no-export)' } },
+                    { extend: 'print', text: '🖨 پرینت', title: document.title || 'گزارش', exportOptions: { columns: ':not(.no-export)' } }
+                ]
+            };
+            var options = $.extend(true, {}, defaults, opts || {});
+            return this.each(function () {
+                if (!$.fn.DataTable.isDataTable(this)) {
+                    $(this).DataTable(options);
+                }
+            });
+        };
+    })(jQuery);
+
+    // ===== Helper: Persian DatePicker =====
+    (function ($) {
+        if (!$ || !$.fn.persianDatepicker) return;
+        $.fn.smsPersianDatePicker = function (opts) {
+            var defaults = {
+                format: 'YYYY/MM/DD',
+                autoClose: true,
+                initialValue: false,
+                observer: true,
+                calendar: {
+                    persian: { locale: 'fa' }
+                },
+                toolbox: {
+                    calendarSwitch: { enabled: false }
+                }
+            };
+            return this.each(function () {
+                $(this).persianDatepicker($.extend({}, defaults, opts || {}));
+            });
+        };
+    })(jQuery);
+
+    // ===== Print only main content =====
+    function printPage() { window.print(); }
+
+    // ===== Auto-init: همه جداول با کلاس enhanced خودکار DataTable می‌شوند =====
+    (function ($) {
+        $(document).ready(function () {
+            $('table.enhanced').each(function () {
+                if (!$(this).hasClass('dt-initialized')) {
+                    $(this).addClass('dt-initialized').smsDataTable({
+                        paging: $(this).data('paging') !== false,
+                        info: $(this).data('info') !== false,
+                        searching: $(this).data('search') !== false
+                    });
+                }
+            });
+
+            // همه inputهای با کلاس persian-date خودکار datepicker می‌گیرند
+            $('.persian-date').each(function () {
+                if (!$(this).hasClass('pd-initialized')) {
+                    $(this).addClass('pd-initialized').smsPersianDatePicker();
+                }
+            });
+        });
+    })(jQuery);
+</script>

@@ -10,7 +10,11 @@ namespace SMS.Infrastructure.Services;
 public class AttendanceService : IAttendanceService
 {
     private readonly SmsDbContext _db;
-    public AttendanceService(SmsDbContext db) => _db = db;
+    private readonly INotificationService? _notification;
+    public AttendanceService(SmsDbContext db, INotificationService? notification = null)
+    {
+        _db = db; _notification = notification;
+    }
 
     public async Task<List<AttendanceStatusDto>> GetStatusesAsync()
     {
@@ -104,6 +108,20 @@ public class AttendanceService : IAttendanceService
 
             await _db.SaveChangesAsync();
             await tx.CommitAsync();
+
+            // ارسال نوتیفیکیشن غیبت (در صورت فعال بودن در تنظیمات)
+            if (_notification != null)
+            {
+                // پیدا کردن statusId های غیبت
+                var absentStatusIds = await _db.AttendanceStatuses.AsNoTracking()
+                    .Where(s => s.IsAbsent).Select(s => s.StatusId).ToListAsync();
+                var absentStudents = dto.Students.Where(s => absentStatusIds.Contains(s.StatusId)).ToList();
+                foreach (var s in absentStudents)
+                {
+                    try { await _notification.NotifyAbsenceAsync(s.StudentId, dateOnly); } catch { }
+                }
+            }
+
             return Result.Ok("حضور و غیاب با موفقیت ثبت شد");
         }
         catch (Exception ex)

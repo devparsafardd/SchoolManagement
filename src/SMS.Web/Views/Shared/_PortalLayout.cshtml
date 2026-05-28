@@ -1,10 +1,41 @@
+@using System.Reflection
 @{
     var fullName = User.FindFirst("FullName")?.Value ?? User.Identity?.Name ?? "کاربر";
     var initials = string.IsNullOrEmpty(fullName) ? "?" : fullName.Substring(0, Math.Min(2, fullName.Length));
     var isParent = User.IsInRole("Parent");
     var roleText = isParent ? "ولی دانش‌آموز" : "دانش‌آموز";
     var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
-    var studentId = ViewContext.RouteData.Values["studentId"]?.ToString() ?? ViewBag.StudentId?.ToString();
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+
+    // ===== پیدا کردن studentId از چندین منبع =====
+    // اولویت: 1) Route 2) Query 3) ViewBag 4) Model (اگر property داشته باشد) 5) Session
+    string? studentId = ViewContext.RouteData.Values["studentId"]?.ToString();
+    if (string.IsNullOrEmpty(studentId))
+        studentId = Context.Request.Query["studentId"].ToString();
+    if (string.IsNullOrEmpty(studentId) && ViewBag.StudentId != null)
+        studentId = ViewBag.StudentId.ToString();
+    if (string.IsNullOrEmpty(studentId) && Model != null)
+    {
+        var prop = Model.GetType().GetProperty("StudentId");
+        if (prop != null)
+        {
+            var val = prop.GetValue(Model);
+            if (val != null) studentId = val.ToString();
+        }
+    }
+    if (string.IsNullOrEmpty(studentId))
+        studentId = Context.Session.GetString("PortalStudentId");
+
+    // ذخیره در Session برای استفاده در صفحات بعدی
+    if (!string.IsNullOrEmpty(studentId))
+        Context.Session.SetString("PortalStudentId", studentId);
+
+    // ===== termId پیش‌فرض =====
+    var termId = ViewContext.RouteData.Values["termId"]?.ToString();
+    if (string.IsNullOrEmpty(termId))
+        termId = Context.Request.Query["termId"].ToString();
+    if (string.IsNullOrEmpty(termId))
+        termId = "1";
 }
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
@@ -25,7 +56,9 @@
             border-right-color: white;
             color: white;
         }
+        .topbar { border-top: 3px solid #4361ee; }
     </style>
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
     <header class="topbar">
@@ -41,8 +74,9 @@
             </div>
         </div>
         <div class="topbar-right">
+            @await Html.PartialAsync("_NotificationBell")
             <div class="user-menu" onclick="this.classList.toggle('open')">
-                <div class="avatar">@initials</div>
+                @await Html.PartialAsync("_UserAvatar")
                 <div class="user-info">
                     <div class="user-name">@fullName</div>
                     <div class="user-role">@roleText</div>
@@ -52,9 +86,10 @@
                     <a asp-controller="Account" asp-action="ChangePassword">🔒 تغییر رمز</a>
                     @if (isParent)
                     {
-                        <a asp-controller="MyPortal" asp-action="SwitchChild">🔄 تغییر فرزند</a>
+                        <a asp-controller="Parent" asp-action="Dashboard">🔄 تغییر فرزند</a>
                     }
                     <hr />
+                    <a asp-controller="Help" asp-action="Index">❓ راهنما</a>
                     <a asp-controller="Account" asp-action="Logout">🚪 خروج</a>
                 </div>
             </div>
@@ -63,31 +98,64 @@
 
     <aside class="sidebar portal-sidebar">
         <nav class="menu">
-            <a asp-controller="MyPortal" asp-action="Index" class="menu-item @(currentAction == "Index" || currentAction == "Dashboard" ? "active" : "")">
+            <a asp-controller="MyPortal" asp-action="Dashboard" asp-route-studentId="@studentId"
+               class="menu-item @(currentAction == "Index" || currentAction == "Dashboard" ? "active" : "")">
                 <span class="menu-icon">🏠</span><span class="menu-text">داشبورد</span>
             </a>
+
             @if (!string.IsNullOrEmpty(studentId))
             {
                 <div class="menu-section">اطلاعات تحصیلی</div>
-                <a asp-controller="MyPortal" asp-action="Scores" asp-route-studentId="@studentId" class="menu-item @(currentAction == "Scores" ? "active" : "")">
+                <a asp-controller="MyPortal" asp-action="Scores" asp-route-studentId="@studentId"
+                   class="menu-item @(currentAction == "Scores" ? "active" : "")">
                     <span class="menu-icon">📝</span><span class="menu-text">نمرات</span>
                 </a>
-                <a asp-controller="MyPortal" asp-action="Attendance" asp-route-studentId="@studentId" class="menu-item @(currentAction == "Attendance" ? "active" : "")">
+                <a asp-controller="MyPortal" asp-action="Attendance" asp-route-studentId="@studentId"
+                   class="menu-item @(currentAction == "Attendance" ? "active" : "")">
                     <span class="menu-icon">✅</span><span class="menu-text">حضور و غیاب</span>
                 </a>
-                <a asp-controller="MyPortal" asp-action="Discipline" asp-route-studentId="@studentId" class="menu-item @(currentAction == "Discipline" ? "active" : "")">
+                <a asp-controller="MyPortal" asp-action="Discipline" asp-route-studentId="@studentId"
+                   class="menu-item @(currentAction == "Discipline" ? "active" : "")">
                     <span class="menu-icon">⭐</span><span class="menu-text">انضباطی</span>
                 </a>
-                <a asp-controller="MyPortal" asp-action="ReportCard" asp-route-studentId="@studentId" asp-route-termId="1" class="menu-item @(currentAction == "ReportCard" ? "active" : "")">
+                <a asp-controller="MyPortal" asp-action="ReportCard" asp-route-studentId="@studentId" asp-route-termId="@termId"
+                   class="menu-item @(currentAction == "ReportCard" ? "active" : "")">
                     <span class="menu-icon">📋</span><span class="menu-text">کارنامه</span>
                 </a>
 
                 <div class="menu-section">سایر</div>
-                <a asp-controller="MyPortal" asp-action="Finance" asp-route-studentId="@studentId" class="menu-item @(currentAction == "Finance" ? "active" : "")">
+                <a asp-controller="MyPortal" asp-action="Finance" asp-route-studentId="@studentId"
+                   class="menu-item @(currentAction == "Finance" ? "active" : "")">
                     <span class="menu-icon">💰</span><span class="menu-text">شهریه</span>
                 </a>
-                <a asp-controller="MyPortal" asp-action="Announcements" asp-route-studentId="@studentId" class="menu-item @(currentAction == "Announcements" ? "active" : "")">
+                <a asp-controller="MyPortal" asp-action="Announcements" asp-route-studentId="@studentId"
+                   class="menu-item @(currentAction == "Announcements" ? "active" : "")">
                     <span class="menu-icon">📢</span><span class="menu-text">اعلان‌ها</span>
+                </a>
+                @if (!isParent)
+                {
+                    <a asp-controller="Homeworks" asp-action="Student"
+                       class="menu-item @(currentController == "Homeworks" ? "active" : "")">
+                        <span class="menu-icon">📚</span><span class="menu-text">تکالیف</span>
+                    </a>
+                }
+                <a asp-controller="Messages" asp-action="Index"
+                   class="menu-item @(currentController == "Messages" ? "active" : "")">
+                    <span class="menu-icon">💬</span><span class="menu-text">پیام‌ها</span>
+                </a>
+            }
+            else
+            {
+                <!-- بدون studentId: حداقل پیام‌ها و تکالیف رو نشون بدیم -->
+                <div class="menu-section">عمومی</div>
+                @if (!isParent)
+                {
+                    <a asp-controller="Homeworks" asp-action="Student" class="menu-item">
+                        <span class="menu-icon">📚</span><span class="menu-text">تکالیف</span>
+                    </a>
+                }
+                <a asp-controller="Messages" asp-action="Index" class="menu-item">
+                    <span class="menu-icon">💬</span><span class="menu-text">پیام‌ها</span>
                 </a>
             }
         </nav>
@@ -111,12 +179,19 @@
                 <button class="alert-close" onclick="this.parentElement.remove()">×</button>
             </div>
         }
+        @if (TempData["Info"] is string info)
+        {
+            <div class="alert alert-info alert-dismissible">
+                <span class="alert-icon">ℹ</span><span>@info</span>
+                <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+            </div>
+        }
         @RenderBody()
     </main>
 
     <script>
         document.addEventListener('click', function (e) {
-            var menu = document.querySelector('.user-menu');
+            var menu = document.querySelector('.user-menu.open');
             if (menu && !menu.contains(e.target)) menu.classList.remove('open');
         });
         setTimeout(function () {
@@ -126,5 +201,7 @@
             });
         }, 5000);
     </script>
+    @await Html.PartialAsync("_AdvancedScripts")
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -7,7 +7,11 @@
         <h1>👨‍🏫 معلمان و کارکنان</h1>
         <div class="subtitle">مجموع: @PersianDate.ToPersianDigits(Model.TotalCount.ToString())</div>
     </div>
-    <a asp-action="Create" class="btn btn-success">➕ افزودن کارمند</a>
+    <div>
+        <a asp-controller="Export" asp-action="StaffExcel" asp-route-schoolId="@ViewBag.SchoolId" asp-route-search="@ViewBag.Search" class="btn btn-success">📊 Excel</a>
+        <a asp-controller="Export" asp-action="StaffPdf" asp-route-schoolId="@ViewBag.SchoolId" asp-route-search="@ViewBag.Search" target="_blank" class="btn btn-danger">📄 PDF</a>
+        <a asp-action="Create" class="btn btn-primary">➕ افزودن کارمند</a>
+    </div>
 </div>
 
 <div class="card">
@@ -42,12 +46,12 @@
         </form>
 
         <div class="table-responsive">
-            <table class="data-table">
+            <table class="data-table enhanced" id="staffTable">
                 <thead>
                     <tr>
                         <th>نام</th><th>کد پرسنلی</th><th>جنسیت</th>
                         <th>موبایل</th><th>نوع استخدام</th><th>مدرک</th>
-                        <th>سمت‌ها</th><th>تخصیص‌ها</th><th>عملیات</th>
+                        <th>سمت‌ها</th><th>تخصیص‌ها</th><th class="no-export">عملیات</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -80,6 +84,7 @@
                             <td>@PersianDate.ToPersianDigits(s.AssignmentCount.ToString())</td>
                             <td>
                                 <a asp-action="Details" asp-route-id="@s.StaffId" class="btn btn-outline btn-sm">👁</a>
+                                <a asp-controller="Analytics" asp-action="Teacher" asp-route-id="@s.StaffId" class="btn btn-info btn-sm" title="گزارش جامع">📊</a>
                                 <a asp-action="Edit" asp-route-id="@s.StaffId" class="btn btn-primary btn-sm">✏️</a>
                                 <form method="post" asp-action="Delete" asp-route-id="@s.StaffId" style="display:inline" onsubmit="return confirm('غیرفعال شود؟');">
                                     @Html.AntiForgeryToken()
@@ -112,3 +117,4 @@
         }
     </div>
 </div>
+

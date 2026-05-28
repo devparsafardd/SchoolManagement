@@ -7,7 +7,10 @@
         <h1>📚 کلاس‌ها</h1>
         <div class="subtitle">@(ViewBag.SchoolId != null ? $"تعداد: {PersianDate.ToPersianDigits(Model.Count.ToString())}" : "ابتدا مدرسه را انتخاب کنید")</div>
     </div>
-    <a asp-action="Create" asp-route-schoolId="@ViewBag.SchoolId" class="btn btn-success">➕ افزودن کلاس</a>
+    <div>
+        <a asp-controller="Export" asp-action="ClassroomsExcel" asp-route-schoolId="@ViewBag.SchoolId" class="btn btn-success">📊 خروجی Excel</a>
+        <a asp-action="Create" asp-route-schoolId="@ViewBag.SchoolId" class="btn btn-primary">➕ افزودن کلاس</a>
+    </div>
 </div>
 
 <div class="card">
@@ -26,7 +29,7 @@
             </div>
         </form>
 
-        <table class="data-table">
+        <table class="data-table enhanced" id="classTable">
             <thead>
                 <tr>
                     <th>نام کلاس</th><th>پایه</th><th>سال تحصیلی</th>
@@ -49,6 +52,8 @@
                         <td>@(c.RoomNumber ?? "-")</td>
                         <td>
                             <a asp-controller="ClassSubjects" asp-action="Index" asp-route-classroomId="@c.ClassroomId" class="btn btn-primary btn-sm">📚 دروس</a>
+                            <a asp-controller="Schedules" asp-action="Classroom" asp-route-classroomId="@c.ClassroomId" class="btn btn-info btn-sm">📅 برنامه</a>
+                            <a asp-controller="Analytics" asp-action="Classroom" asp-route-id="@c.ClassroomId" class="btn btn-info btn-sm" title="گزارش جامع">📊 گزارش</a>
                             <a asp-controller="Attendance" asp-action="Take" asp-route-classroomId="@c.ClassroomId" class="btn btn-outline btn-sm">✓ حضور</a>
                             <form method="post" asp-action="Delete" asp-route-id="@c.ClassroomId" asp-route-schoolId="@c.SchoolId" style="display:inline" onsubmit="return confirm('حذف شود؟');">
                                 @Html.AntiForgeryToken()
@@ -62,3 +67,4 @@
         </table>
     </div>
 </div>
+

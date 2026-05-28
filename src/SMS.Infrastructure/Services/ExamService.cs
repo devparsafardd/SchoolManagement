@@ -10,7 +10,11 @@ namespace SMS.Infrastructure.Services;
 public class ExamService : IExamService
 {
     private readonly SmsDbContext _db;
-    public ExamService(SmsDbContext db) => _db = db;
+    private readonly INotificationService? _notification;
+    public ExamService(SmsDbContext db, INotificationService? notification = null)
+    {
+        _db = db; _notification = notification;
+    }
 
     private IQueryable<ExamDto> BaseQuery() => _db.Exams
         .Include(e => e.ClassSubject).ThenInclude(cs => cs.Classroom)
@@ -138,7 +142,17 @@ public class ExamService : IExamService
         if (exam is null) return Result.Fail("آزمون یافت نشد");
         exam.IsFinalized = true;
         await _db.SaveChangesAsync();
+        if (_notification != null) { try { await _notification.NotifyExamFinalizedAsync(id); } catch { } }
         return Result.Ok("آزمون نهایی شد و دیگر قابل تغییر نیست");
+    }
+
+    public async Task<Result> UnfinalizeAsync(long id)
+    {
+        var exam = await _db.Exams.FindAsync(id);
+        if (exam is null) return Result.Fail("آزمون یافت نشد");
+        exam.IsFinalized = false;
+        await _db.SaveChangesAsync();
+        return Result.Ok("آزمون به حالت قابل ویرایش بازگشت");
     }
 
     public async Task<List<ExamScoreRow>> GetScoresAsync(long examId)

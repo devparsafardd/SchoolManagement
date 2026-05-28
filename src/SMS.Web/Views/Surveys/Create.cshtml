@@ -1,0 +1,94 @@
+@using SMS.Application.DTOs
+@model SurveyCreateDto
+@{ ViewData["Title"] = "نظرسنجی جدید"; }
+
+<div class="page-header"><h1>➕ ساخت نظرسنجی جدید</h1></div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post" id="surveyForm">
+            @Html.AntiForgeryToken()
+
+            <div class="form-row">
+                <div class="form-group" style="flex:2">
+                    <label>عنوان نظرسنجی *</label>
+                    <input asp-for="Title" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>مخاطب</label>
+                    <select asp-for="TargetAudience" class="form-control">
+                        <option value="All">همه</option>
+                        <option value="Students">دانش‌آموزان</option>
+                        <option value="Parents">اولیا</option>
+                        <option value="Teachers">معلمان</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>توضیحات</label>
+                <textarea asp-for="Description" class="form-control" rows="2"></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group"><label>تاریخ شروع</label><input asp-for="StartDate" type="date" class="form-control" /></div>
+                <div class="form-group"><label>تاریخ پایان</label><input asp-for="EndDate" type="date" class="form-control" /></div>
+                <div class="form-group">
+                    <label style="margin-top:30px">
+                        <input asp-for="IsAnonymous" type="checkbox" /> نظرسنجی ناشناس
+                    </label>
+                </div>
+            </div>
+
+            <hr style="margin:20px 0" />
+            <h3>📝 سوالات</h3>
+            <div id="questionsContainer"></div>
+
+            <button type="button" class="btn btn-outline" onclick="addQuestion()">➕ افزودن سوال</button>
+
+            <hr style="margin:20px 0" />
+            <button type="submit" class="btn btn-success">💾 ایجاد نظرسنجی</button>
+            <a asp-action="Index" class="btn btn-secondary">انصراف</a>
+        </form>
+    </div>
+</div>
+
+<script>
+    let qCount = 0;
+    function addQuestion() {
+        const html = `
+        <div class="card" style="background:#f8f9fa; margin-bottom:10px" id="q_${qCount}">
+            <div class="card-body">
+                <div class="form-row">
+                    <div class="form-group" style="flex:2">
+                        <label>متن سوال *</label>
+                        <input name="Questions[${qCount}].Text" class="form-control" required />
+                    </div>
+                    <div class="form-group">
+                        <label>نوع</label>
+                        <select name="Questions[${qCount}].QuestionType" class="form-control" onchange="toggleOptions(this, ${qCount})">
+                            <option value="Text">پاسخ متنی</option>
+                            <option value="YesNo">بله/خیر</option>
+                            <option value="Rating">امتیاز ۱-۵</option>
+                            <option value="SingleChoice">انتخاب یک گزینه</option>
+                            <option value="MultipleChoice">انتخاب چند گزینه</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group opt_${qCount}" style="display:none">
+                    <label>گزینه‌ها (با | جدا کنید)</label>
+                    <input name="Questions[${qCount}].Options" class="form-control" placeholder="مثلاً: عالی|خوب|متوسط|ضعیف" />
+                </div>
+                <label><input name="Questions[${qCount}].IsRequired" type="checkbox" checked value="true" /> اجباری</label>
+                <button type="button" class="btn btn-sm btn-danger" style="float:left" onclick="document.getElementById('q_${qCount}').remove()">حذف</button>
+            </div>
+        </div>`;
+        document.getElementById('questionsContainer').insertAdjacentHTML('beforeend', html);
+        qCount++;
+    }
+    function toggleOptions(sel, i) {
+        const showOpts = sel.value === 'SingleChoice' || sel.value === 'MultipleChoice';
+        document.querySelector('.opt_' + i).style.display = showOpts ? 'block' : 'none';
+    }
+    addQuestion(); // یک سوال پیش‌فرض
+</script>

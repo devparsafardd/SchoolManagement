@@ -1,0 +1,132 @@
+@using SMS.Application.DTOs
+@using SMS.Shared.Helpers
+@model DisciplineAnalyticsDto
+@{ ViewData["Title"] = "تحلیل انضباطی"; }
+
+@section Styles { <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script> }
+
+<div class="page-header">
+    <h1>⭐ تحلیل انضباطی</h1>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="get" class="filters-bar">
+            <div class="form-group">
+                <label>مدرسه</label>
+                <select name="schoolId" class="form-control">
+                    <option value="">همه</option>
+                    @foreach (var s in (List<SchoolDto>)ViewBag.Schools)
+                    { var sel = (int?)ViewBag.SchoolId == s.SchoolId ? "selected" : ""; @Html.Raw($"<option value='{s.SchoolId}' {sel}>{s.Name}</option>") }
+                </select>
+            </div>
+            <div class="form-group"><label>از تاریخ</label><input name="fromDate" value="@ViewBag.FromDate" class="form-control persian-date" autocomplete="off" style="width:120px" /></div>
+            <div class="form-group"><label>تا تاریخ</label><input name="toDate" value="@ViewBag.ToDate" class="form-control persian-date" autocomplete="off" style="width:120px" /></div>
+            <button class="btn btn-primary">🔍 مشاهده</button>
+        </form>
+    </div>
+</div>
+
+<div class="stats-grid" style="margin-top:16px">
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">کل تشویق‌ها</div>
+            <div class="stat-number text-success">@PersianDate.ToPersianDigits(Model.TotalRewards.ToString())</div>
+        </div>
+        <div class="stat-icon bg-success">⭐</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">کل تنبیه‌ها</div>
+            <div class="stat-number text-danger">@PersianDate.ToPersianDigits(Model.TotalPunishments.ToString())</div>
+        </div>
+        <div class="stat-icon bg-danger">⚠️</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">نسبت</div>
+            <div class="stat-number">
+                @{ var ratio = Model.TotalPunishments > 0 ? (decimal)Model.TotalRewards / Model.TotalPunishments : 0; }
+                @PersianDate.ToPersianDigits(ratio.ToString("0.0"))
+            </div>
+            <div class="stat-trend text-muted">تشویق به تنبیه</div>
+        </div>
+        <div class="stat-icon bg-primary">📊</div>
+    </div>
+</div>
+
+<div class="card" style="margin-top:16px">
+    <div class="card-header"><h2>📈 روند ماهانه</h2></div>
+    <div class="card-body"><canvas id="monthlyChart" height="80"></canvas></div>
+</div>
+
+<div class="row" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-top:16px">
+    <div class="card">
+        <div class="card-header"><h2>📊 به تفکیک نوع</h2></div>
+        <div class="card-body" style="max-height:400px; overflow-y:auto">
+            <table class="data-table">
+                <thead><tr><th>نوع</th><th>دسته</th><th>تعداد</th></tr></thead>
+                <tbody>
+                    @foreach (var t in Model.ByType)
+                    {
+                        <tr>
+                            <td>@t.TypeName</td>
+                            <td>@(t.Category == "R" ? "تشویق" : "تنبیه")</td>
+                            <td><strong>@PersianDate.ToPersianDigits(t.Count.ToString())</strong></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header"><h2>🏆 بیشترین تشویق</h2></div>
+        <div class="card-body">
+            <table class="data-table">
+                <thead><tr><th>دانش‌آموز</th><th>تعداد</th></tr></thead>
+                <tbody>
+                    @foreach (var s in Model.TopRewarded)
+                    {
+                        <tr><td><strong>@s.FullName</strong><br /><small>@s.ClassroomName</small></td><td class="text-success"><strong>@PersianDate.ToPersianDigits(s.RecordCount.ToString())</strong></td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header"><h2>⚠️ بیشترین تنبیه</h2></div>
+        <div class="card-body">
+            <table class="data-table">
+                <thead><tr><th>دانش‌آموز</th><th>تعداد</th></tr></thead>
+                <tbody>
+                    @foreach (var s in Model.TopPunished)
+                    {
+                        <tr><td><strong>@s.FullName</strong><br /><small>@s.ClassroomName</small></td><td class="text-danger"><strong>@PersianDate.ToPersianDigits(s.RecordCount.ToString())</strong></td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () { $('.persian-date').smsPersianDatePicker(); });
+    </script>
+    <script>
+        new Chart(document.getElementById('monthlyChart'), {
+            type: 'line',
+            data: {
+                labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Monthly.Select(m => m.MonthLabel))),
+                datasets: [
+                    { label:'تشویق', data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Monthly.Select(m => m.Rewards))), borderColor:'#198754', backgroundColor:'#19875422', fill:true, tension:0.3 },
+                    { label:'تنبیه', data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Monthly.Select(m => m.Punishments))), borderColor:'#dc3545', backgroundColor:'#dc354522', fill:true, tension:0.3 }
+                ]
+            },
+            options: { responsive:true, plugins:{ legend:{ position:'bottom' } } }
+        });
+    </script>
+}
+

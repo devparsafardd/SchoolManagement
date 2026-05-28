@@ -1,0 +1,83 @@
+@using SMS.Application.DTOs
+@model MessageSendDto
+@{
+    ViewData["Title"] = Model.ReplyToMessageId.HasValue ? "پاسخ به پیام" : "پیام جدید";
+    var isReply = Model.ReplyToMessageId.HasValue;
+    var contacts = (List<MessageContactDto>)ViewBag.Contacts;
+    var recipientName = isReply
+        ? contacts.FirstOrDefault(c => c.UserId == Model.ToUserId)?.FullName ?? "—"
+        : null;
+}
+
+<div class="page-header">
+    <h1>@(isReply ? "↩ پاسخ به پیام" : "✏️ پیام جدید")</h1>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post">
+            @Html.AntiForgeryToken()
+            @if (isReply)
+            {
+                <input type="hidden" asp-for="ReplyToMessageId" />
+                <input type="hidden" asp-for="ToUserId" />
+                <input type="hidden" asp-for="Category" />
+            }
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div asp-validation-summary="All" class="alert alert-danger"></div>
+            }
+
+            <div class="form-group">
+                <label>گیرنده *</label>
+                @if (isReply)
+                {
+                    <input type="text" class="form-control" value="@recipientName" disabled style="background:#f8f9fa" />
+                    <small class="text-muted">در پاسخ، گیرنده قابل تغییر نیست</small>
+                }
+                else
+                {
+                    <select asp-for="ToUserId" class="form-control" required>
+                        <option value="">انتخاب کنید</option>
+                        @foreach (var c in contacts)
+                        {
+                            var sel = Model.ToUserId == c.UserId ? "selected" : "";
+                            @Html.Raw($"<option value='{c.UserId}' {sel}>{c.FullName} ({c.RoleDisplay ?? c.Role})</option>")
+                        }
+                    </select>
+                    @if (!contacts.Any())
+                    {
+                        <small class="text-danger">⚠️ هیچ مخاطبی برای پیام دادن ندارید. با مدیر تماس بگیرید.</small>
+                    }
+                }
+            </div>
+
+            <div class="form-group">
+                <label>موضوع</label>
+                <input asp-for="Subject" class="form-control" />
+            </div>
+
+            @if (!isReply)
+            {
+                <div class="form-group">
+                    <label>دسته (اختیاری)</label>
+                    <select asp-for="Category" class="form-control">
+                        <option value="">—</option>
+                        <option value="Notice">اعلان</option>
+                        <option value="Question">پرسش</option>
+                        <option value="Complaint">شکایت</option>
+                        <option value="Request">درخواست</option>
+                    </select>
+                </div>
+            }
+
+            <div class="form-group">
+                <label>متن پیام *</label>
+                <textarea asp-for="Body" class="form-control" rows="8" required></textarea>
+            </div>
+
+            <button class="btn btn-success">📤 ارسال</button>
+            <a asp-action="Index" class="btn btn-secondary">انصراف</a>
+        </form>
+    </div>
+</div>

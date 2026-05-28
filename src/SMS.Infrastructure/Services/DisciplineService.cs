@@ -10,7 +10,12 @@ namespace SMS.Infrastructure.Services;
 public class DisciplineService : IDisciplineService
 {
     private readonly SmsDbContext _db;
-    public DisciplineService(SmsDbContext db) => _db = db;
+    private readonly INotificationService? _notification;
+    public DisciplineService(SmsDbContext db, INotificationService? notification = null)
+    {
+        _db = db;
+        _notification = notification;
+    }
 
     public async Task<PagedResult<DisciplinaryRecordDto>> GetPagedAsync(int? studentId, int? classroomId, string? category, int page = 1, int pageSize = 20)
     {
@@ -76,6 +81,7 @@ public class DisciplineService : IDisciplineService
         };
         _db.DisciplinaryRecords.Add(record);
         await _db.SaveChangesAsync();
+        if (_notification != null) { try { await _notification.NotifyDisciplineAsync(record.RecordId); } catch { } }
         return Result<long>.Ok(record.RecordId, "رکورد انضباطی ثبت شد");
     }
 

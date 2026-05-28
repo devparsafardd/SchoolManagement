@@ -10,7 +10,11 @@ namespace SMS.Infrastructure.Services;
 public class FinanceService : IFinanceService
 {
     private readonly SmsDbContext _db;
-    public FinanceService(SmsDbContext db) => _db = db;
+    private readonly INotificationService? _notification;
+    public FinanceService(SmsDbContext db, INotificationService? notification = null)
+    {
+        _db = db; _notification = notification;
+    }
 
     public async Task<List<FeeTypeDto>> GetFeeTypesAsync() =>
         await _db.FeeTypes.AsNoTracking().OrderBy(f => f.Name)
@@ -133,6 +137,7 @@ public class FinanceService : IFinanceService
         };
         _db.StudentInvoices.Add(invoice);
         await _db.SaveChangesAsync();
+        if (_notification != null) { try { await _notification.NotifyInvoiceCreatedAsync(invoice.InvoiceId); } catch { } }
         return Result<long>.Ok(invoice.InvoiceId, "فاکتور صادر شد");
     }
 
@@ -184,6 +189,7 @@ public class FinanceService : IFinanceService
         invoice.Status = newTotal >= invoice.NetAmount ? "پرداخت‌شده" : "پرداخت ناقص";
 
         await _db.SaveChangesAsync();
+        if (_notification != null) { try { await _notification.NotifyPaymentReceivedAsync(payment.PaymentId); } catch { } }
         return Result<long>.Ok(payment.PaymentId, "پرداخت ثبت شد");
     }
 

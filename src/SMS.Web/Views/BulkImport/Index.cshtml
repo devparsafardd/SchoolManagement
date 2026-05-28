@@ -1,0 +1,108 @@
+@using SMS.Application.DTOs
+@{
+    ViewData["Title"] = "ایمپورت دسته‌جمعی از Excel";
+    var errorsJson = TempData["ImportErrors"] as string;
+    List<BulkImportError>? errors = null;
+    if (!string.IsNullOrEmpty(errorsJson))
+    {
+        try { errors = System.Text.Json.JsonSerializer.Deserialize<List<BulkImportError>>(errorsJson); } catch {}
+    }
+}
+
+<div class="page-header">
+    <h1>📊 ایمپورت دسته‌جمعی از Excel</h1>
+</div>
+
+@if (errors != null && errors.Any())
+{
+    <div class="alert alert-warning">
+        <strong>⚠️ خطاهای ایمپورت:</strong>
+        <ul style="margin:8px 0; padding-right:20px">
+            @foreach (var e in errors.Take(20))
+            {
+                <li>ردیف @e.RowNumber: @e.Message</li>
+            }
+        </ul>
+        @if (errors.Count > 20) { <small>...و @(errors.Count - 20) خطای دیگر</small> }
+    </div>
+}
+
+<div class="row" style="display:grid; grid-template-columns:1fr 1fr; gap:16px">
+
+    <!-- ایمپورت دانش‌آموزان -->
+    <div class="card">
+        <div class="card-header"><h2>👥 ثبت‌نام دسته‌جمعی دانش‌آموزان</h2></div>
+        <div class="card-body">
+            <p class="text-muted">برای ثبت‌نام چند ده یا چند صد دانش‌آموز همزمان</p>
+
+            <ol style="line-height:1.9">
+                <li>اول قالب Excel رو دانلود کن</li>
+                <li>قالب رو با اطلاعات دانش‌آموزان پر کن</li>
+                <li>کلاسی که می‌خوای ثبت‌نام بشن انتخاب کن</li>
+                <li>فایل رو آپلود کن</li>
+            </ol>
+
+            <a asp-action="StudentsTemplate" class="btn btn-info" style="margin-bottom:14px">📥 دانلود قالب نمونه</a>
+
+            <form method="post" asp-action="ImportStudents" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label>کلاس مقصد *</label>
+                    <select name="classroomId" class="form-control" required>
+                        <option value="">انتخاب کنید</option>
+                        @{
+                            // پر کردن از تمام مدارس
+                            var schools = (List<SchoolDto>)ViewBag.Schools;
+                            // برای سادگی، ما این رو با Ajax بهتر می‌تونیم پر کنیم
+                            // فعلاً کاربر باید بره از Classrooms/Index، classroomId رو ببینه و اینجا تایپ کنه
+                        }
+                        <optgroup label="انتخاب کلاس از /Classrooms">
+                            <option disabled>برای انتخاب دقیق کلاس، اول به صفحه کلاس‌ها مراجعه کنید</option>
+                        </optgroup>
+                    </select>
+                    <small class="text-muted">
+                        ⚠️ اگر کلاس‌ها در لیست نیست، classroomId را از <a asp-controller="Classrooms" asp-action="Index">صفحه کلاس‌ها</a> پیدا کنید و در URL وارد کنید
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label>یا classroomId را مستقیم وارد کنید</label>
+                    <input type="number" name="classroomId" class="form-control" placeholder="مثلاً 1" />
+                </div>
+                <div class="form-group">
+                    <label>فایل Excel *</label>
+                    <input type="file" name="file" accept=".xlsx" required class="form-control" />
+                </div>
+                <button class="btn btn-success">📤 ایمپورت</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ایمپورت معلمان -->
+    <div class="card">
+        <div class="card-header"><h2>👨‍🏫 ثبت‌نام دسته‌جمعی معلمان</h2></div>
+        <div class="card-body">
+            <p class="text-muted">برای ثبت چندین معلم همزمان</p>
+
+            <a asp-action="StaffTemplate" class="btn btn-info" style="margin-bottom:14px">📥 دانلود قالب نمونه</a>
+
+            <form method="post" asp-action="ImportStaff" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label>مدرسه مقصد *</label>
+                    <select name="schoolId" class="form-control" required>
+                        <option value="">انتخاب کنید</option>
+                        @foreach (var s in (List<SchoolDto>)ViewBag.Schools)
+                        {
+                            <option value="@s.SchoolId">@s.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>فایل Excel *</label>
+                    <input type="file" name="file" accept=".xlsx" required class="form-control" />
+                </div>
+                <button class="btn btn-success">📤 ایمپورت</button>
+            </form>
+        </div>
+    </div>
+</div>

@@ -7,7 +7,10 @@
     <div class="card-body">
         <form method="post">
             @Html.AntiForgeryToken()
-            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            }
             @if (ViewBag.StudentId != null)
             {
                 <input type="hidden" name="studentId" value="@ViewBag.StudentId" />

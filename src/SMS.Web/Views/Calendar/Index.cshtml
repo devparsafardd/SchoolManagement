@@ -1,0 +1,121 @@
+@using SMS.Application.DTOs
+@using SMS.Shared.Helpers
+@model List<CalendarEventDto>
+@{
+    ViewData["Title"] = "تقویم آموزشی";
+    var upcoming = (List<CalendarEventDto>)ViewBag.UpcomingEvents;
+    var monthOffset = (int)ViewBag.Month;
+    var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("SchoolAdmin") || User.IsInRole("Principal") || User.IsInRole("VicePrincipal");
+}
+
+<div class="page-header">
+    <h1>📅 تقویم آموزشی</h1>
+    @if (canManage)
+    {
+        <a asp-action="Create" class="btn btn-success">➕ افزودن رویداد</a>
+    }
+</div>
+
+<div class="row" style="display:grid; grid-template-columns:2fr 1fr; gap:16px">
+
+    <!-- لیست رویدادهای ماه -->
+    <div class="card">
+        <div class="card-header" style="display:flex; justify-content:space-between; align-items:center">
+            <h2>📋 @ViewBag.MonthLabel</h2>
+            <div>
+                <a asp-action="Index" asp-route-month="@(monthOffset - 1)" class="btn btn-sm btn-outline">‹ ماه قبل</a>
+                <a asp-action="Index" class="btn btn-sm btn-primary">امروز</a>
+                <a asp-action="Index" asp-route-month="@(monthOffset + 1)" class="btn btn-sm btn-outline">ماه بعد ›</a>
+            </div>
+        </div>
+        <div class="card-body">
+            @if (!Model.Any())
+            {
+                <p class="empty-state">رویدادی برای این ماه ثبت نشده.</p>
+            }
+            else
+            {
+                <table class="data-table enhanced">
+                    <thead>
+                        <tr><th>تاریخ</th><th>عنوان</th><th>نوع</th><th>مخاطب</th><th class="no-export">عملیات</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var e in Model.OrderBy(x => x.StartDate))
+                        {
+                            <tr>
+                                <td>
+                                    <strong>@PersianDate.ToPersian(e.StartDate)</strong>
+                                    @if (e.StartDate.Date != e.EndDate.Date)
+                                    {
+                                        <span class="text-muted"> تا @PersianDate.ToPersian(e.EndDate)</span>
+                                    }
+                                </td>
+                                <td><strong>@e.Title</strong>
+                                    @if (!string.IsNullOrEmpty(e.Description))
+                                    { <br /><small class="text-muted">@e.Description</small> }
+                                </td>
+                                <td>
+                                    <span class="badge" style="background:@(e.Color ?? "#0d6efd"); color:white">
+                                        @e.EventTypeText
+                                    </span>
+                                </td>
+                                <td>@(e.TargetAudience switch {
+                                    "All" => "همه", "Students" => "دانش‌آموزان",
+                                    "Parents" => "اولیا", "Teachers" => "معلمان",
+                                    _ => e.TargetAudience
+                                })</td>
+                                <td>
+                                    @if (canManage)
+                                    {
+                                        <form method="post" asp-action="Delete" style="display:inline" onsubmit="return confirm('حذف؟')">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@e.EventId" />
+                                            <button class="btn btn-sm btn-danger">🗑</button>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+
+    <!-- رویدادهای پیش رو -->
+    <div class="card">
+        <div class="card-header"><h2>🔜 رویدادهای پیش رو (۳۰ روز)</h2></div>
+        <div class="card-body">
+            @if (!upcoming.Any())
+            {
+                <p class="text-muted">رویداد پیش‌رویی نیست.</p>
+            }
+            else
+            {
+                <ul style="list-style:none; padding:0; margin:0">
+                    @foreach (var e in upcoming.OrderBy(x => x.StartDate).Take(15))
+                    {
+                        var daysLeft = (e.StartDate.Date - DateTime.Today).Days;
+                        <li style="padding:10px 0; border-bottom:1px solid #eee">
+                            <div style="display:flex; gap:10px; align-items:start">
+                                <div style="background:@(e.Color ?? "#0d6efd"); color:white; padding:6px 8px; border-radius:6px; min-width:60px; text-align:center; font-size:0.85em">
+                                    @e.StartDate.ToString("dd")<br />
+                                    <small>@e.StartDate.ToString("MMM", new System.Globalization.CultureInfo("fa-IR"))</small>
+                                </div>
+                                <div style="flex:1">
+                                    <strong>@e.Title</strong>
+                                    <div class="text-muted" style="font-size:0.85em">
+                                        @e.EventTypeText
+                                        @if (daysLeft == 0) { <span class="badge badge-danger">امروز</span> }
+                                        else if (daysLeft == 1) { <span class="badge badge-warning">فردا</span> }
+                                        else if (daysLeft > 0) { <span>@PersianDate.ToPersianDigits(daysLeft.ToString()) روز دیگه</span> }
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            }
+        </div>
+    </div>
+</div>

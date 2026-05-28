@@ -1,0 +1,55 @@
+@using SMS.Application.DTOs
+@model SurveyResultDto
+@{ ViewData["Title"] = "نتایج: " + Model.Title; }
+
+<div class="page-header">
+    <div>
+        <h1>📊 نتایج نظرسنجی</h1>
+        <div class="subtitle">@Model.Title | پاسخ‌دهندگان: @SMS.Shared.Helpers.PersianDate.ToPersianDigits(Model.TotalResponses.ToString())</div>
+    </div>
+    <a asp-action="Index" class="btn btn-secondary">↩ بازگشت</a>
+</div>
+
+@if (Model.TotalResponses == 0)
+{
+    <div class="alert alert-info">هنوز کسی به این نظرسنجی پاسخ نداده.</div>
+}
+else
+{
+    @foreach (var q in Model.Questions)
+    {
+        <div class="card" style="margin-bottom:14px">
+            <div class="card-header"><h3>@q.Text</h3></div>
+            <div class="card-body">
+                @if (q.Summary.Any())
+                {
+                    @foreach (var s in q.Summary)
+                    {
+                        <div style="margin-bottom:8px">
+                            <div style="display:flex; justify-content:space-between">
+                                <strong>@s.Option</strong>
+                                <span>@SMS.Shared.Helpers.PersianDate.ToPersianDigits(s.Count.ToString()) (@SMS.Shared.Helpers.PersianDate.ToPersianDigits(s.Percent.ToString("0.#"))%)</span>
+                            </div>
+                            <div style="background:#eee; border-radius:10px; overflow:hidden; height:22px">
+                                <div style="background:#0d6efd; width:@(s.Percent)%; height:100%"></div>
+                            </div>
+                        </div>
+                    }
+                }
+                else if (q.TextAnswers.Any())
+                {
+                    <ul>
+                        @foreach (var t in q.TextAnswers)
+                        {
+                            <li style="padding:6px 0; border-bottom:1px solid #eee">@t</li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p class="text-muted">پاسخی نیست.</p>
+                }
+            </div>
+        </div>
+    }
+}

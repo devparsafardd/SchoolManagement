@@ -7,7 +7,7 @@ using SMS.Shared.Constants;
 
 namespace SMS.Web.Controllers;
 
-[Authorize(Roles = RoleNames.ManagerGroup)]
+[Authorize]
 public class AnnouncementsController : Controller
 {
     private readonly IAnnouncementService _svc;
@@ -27,6 +27,7 @@ public class AnnouncementsController : Controller
         return View(r);
     }
 
+    [Authorize(Roles = RoleNames.ManagerGroup)]
     public async Task<IActionResult> Create()
     {
         ViewBag.Schools = (await _schoolSvc.GetPagedAsync(null, 1, 1000)).Items;
@@ -34,6 +35,7 @@ public class AnnouncementsController : Controller
     }
 
     [HttpPost, ValidateAntiForgeryToken]
+    [Authorize(Roles = RoleNames.ManagerGroup)]
     public async Task<IActionResult> Create(AnnouncementCreateDto dto)
     {
         var userId = _currentUser.UserId ?? 0;
@@ -43,6 +45,7 @@ public class AnnouncementsController : Controller
     }
 
     [HttpPost, ValidateAntiForgeryToken]
+    [Authorize(Roles = RoleNames.ManagerGroup)]
     public async Task<IActionResult> Delete(int id)
     {
         var r = await _svc.DeleteAsync(id);

@@ -1,0 +1,156 @@
+@{
+    var fullName = User.FindFirst("FullName")?.Value ?? User.Identity?.Name ?? "معلم";
+    var initials = string.IsNullOrEmpty(fullName) ? "?" : fullName.Substring(0, Math.Min(2, fullName.Length));
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - پنل معلم</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <style>
+        .teacher-sidebar {
+            background: linear-gradient(180deg, #198754 0%, #146c43 100%) !important;
+        }
+        .teacher-sidebar .menu-section { color: rgba(255,255,255,0.55); }
+        .teacher-sidebar .menu-item { color: rgba(255,255,255,0.9); }
+        .teacher-sidebar .menu-item:hover { background: rgba(255,255,255,0.1); }
+        .teacher-sidebar .menu-item.active {
+            background: rgba(255,255,255,0.18);
+            border-right-color: white;
+            color: white;
+        }
+        .topbar { border-top: 3px solid #198754; }
+    </style>
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <header class="topbar">
+        <div class="topbar-left">
+            <button class="sidebar-toggle" onclick="document.body.classList.toggle('sidebar-collapsed')">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" />
+                </svg>
+            </button>
+            <div class="brand">
+                <span class="brand-icon">👨‍🏫</span>
+                <span class="brand-text">پنل معلم</span>
+            </div>
+        </div>
+        <div class="topbar-right">
+            @await Html.PartialAsync("_NotificationBell")
+                <div class="user-menu" onclick="this.classList.toggle('open')">
+                @await Html.PartialAsync("_UserAvatar")
+                <div class="user-info">
+                    <div class="user-name">@fullName</div>
+                    <div class="user-role">معلم</div>
+                </div>
+                <div class="user-dropdown">
+                    <a asp-controller="Account" asp-action="Profile">👤 پروفایل من</a>
+                    <a asp-controller="Account" asp-action="ChangePassword">🔒 تغییر رمز</a>
+                    <hr />
+                    <a asp-controller="Help" asp-action="Index">❓ راهنما</a>
+                    <a asp-controller="Account" asp-action="Logout">🚪 خروج</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <aside class="sidebar teacher-sidebar">
+        <nav class="menu">
+            <a asp-controller="Teacher" asp-action="Dashboard"
+               class="menu-item @(currentAction == "Dashboard" || currentAction == "Index" ? "active" : "")">
+                <span class="menu-icon">🏠</span><span class="menu-text">داشبورد</span>
+            </a>
+
+            <div class="menu-section">تدریس</div>
+            <a asp-controller="Teacher" asp-action="MyClasses"
+               class="menu-item @(currentAction == "MyClasses" || currentAction == "ClassDetail" ? "active" : "")">
+                <span class="menu-icon">📚</span><span class="menu-text">کلاس‌های من</span>
+            </a>
+            <a asp-controller="Teacher" asp-action="Schedule"
+               class="menu-item @(currentAction == "Schedule" ? "active" : "")">
+                <span class="menu-icon">📅</span><span class="menu-text">برنامه هفتگی</span>
+            </a>
+
+            <div class="menu-section">آموزشی</div>
+            <a asp-controller="Teacher" asp-action="MyClasses"
+               class="menu-item">
+                <span class="menu-icon">✅</span><span class="menu-text">ثبت حضور و غیاب</span>
+            </a>
+            <a asp-controller="Teacher" asp-action="MyClasses"
+               class="menu-item">
+                <span class="menu-icon">📝</span><span class="menu-text">آزمون و نمره</span>
+            </a>
+
+            <div class="menu-section">ارتباطات</div>
+            <a asp-controller="Announcements" asp-action="Index"
+               class="menu-item @(currentController == "Announcements" ? "active" : "")">
+                <span class="menu-icon">📢</span><span class="menu-text">اعلان‌ها</span>
+            </a>
+            <a asp-controller="Calendar" asp-action="Index"
+               class="menu-item @(currentController == "Calendar" ? "active" : "")">
+                <span class="menu-icon">📅</span><span class="menu-text">تقویم</span>
+            </a>
+            <a asp-controller="Surveys" asp-action="Index"
+               class="menu-item @(currentController == "Surveys" ? "active" : "")">
+                <span class="menu-icon">📊</span><span class="menu-text">نظرسنجی</span>
+            </a>
+            <a asp-controller="Messages" asp-action="Index"
+               class="menu-item @(currentController == "Messages" ? "active" : "")">
+                <span class="menu-icon">💬</span><span class="menu-text">پیام‌ها</span>
+            </a>
+            <a asp-controller="Homeworks" asp-action="Teacher"
+               class="menu-item @(currentController == "Homeworks" ? "active" : "")">
+                <span class="menu-icon">📝</span><span class="menu-text">تکالیف من</span>
+            </a>
+
+            <div class="menu-section">گزارش</div>
+            <a asp-controller="Teacher" asp-action="MyReport"
+               class="menu-item @(currentAction == "MyReport" ? "active" : "")">
+                <span class="menu-icon">📊</span><span class="menu-text">گزارش عملکرد من</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <small>پنل معلم | نسخه ۲.۰</small>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        @if (TempData["Success"] is string ok)
+        {
+            <div class="alert alert-success alert-dismissible">
+                <span class="alert-icon">✓</span><span>@ok</span>
+                <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+            </div>
+        }
+        @if (TempData["Error"] is string err)
+        {
+            <div class="alert alert-danger alert-dismissible">
+                <span class="alert-icon">✗</span><span>@err</span>
+                <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+            </div>
+        }
+        @if (TempData["Info"] is string info)
+        {
+            <div class="alert alert-info alert-dismissible">
+                <span class="alert-icon">ℹ</span><span>@info</span>
+                <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+            </div>
+        }
+        @RenderBody()
+    </main>
+
+    <script>
+        document.addEventListener('click', function (e) {
+            const menu = document.querySelector('.user-menu.open');
+            if (menu && !menu.contains(e.target)) menu.classList.remove('open');
+        });
+    </script>
+    @await Html.PartialAsync("_AdvancedScripts")
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

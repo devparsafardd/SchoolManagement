@@ -1,0 +1,40 @@
+@using Microsoft.EntityFrameworkCore
+@inject SMS.Application.Common.ICurrentUserService CurrentUser
+@inject SMS.Infrastructure.Persistence.SmsDbContext DbCtx
+@{
+    string? photoPath = null;
+    var personId = CurrentUser.PersonId;
+    if (personId.HasValue)
+    {
+        // کش ساده در HttpContext.Items
+        var cacheKey = $"avatar_{personId.Value}";
+        if (Context.Items.ContainsKey(cacheKey))
+        {
+            photoPath = Context.Items[cacheKey] as string;
+        }
+        else
+        {
+            try
+            {
+                photoPath = await DbCtx.Persons
+                    .Where(p => p.PersonId == personId.Value)
+                    .Select(p => p.PhotoPath)
+                    .FirstOrDefaultAsync();
+                Context.Items[cacheKey] = photoPath;
+            }
+            catch { }
+        }
+    }
+    var fullName = CurrentUser.FullName ?? CurrentUser.Username ?? "?";
+    var initials = fullName.Length > 0 ? fullName.Substring(0, Math.Min(2, fullName.Length)) : "?";
+}
+
+@if (!string.IsNullOrEmpty(photoPath))
+{
+    <img src="@photoPath" alt="عکس" class="avatar"
+         style="width:42px; height:42px; border-radius:50%; object-fit:cover" />
+}
+else
+{
+    <div class="avatar">@initials</div>
+}

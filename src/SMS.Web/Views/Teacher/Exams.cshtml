@@ -1,0 +1,53 @@
+@using SMS.Application.DTOs
+@using SMS.Shared.Helpers
+@model List<ExamDto>
+@{ ViewData["Title"] = "آزمون‌های کلاس"; }
+
+<div class="page-header">
+    <div>
+        <h1>📝 آزمون‌های این کلاس</h1>
+        @if (Model.Any())
+        {
+            var f = Model.First();
+            <div class="subtitle">@f.ClassroomName | @f.SubjectName</div>
+        }
+    </div>
+    <a asp-action="CreateExam" asp-route-classSubjectId="@ViewBag.ClassSubjectId" class="btn btn-success">➕ آزمون جدید</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <table class="data-table enhanced">
+            <thead>
+                <tr>
+                    <th>عنوان</th><th>نوع</th><th>نوبت</th><th>تاریخ</th>
+                    <th>نمره کل</th><th>نمرات وارد شده</th><th>وضعیت</th><th>عملیات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var e in Model)
+                {
+                    <tr>
+                        <td><strong>@e.Title</strong></td>
+                        <td><span class="badge badge-info">@e.ExamTypeName</span></td>
+                        <td>@e.TermName</td>
+                        <td>@PersianDate.ToPersian(e.ExamDate)</td>
+                        <td>@PersianDate.ToPersianDigits(e.MaxScore.ToString("0.#"))</td>
+                        <td>@PersianDate.ToPersianDigits(e.ScoresEntered.ToString()) / @PersianDate.ToPersianDigits(e.TotalStudents.ToString())</td>
+                        <td>
+                            @if (e.IsFinalized) { <span class="badge badge-success">نهایی</span> }
+                            else { <span class="badge badge-warning">قابل ویرایش</span> }
+                        </td>
+                        <td>
+                            <a asp-action="ExamScores" asp-route-examId="@e.ExamId" class="btn btn-primary btn-sm">✏️ ورود نمرات</a>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="8" class="empty-state">هنوز آزمونی ثبت نشده.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

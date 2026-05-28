@@ -1,0 +1,208 @@
+@using SMS.Shared.Helpers
+@model SMS.Application.DTOs.TeacherDashboardDto
+@{ ViewData["Title"] = "داشبورد معلم"; }
+
+<div class="page-header">
+    <div>
+        <h1>👨‍🏫 خوش آمدی @Model.FullName</h1>
+        <div class="subtitle">
+            @(string.IsNullOrEmpty(Model.PersonnelCode) ? "" : "کد پرسنلی: " + PersianDate.ToPersianDigits(Model.PersonnelCode))
+            | @PersianDate.ToPersianLong(DateTime.Today)
+        </div>
+    </div>
+    <div>
+        <a asp-action="MyReport" class="btn btn-info">📊 گزارش عملکرد من</a>
+        <a asp-action="Schedule" class="btn btn-outline">📅 برنامه هفتگی</a>
+    </div>
+</div>
+
+<!-- آمار سریع -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">کلاس‌های در دست تدریس</div>
+            <div class="stat-number">@PersianDate.ToPersianDigits(Model.TotalClasses.ToString())</div>
+            <div class="stat-trend text-muted">سال جاری</div>
+        </div>
+        <div class="stat-icon bg-success">📚</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">دانش‌آموزان من</div>
+            <div class="stat-number">@PersianDate.ToPersianDigits(Model.TotalStudents.ToString())</div>
+            <div class="stat-trend text-muted">مجموع</div>
+        </div>
+        <div class="stat-icon bg-primary">👥</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">کلاس‌های امروز</div>
+            <div class="stat-number">@PersianDate.ToPersianDigits(Model.TodayClasses.ToString())</div>
+            <div class="stat-trend @(Model.PendingAttendance > 0 ? "text-danger" : "text-success")">
+                @PersianDate.ToPersianDigits(Model.PendingAttendance.ToString()) ثبت نشده
+            </div>
+        </div>
+        <div class="stat-icon bg-warning">📅</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">آزمون‌های پیش رو</div>
+            <div class="stat-number">@PersianDate.ToPersianDigits(Model.UpcomingExams.ToString())</div>
+            <div class="stat-trend text-muted">۲ هفته آینده</div>
+        </div>
+        <div class="stat-icon bg-info">📝</div>
+    </div>
+</div>
+
+<!-- ردیف ۱: برنامه امروز + آزمون‌های آینده -->
+<div class="row" style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px">
+    <div class="card">
+        <div class="card-header">
+            <h2>📅 برنامه امروز</h2>
+        </div>
+        <div class="card-body">
+            @if (!Model.TodaySchedule.Any())
+            {
+                <p class="text-muted">برای امروز برنامه‌ای ثبت نشده است.</p>
+            }
+            else
+            {
+                <table class="data-table">
+                    <thead>
+                        <tr><th>زنگ</th><th>کلاس</th><th>درس</th><th>ساعت</th><th>وضعیت</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var t in Model.TodaySchedule)
+                        {
+                            <tr>
+                                <td>@(t.SessionNo.HasValue ? PersianDate.ToPersianDigits(t.SessionNo.ToString()!) : "—")</td>
+                                <td>@t.ClassroomName</td>
+                                <td>@t.SubjectName</td>
+                                <td>@PersianDate.ToPersianDigits(t.StartTime) - @PersianDate.ToPersianDigits(t.EndTime)</td>
+                                <td>
+                                    @if (t.AttendanceTaken)
+                                    {
+                                        <span class="badge badge-success">✓ ثبت شد</span>
+                                    }
+                                    else
+                                    {
+                                        <a class="btn btn-sm btn-warning"
+                                           asp-action="Attendance"
+                                           asp-route-classSubjectId="@t.ClassSubjectId">ثبت حضور</a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>📝 آزمون‌های پیش رو</h2>
+        </div>
+        <div class="card-body">
+            @if (!Model.UpcomingExamsList.Any())
+            {
+                <p class="text-muted">آزمونی در ۲ هفته آینده ثبت نشده.</p>
+            }
+            else
+            {
+                <table class="data-table">
+                    <thead>
+                        <tr><th>عنوان</th><th>کلاس</th><th>درس</th><th>تاریخ</th><th>وضعیت نمرات</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var e in Model.UpcomingExamsList)
+                        {
+                            <tr>
+                                <td><a asp-action="ExamScores" asp-route-examId="@e.ExamId">@e.Title</a></td>
+                                <td>@e.ClassroomName</td>
+                                <td>@e.SubjectName</td>
+                                <td>@PersianDate.ToPersian(e.ExamDate)</td>
+                                <td>
+                                    @if (e.ScoresEntered)
+                                    {
+                                        <span class="badge badge-success">ثبت شده</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-warning">در انتظار</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- کلاس‌های من -->
+<div class="card" style="margin-top:16px">
+    <div class="card-header" style="display:flex; justify-content:space-between; align-items:center">
+        <h2>📚 کلاس‌های من</h2>
+        <a asp-action="MyClasses" class="btn btn-sm btn-outline">مشاهده همه</a>
+    </div>
+    <div class="card-body">
+        @if (!Model.MyClasses.Any())
+        {
+            <p class="text-muted">کلاسی به شما تخصیص داده نشده است.</p>
+        }
+        else
+        {
+            <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:12px">
+                @foreach (var c in Model.MyClasses)
+                {
+                    <div class="card" style="background:#f8f9fa; padding:14px">
+                        <h3 style="margin:0 0 6px">@c.SubjectName</h3>
+                        <div class="text-muted" style="font-size:0.9em">
+                            🏫 @c.SchoolName<br />
+                            🏷 @c.ClassroomName | @c.GradeName<br />
+                            👥 @PersianDate.ToPersianDigits(c.StudentCount.ToString()) دانش‌آموز
+                        </div>
+                        <div style="margin-top:10px; display:flex; gap:6px">
+                            <a class="btn btn-sm btn-primary"
+                               asp-action="ClassDetail" asp-route-id="@c.ClassSubjectId">جزئیات</a>
+                            <a class="btn btn-sm btn-success"
+                               asp-action="Attendance" asp-route-classSubjectId="@c.ClassSubjectId">حضور</a>
+                            <a class="btn btn-sm btn-info"
+                               asp-action="Exams" asp-route-classSubjectId="@c.ClassSubjectId">آزمون</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+<!-- فعالیت‌های اخیر -->
+@if (Model.RecentActivities.Any())
+{
+    <div class="card" style="margin-top:16px">
+        <div class="card-header"><h2>🕒 فعالیت‌های اخیر</h2></div>
+        <div class="card-body">
+            <ul style="list-style:none; padding:0; margin:0">
+                @foreach (var a in Model.RecentActivities)
+                {
+                    <li style="padding:10px 0; border-bottom:1px solid #eee">
+                        <span style="display:inline-block; width:90px; color:#999; font-size:0.85em">
+                            @PersianDate.ToPersian(a.At)
+                        </span>
+                        @if (!string.IsNullOrEmpty(a.Link))
+                        {
+                            <a href="@a.Link">@a.Description</a>
+                        }
+                        else
+                        {
+                            <span>@a.Description</span>
+                        }
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+}

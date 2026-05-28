@@ -1,0 +1,45 @@
+@using SMS.Application.DTOs
+@using SMS.Shared.Helpers
+@model List<PrincipalClassroomBrief>
+@{ ViewData["Title"] = "کلاس‌های مدرسه"; }
+
+<div class="page-header">
+    <h1>📚 کلاس‌های مدرسه</h1>
+    <form method="get" style="display:flex; gap:6px; align-items:flex-end">
+        <input type="hidden" name="schoolId" value="@ViewBag.SchoolId" />
+        <div class="form-group" style="margin:0">
+            <label>سال تحصیلی</label>
+            <select name="academicYearId" class="form-control" onchange="this.form.submit()">
+                @foreach (var y in (List<LookupDto>)ViewBag.AcademicYears)
+                {
+                    var sel = (int?)ViewBag.AcademicYearId == y.Id ? "selected" : "";
+                    @Html.Raw($"<option value='{y.Id}' {sel}>{y.Name}</option>")
+                }
+            </select>
+        </div>
+    </form>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <table class="data-table enhanced">
+            <thead>
+                <tr>
+                    <th>کلاس</th><th>پایه</th><th>دانش‌آموزان</th><th>مدیر کلاس</th><th>میانگین معدل</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model)
+                {
+                    <tr>
+                        <td><strong>@c.ClassroomName</strong></td>
+                        <td>@c.GradeName</td>
+                        <td>@PersianDate.ToPersianDigits(c.StudentCount.ToString())</td>
+                        <td>@(string.IsNullOrEmpty(c.HeadTeacherName) ? "—" : c.HeadTeacherName)</td>
+                        <td>@(c.AverageGPA.HasValue ? PersianDate.ToPersianDigits(c.AverageGPA.Value.ToString("0.00")) : "—")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

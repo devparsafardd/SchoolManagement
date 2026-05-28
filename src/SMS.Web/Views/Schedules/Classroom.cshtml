@@ -1,0 +1,125 @@
+@using SMS.Application.DTOs
+@using SMS.Shared.Helpers
+@model List<ClassScheduleDto>
+@{
+    var cls = (ClassroomDto)ViewBag.Classroom;
+    var periods = (List<SchoolPeriodDto>)ViewBag.Periods;
+    var subjects = (List<ClassSubjectTeacherDto>)ViewBag.Subjects;
+    ViewData["Title"] = "برنامه هفتگی " + cls.Name;
+    var days = new[] { "شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنج‌شنبه", "جمعه" };
+}
+
+<div class="page-header">
+    <div>
+        <h1>📅 برنامه هفتگی @cls.Name</h1>
+    </div>
+    <div>
+        <button class="btn btn-info" onclick="window.print()">🖨 پرینت / PDF</button>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header"><h2>➕ تخصیص درس به زنگ</h2></div>
+    <div class="card-body">
+        <form method="post" asp-action="Assign" class="filters-bar">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="ClassroomId" value="@cls.ClassroomId" />
+            <div class="form-group">
+                <label>روز</label>
+                <select name="DayOfWeek" class="form-control" required>
+                    @for (byte d = 0; d < 7; d++)
+                    { <option value="@d">@days[d]</option> }
+                </select>
+            </div>
+            <div class="form-group">
+                <label>زنگ</label>
+                <select name="PeriodId" class="form-control" required>
+                    @foreach (var p in periods.Where(x => !x.IsBreak))
+                    { <option value="@p.PeriodId">@p.Name (@PersianDate.ToPersianDigits(p.StartTime)-@PersianDate.ToPersianDigits(p.EndTime))</option> }
+                </select>
+            </div>
+            <div class="form-group">
+                <label>درس و معلم</label>
+                <select name="ClassSubjectId" class="form-control" required style="min-width:240px">
+                    @foreach (var s in subjects.Where(x => x.IsActive))
+                    { <option value="@s.ClassSubjectId">@s.SubjectName — @s.TeacherName</option> }
+                </select>
+            </div>
+            <div class="form-group">
+                <label>اتاق</label>
+                <input name="RoomNumber" class="form-control" style="width:90px" />
+            </div>
+            <button class="btn btn-success">ثبت</button>
+        </form>
+    </div>
+</div>
+
+<div class="card" style="margin-top:16px">
+    <div class="card-header"><h2>📋 برنامه فعلی</h2></div>
+    <div class="card-body">
+        @if (!periods.Any())
+        {
+            <div class="alert alert-warning">برای این مدرسه هنوز زنگی تعریف نشده. ابتدا از <a asp-action="Periods" asp-route-schoolId="@cls.SchoolId">اینجا</a> زنگ‌ها رو تعریف کن.</div>
+        }
+        else
+        {
+            <div style="overflow-x:auto">
+                <table class="data-table" style="min-width:800px">
+                    <thead>
+                        <tr>
+                            <th>زنگ</th>
+                            @for (byte d = 0; d < 7; d++)
+                            { <th>@days[d]</th> }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var p in periods.Where(x => !x.IsBreak).OrderBy(x => x.PeriodNo))
+                        {
+                            <tr>
+                                <td style="background:#f8f9fa">
+                                    <strong>@p.Name</strong><br />
+                                    <small>@PersianDate.ToPersianDigits(p.StartTime)-@PersianDate.ToPersianDigits(p.EndTime)</small>
+                                </td>
+                                @for (byte d = 0; d < 7; d++)
+                                {
+                                    var entry = Model.FirstOrDefault(s => s.PeriodId == p.PeriodId && s.DayOfWeek == d);
+                                    <td>
+                                        @if (entry != null)
+                                        {
+                                            <div style="background:#e7f3ff; padding:6px; border-radius:4px; font-size:0.85em">
+                                                <strong>@entry.SubjectName</strong><br />
+                                                <small>@entry.TeacherName</small>
+                                                <form method="post" asp-action="Remove" style="display:inline" onsubmit="return confirm('حذف شود؟')">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="id" value="@entry.ScheduleId" />
+                                                    <input type="hidden" name="classroomId" value="@cls.ClassroomId" />
+                                                    <button class="btn btn-sm btn-danger" style="padding:2px 6px; font-size:0.75em">🗑</button>
+                                                </form>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">—</span>
+                                        }
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+
+@section Styles {
+    <style>
+        @@media print {
+            .topbar, .sidebar, .alert, .card:first-of-type,
+            form, button, .btn { display: none !important; }
+            .main-content { margin: 0 !important; padding: 10px !important; }
+            body { padding: 0 !important; }
+        }
+    </style>
+}

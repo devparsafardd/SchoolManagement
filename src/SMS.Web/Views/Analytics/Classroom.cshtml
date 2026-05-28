@@ -1,0 +1,132 @@
+@using SMS.Application.DTOs
+@using SMS.Shared.Helpers
+@model ClassroomAnalyticsDto
+@{ ViewData["Title"] = "گزارش کلاس " + Model.ClassroomName; }
+
+@section Styles { <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script> }
+
+<div class="page-header">
+    <div>
+        <h1>📚 @Model.ClassroomName</h1>
+        <div class="subtitle">@Model.SchoolName | @Model.GradeName</div>
+    </div>
+    <div>
+        <a asp-controller="Export" asp-action="ClassroomReportExcel" asp-route-id="@Model.ClassroomId" asp-route-termId="@ViewBag.TermId" class="btn btn-success">📊 Excel</a>
+        <a asp-controller="Export" asp-action="ClassroomReportPdf" asp-route-id="@Model.ClassroomId" asp-route-termId="@ViewBag.TermId" target="_blank" class="btn btn-danger">📄 PDF</a>
+        <button class="btn btn-info" onclick="window.print()">🖨 پرینت / PDF</button>
+    </div>
+    <form method="get" style="display:flex; gap:6px; align-items:flex-end">
+        <input type="hidden" name="id" value="@Model.ClassroomId" />
+        <div class="form-group" style="margin:0">
+            <label>نوبت</label>
+            <select name="termId" class="form-control" onchange="this.form.submit()">
+                <option value="">همه</option>
+                @foreach (var t in (List<LookupDto>)ViewBag.Terms)
+                { var sel = (int?)ViewBag.TermId == t.Id ? "selected" : ""; @Html.Raw($"<option value='{t.Id}' {sel}>{t.Name}</option>") }
+            </select>
+        </div>
+    </form>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">دانش‌آموز</div>
+            <div class="stat-number">@PersianDate.ToPersianDigits(Model.TotalStudents.ToString())</div>
+            <div class="stat-trend text-muted">پسر:@PersianDate.ToPersianDigits(Model.MaleStudents.ToString()) / دختر:@PersianDate.ToPersianDigits(Model.FemaleStudents.ToString())</div>
+        </div>
+        <div class="stat-icon bg-primary">👥</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">میانگین کلاس</div>
+            <div class="stat-number">@(Model.ClassAverage.HasValue ? PersianDate.ToPersianDigits(Model.ClassAverage.Value.ToString("0.00")) : "—")</div>
+        </div>
+        <div class="stat-icon bg-success">📊</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">غیبت / تاخیر</div>
+            <div class="stat-number">
+                <span class="text-danger">@PersianDate.ToPersianDigits(Model.TotalAbsences.ToString())</span>
+                /
+                <span class="text-warning">@PersianDate.ToPersianDigits(Model.TotalTardies.ToString())</span>
+            </div>
+        </div>
+        <div class="stat-icon bg-warning">⏰</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">تشویق / تنبیه</div>
+            <div class="stat-number">
+                <span class="text-success">+@PersianDate.ToPersianDigits(Model.TotalRewards.ToString())</span>
+                /
+                <span class="text-danger">-@PersianDate.ToPersianDigits(Model.TotalPunishments.ToString())</span>
+            </div>
+        </div>
+        <div class="stat-icon bg-info">⭐</div>
+    </div>
+</div>
+
+<div class="row" style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px">
+    <div class="card">
+        <div class="card-header"><h2>📊 میانگین دروس</h2></div>
+        <div class="card-body"><canvas id="subjChart" height="160"></canvas></div>
+    </div>
+    <div class="card">
+        <div class="card-header"><h2>📈 حضور و غیاب ۳۰ روز اخیر</h2></div>
+        <div class="card-body"><canvas id="attChart" height="160"></canvas></div>
+    </div>
+</div>
+
+<div class="card" style="margin-top:16px">
+    <div class="card-header"><h2>🏆 رتبه‌بندی دانش‌آموزان</h2></div>
+    <div class="card-body">
+        <table class="data-table">
+            <thead>
+                <tr><th>رتبه</th><th>کد</th><th>نام</th><th>میانگین</th><th>غیبت</th><th>تاخیر</th><th>تشویق</th><th>تنبیه</th><th>عملیات</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var s in Model.StudentRanking)
+                {
+                    var cls = s.Average.HasValue ? (s.Average >= 17 ? "text-success" : s.Average < 10 ? "text-danger" : "") : "";
+                    <tr>
+                        <td><strong>@PersianDate.ToPersianDigits(s.Rank!.Value.ToString())</strong></td>
+                        <td><code>@PersianDate.ToPersianDigits(s.StudentCode)</code></td>
+                        <td>@s.FullName</td>
+                        <td class="@cls"><strong>@(s.Average.HasValue ? PersianDate.ToPersianDigits(s.Average.Value.ToString("0.00")) : "—")</strong></td>
+                        <td>@PersianDate.ToPersianDigits(s.AbsenceCount.ToString())</td>
+                        <td>@PersianDate.ToPersianDigits(s.TardyCount.ToString())</td>
+                        <td class="text-success">+@PersianDate.ToPersianDigits(s.RewardsCount.ToString())</td>
+                        <td class="text-danger">-@PersianDate.ToPersianDigits(s.PunishmentsCount.ToString())</td>
+                        <td><a asp-action="Student" asp-route-id="@s.StudentId" class="btn btn-sm btn-outline">🔍 جزئیات</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        new Chart(document.getElementById('subjChart'), {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.SubjectAverages.Select(s => s.SubjectName))),
+                datasets: [{ label:'میانگین', data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.SubjectAverages.Select(s => s.AverageScore))), backgroundColor:'#0d6efd' }]
+            },
+            options: { indexAxis: 'y', responsive:true, plugins:{ legend:{ display:false } }, scales:{ x:{ beginAtZero:true, max:20 } } }
+        });
+        new Chart(document.getElementById('attChart'), {
+            type: 'line',
+            data: {
+                labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AttendanceTrend.Select(d => d.Label))),
+                datasets: [
+                    { label:'حاضر', data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AttendanceTrend.Select(d => d.Present))), borderColor:'#198754', tension:0.3 },
+                    { label:'غایب', data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AttendanceTrend.Select(d => d.Absent))), borderColor:'#dc3545', tension:0.3 }
+                ]
+            },
+            options: { responsive:true, plugins:{ legend:{ position:'bottom' } } }
+        });
+    </script>
+}

@@ -16,7 +16,7 @@
 
 <div class="card">
     <div class="card-body">
-        <table class="data-table">
+        <table class="data-table enhanced">
             <thead><tr><th>عنوان</th><th>نوع</th><th>نوبت</th><th>تاریخ</th><th>نمره کل</th><th>وزن</th><th>نمرات وارد شده</th><th>وضعیت</th><th>عملیات</th></tr></thead>
             <tbody>
                 @foreach (var e in Model)
@@ -29,7 +29,7 @@
                         <td>@e.MaxScore @(e.IsDescriptive ? "(توصیفی)" : "")</td>
                         <td>@e.Weight</td>
                         <td>@PersianDate.ToPersianDigits(e.ScoresEntered.ToString()) / @PersianDate.ToPersianDigits(e.TotalStudents.ToString())</td>
-                        <td>@(e.IsFinalized ? Html.Raw("<span class='badge badge-success'>نهایی</span>") : Html.Raw("<span class='badge badge-warning'>پیش‌نویس</span>"))</td>
+                        <td>@(e.IsFinalized ? Html.Raw("<span class='badge badge-success'>نهایی</span>") : Html.Raw("<span class='badge badge-warning'>قابل ویرایش</span>"))</td>
                         <td>
                             <a asp-action="Scores" asp-route-id="@e.ExamId" class="btn btn-primary btn-sm">✏️ نمرات</a>
                             @if (!e.IsFinalized)

@@ -1,0 +1,52 @@
+@using SMS.Application.DTOs
+@using SMS.Shared.Helpers
+@model List<HomeworkDto>
+@{ ViewData["Title"] = "تکالیف من"; Layout = "_PortalLayout"; }
+
+<div class="page-header"><h1>📝 تکالیف من</h1></div>
+
+<div class="card">
+    <div class="card-body">
+        <table class="data-table enhanced">
+            <thead>
+                <tr>
+                    <th>عنوان</th><th>درس</th><th>معلم</th><th>مهلت</th><th>وضعیت</th><th>عملیات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var h in Model)
+                {
+                    <tr>
+                        <td><strong>@h.Title</strong></td>
+                        <td>@h.SubjectName</td>
+                        <td>@h.CreatedByName</td>
+                        <td class="@(h.IsOverdue ? "text-danger" : "")">@PersianDate.ToPersian(h.DueDate)</td>
+                        <td>
+                            @if (h.SubmissionsCount > 0)
+                            {
+                                <span class="badge badge-success">✓ تحویل داده شد</span>
+                            }
+                            else if (h.IsOverdue)
+                            {
+                                <span class="badge badge-danger">گذشته</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-warning">باقی‌مانده</span>
+                            }
+                        </td>
+                        <td>
+                            <a class="btn btn-sm btn-primary" asp-action="Submit" asp-route-id="@h.HomeworkId">
+                                @(h.SubmissionsCount > 0 ? "✏️ ویرایش" : "📤 تحویل")
+                            </a>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="6" class="empty-state">تکلیفی موجود نیست.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

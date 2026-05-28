@@ -1,0 +1,41 @@
+@{ ViewData["Title"] = "گزارش‌گیری و آمار"; }
+
+<div class="page-header">
+    <h1>📊 گزارش‌گیری و آمار جامع</h1>
+</div>
+
+<h2 style="margin-top:16px">📈 گزارش‌های کلی</h2>
+<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:14px">
+    <a asp-action="Attendance" class="card" style="text-decoration:none; padding:22px; text-align:center">
+        <div style="font-size:42px">📅</div><h3 style="margin:10px 0 4px">حضور و غیاب</h3>
+        <p class="text-muted" style="font-size:0.85em">تحلیل کامل حضور، غیبت و تاخیر</p>
+    </a>
+    <a asp-action="Academic" class="card" style="text-decoration:none; padding:22px; text-align:center">
+        <div style="font-size:42px">🎓</div><h3 style="margin:10px 0 4px">عملکرد تحصیلی</h3>
+        <p class="text-muted" style="font-size:0.85em">میانگین نمرات، رتبه و توزیع</p>
+    </a>
+    <a asp-action="Financial" class="card" style="text-decoration:none; padding:22px; text-align:center">
+        <div style="font-size:42px">💰</div><h3 style="margin:10px 0 4px">مالی</h3>
+        <p class="text-muted" style="font-size:0.85em">شهریه، پرداخت‌ها و معوقات</p>
+    </a>
+    <a asp-action="Discipline" class="card" style="text-decoration:none; padding:22px; text-align:center">
+        <div style="font-size:42px">⭐</div><h3 style="margin:10px 0 4px">انضباطی</h3>
+        <p class="text-muted" style="font-size:0.85em">تشویق‌ها، تنبیه‌ها و آمار رفتاری</p>
+    </a>
+</div>
+
+<h2 style="margin-top:24px">🔍 گزارش‌های اختصاصی</h2>
+<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:14px">
+    <a asp-controller="Classrooms" asp-action="Index" class="card" style="text-decoration:none; padding:22px; text-align:center; background:#f0fdf4">
+        <div style="font-size:42px">📚</div><h3 style="margin:10px 0 4px">گزارش هر کلاس</h3>
+        <p class="text-muted" style="font-size:0.85em">از لیست کلاس‌ها روی دکمه "📊 گزارش" کلیک کنید</p>
+    </a>
+    <a asp-controller="Staff" asp-action="Index" class="card" style="text-decoration:none; padding:22px; text-align:center; background:#fef9c3">
+        <div style="font-size:42px">👨‍🏫</div><h3 style="margin:10px 0 4px">گزارش هر معلم</h3>
+        <p class="text-muted" style="font-size:0.85em">از لیست معلمان روی دکمه "📊 گزارش" کلیک کنید</p>
+    </a>
+    <a asp-controller="Students" asp-action="Index" class="card" style="text-decoration:none; padding:22px; text-align:center; background:#fce7f3">
+        <div style="font-size:42px">👤</div><h3 style="margin:10px 0 4px">گزارش هر دانش‌آموز</h3>
+        <p class="text-muted" style="font-size:0.85em">از لیست دانش‌آموزان روی دکمه "📊 گزارش" کلیک کنید</p>
+    </a>
+</div>

@@ -1,0 +1,85 @@
+@using SMS.Application.DTOs
+@using SMS.Shared.Helpers
+@model HomeworkSubmissionDto
+@{
+    var hw = (HomeworkDto)ViewBag.Homework;
+    ViewData["Title"] = "تحویل تکلیف";
+    Layout = "_PortalLayout";
+    var canEdit = !Model.IsGraded;
+}
+
+<div class="page-header">
+    <h1>📤 @hw.Title</h1>
+</div>
+
+<div class="card">
+    <div class="card-header"><h2>اطلاعات تکلیف</h2></div>
+    <div class="card-body">
+        <p><strong>درس:</strong> @hw.SubjectName</p>
+        <p><strong>معلم:</strong> @hw.CreatedByName</p>
+        <p><strong>تاریخ ارائه:</strong> @PersianDate.ToPersian(hw.AssignedDate)</p>
+        <p><strong>مهلت تحویل:</strong> <span class="@(hw.IsOverdue ? "text-danger" : "")">@PersianDate.ToPersian(hw.DueDate)</span></p>
+        @if (!string.IsNullOrEmpty(hw.Description))
+        {
+            <div style="margin-top:12px; padding:12px; background:#f8f9fa; border-radius:6px; white-space:pre-wrap">
+                @hw.Description
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(hw.AttachmentPath))
+        {
+            <p style="margin-top:8px"><a href="@hw.AttachmentPath" target="_blank" class="btn btn-sm btn-outline">📎 دانلود فایل معلم</a></p>
+        }
+    </div>
+</div>
+
+@if (Model.IsGraded)
+{
+    <div class="alert alert-info" style="margin-top:14px">
+        <strong>نمره شما:</strong> @PersianDate.ToPersianDigits(Model.Score!.Value.ToString("0.#"))
+        @(hw.MaxScore.HasValue ? $" از {hw.MaxScore}" : "")
+        <br />
+        @if (!string.IsNullOrEmpty(Model.TeacherFeedback))
+        {
+            <strong>بازخورد معلم:</strong> @Model.TeacherFeedback
+        }
+    </div>
+}
+
+<form method="post" enctype="multipart/form-data" style="margin-top:14px">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="HomeworkId" />
+    <input type="hidden" asp-for="StudentId" />
+
+    <div class="card">
+        <div class="card-header"><h2>پاسخ شما</h2></div>
+        <div class="card-body">
+            <div class="form-group">
+                <label>متن پاسخ</label>
+                <textarea name="TextAnswer" class="form-control" rows="8" @(canEdit ? "" : "disabled")>@Model.TextAnswer</textarea>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.AttachmentPath))
+            {
+                <div class="form-group">
+                    <label>فایل قبلی:</label>
+                    <a href="@Model.AttachmentPath" target="_blank" class="btn btn-sm btn-outline">📎 دانلود</a>
+                </div>
+            }
+
+            @if (hw.AllowFileSubmission && canEdit)
+            {
+                <div class="form-group">
+                    <label>📎 آپلود فایل پاسخ (اختیاری) — حداکثر ۱۰ مگابایت</label>
+                    <input type="file" name="attachment" class="form-control" />
+                    <small class="text-muted">PDF، Word، تصویر، ZIP</small>
+                </div>
+            }
+
+            @if (canEdit)
+            {
+                <button class="btn btn-success">📤 ارسال تکلیف</button>
+            }
+            <a asp-action="Student" class="btn btn-secondary">↩ بازگشت</a>
+        </div>
+    </div>
+</form>

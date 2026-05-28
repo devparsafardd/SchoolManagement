@@ -1,0 +1,50 @@
+@using SMS.Shared.Helpers
+@model List<SMS.Application.DTOs.TeacherClassStudentRow>
+@{ ViewData["Title"] = "دانش‌آموزان کلاس"; }
+
+<div class="page-header">
+    <h1>👥 دانش‌آموزان</h1>
+</div>
+
+<table class="data-table enhanced">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>نام و نام خانوادگی</th>
+            <th>کد دانش‌آموزی</th>
+            <th>جنسیت</th>
+            <th>موبایل</th>
+            <th>میانگین</th>
+            <th>غیبت / تاخیر</th>
+            <th>تشویق / تنبیه</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{ var i = 1; }
+        @foreach (var s in Model)
+        {
+            <tr>
+                <td>@PersianDate.ToPersianDigits((i++).ToString())</td>
+                <td><strong>@s.FullName</strong></td>
+                <td>@PersianDate.ToPersianDigits(s.StudentCode)</td>
+                <td>@(s.Gender == "M" ? "پسر" : "دختر")</td>
+                <td>@(string.IsNullOrEmpty(s.Mobile) ? "—" : PersianDate.ToPersianDigits(s.Mobile))</td>
+                <td>
+                    @if (s.AverageScore.HasValue)
+                    { <strong>@PersianDate.ToPersianDigits(s.AverageScore.Value.ToString("0.00"))</strong> }
+                    else { <span>—</span> }
+                </td>
+                <td>
+                    <span class="text-danger">@PersianDate.ToPersianDigits(s.AbsenceCount.ToString())</span>
+                    /
+                    <span class="text-warning">@PersianDate.ToPersianDigits(s.TardyCount.ToString())</span>
+                </td>
+                <td>
+                    <span class="text-success">+@PersianDate.ToPersianDigits(s.DisciplineRewards.ToString())</span>
+                    /
+                    <span class="text-danger">-@PersianDate.ToPersianDigits(s.DisciplinePunishments.ToString())</span>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

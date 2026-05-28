@@ -1,0 +1,53 @@
+@using SMS.Shared.Helpers
+@model List<SMS.Application.DTOs.TeacherClassBriefDto>
+@{ ViewData["Title"] = "کلاس‌های من"; }
+
+<div class="page-header">
+    <h1>📚 کلاس‌های من</h1>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">کلاسی به شما تخصیص داده نشده است.</div>
+}
+else
+{
+    <div class="card">
+        <div class="card-body">
+            <table class="data-table enhanced" id="myClassesTable">
+                <thead>
+                    <tr>
+                        <th>درس</th>
+                        <th>مدرسه</th>
+                        <th>کلاس</th>
+                        <th>پایه</th>
+                        <th>دانش‌آموزان</th>
+                        <th>ساعت هفتگی</th>
+                        <th class="no-export">عملیات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var c in Model)
+                    {
+                        <tr>
+                            <td><strong>@c.SubjectName</strong></td>
+                            <td>@c.SchoolName</td>
+                            <td>@c.ClassroomName</td>
+                            <td>@c.GradeName</td>
+                            <td>@PersianDate.ToPersianDigits(c.StudentCount.ToString())</td>
+                            <td>@(c.WeeklyHours.HasValue ? PersianDate.ToPersianDigits(c.WeeklyHours.Value.ToString("0.#")) : "—")</td>
+                            <td>
+                                <a class="btn btn-sm btn-primary" asp-action="ClassDetail" asp-route-id="@c.ClassSubjectId">🔍 جزئیات</a>
+                                <a class="btn btn-sm btn-success" asp-action="Attendance" asp-route-classSubjectId="@c.ClassSubjectId">✅ حضور</a>
+                                <a class="btn btn-sm btn-info" asp-action="Exams" asp-route-classSubjectId="@c.ClassSubjectId">📝 آزمون</a>
+                                <a class="btn btn-sm btn-outline" asp-action="Students" asp-route-classSubjectId="@c.ClassSubjectId">👥 دانش‌آموزان</a>
+                                <a class="btn btn-sm btn-info" asp-controller="Analytics" asp-action="Classroom" asp-route-id="@c.ClassroomId">📊 گزارش</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+

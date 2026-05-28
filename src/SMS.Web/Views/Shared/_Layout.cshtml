@@ -32,8 +32,9 @@
                 </div>
             </div>
             <div class="topbar-right">
+                @await Html.PartialAsync("_NotificationBell")
                 <div class="user-menu" onclick="this.classList.toggle('open')">
-                    <div class="avatar">@initials</div>
+                    @await Html.PartialAsync("_UserAvatar")
                     <div class="user-info">
                         <div class="user-name">@fullName</div>
                         <div class="user-role">@(User.IsInRole("SuperAdmin") ? "مدیر ارشد" : "کاربر")</div>
@@ -42,7 +43,8 @@
                         <a asp-controller="Account" asp-action="Profile">👤 پروفایل من</a>
                         <a asp-controller="Account" asp-action="ChangePassword">🔒 تغییر رمز عبور</a>
                         <hr />
-                        <a asp-controller="Account" asp-action="Logout">🚪 خروج</a>
+                        <a asp-controller="Help" asp-action="Index">❓ راهنما</a>
+                    <a asp-controller="Account" asp-action="Logout">🚪 خروج</a>
                     </div>
                 </div>
             </div>
@@ -75,6 +77,9 @@
                 <a asp-controller="Subjects" asp-action="Index" class="menu-item @(currentController == "Subjects" || currentController == "ClassSubjects" ? "active" : "")">
                     <span class="menu-icon">📖</span><span class="menu-text">دروس</span>
                 </a>
+                <a asp-controller="Schedules" asp-action="Index" class="menu-item @(currentController == "Schedules" ? "active" : "")">
+                    <span class="menu-icon">⏰</span><span class="menu-text">برنامه و زنگ</span>
+                </a>
                 <a asp-controller="Attendance" asp-action="Index" class="menu-item @(currentController == "Attendance" ? "active" : "")">
                     <span class="menu-icon">✅</span><span class="menu-text">حضور و غیاب</span>
                 </a>
@@ -86,6 +91,9 @@
                 </a>
                 <a asp-controller="Reports" asp-action="Index" class="menu-item @(currentController == "Reports" ? "active" : "")">
                     <span class="menu-icon">📋</span><span class="menu-text">کارنامه و گزارش</span>
+                </a>
+                <a asp-controller="Analytics" asp-action="Index" class="menu-item @(currentController == "Analytics" ? "active" : "")">
+                    <span class="menu-icon">📊</span><span class="menu-text">آمار و نمودار</span>
                 </a>
 
                 @if (isAccountant)
@@ -100,8 +108,20 @@
                 <a asp-controller="Announcements" asp-action="Index" class="menu-item @(currentController == "Announcements" ? "active" : "")">
                     <span class="menu-icon">📢</span><span class="menu-text">اعلان‌ها</span>
                 </a>
+                <a asp-controller="Calendar" asp-action="Index" class="menu-item @(currentController == "Calendar" ? "active" : "")">
+                    <span class="menu-icon">📅</span><span class="menu-text">تقویم آموزشی</span>
+                </a>
+                <a asp-controller="Surveys" asp-action="Index" class="menu-item @(currentController == "Surveys" ? "active" : "")">
+                    <span class="menu-icon">📊</span><span class="menu-text">نظرسنجی‌ها</span>
+                </a>
                 <a asp-controller="Sms" asp-action="Index" class="menu-item @(currentController == "Sms" ? "active" : "")">
                     <span class="menu-icon">📱</span><span class="menu-text">پیامک</span>
+                </a>
+                <a asp-controller="Notifications" asp-action="Index" class="menu-item @(currentController == "Notifications" ? "active" : "")">
+                    <span class="menu-icon">📲</span><span class="menu-text">ارسال خودکار</span>
+                </a>
+                <a asp-controller="Messages" asp-action="Index" class="menu-item @(currentController == "Messages" ? "active" : "")">
+                    <span class="menu-icon">💬</span><span class="menu-text">پیام‌های داخلی</span>
                 </a>
 
                 @if (isAdmin)
@@ -109,6 +129,9 @@
                     <div class="menu-section">سیستم</div>
                     <a asp-controller="AuditLog" asp-action="Index" class="menu-item @(currentController == "AuditLog" ? "active" : "")">
                         <span class="menu-icon">📜</span><span class="menu-text">لاگ سیستم</span>
+                    </a>
+                    <a asp-controller="BulkImport" asp-action="Index" class="menu-item @(currentController == "BulkImport" ? "active" : "")">
+                        <span class="menu-icon">📊</span><span class="menu-text">ایمپورت Excel</span>
                     </a>
                     <a asp-controller="Settings" asp-action="Index" class="menu-item @(currentController == "Settings" ? "active" : "")">
                         <span class="menu-icon">⚙</span><span class="menu-text">تنظیمات</span>
@@ -158,6 +181,7 @@
             });
         }, 5000);
     </script>
+    @await Html.PartialAsync("_AdvancedScripts")
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -11,7 +11,9 @@
         <div class="subtitle">@Model.SchoolName | @Model.ClassroomName | @Model.TermName</div>
     </div>
     <div>
-        <a asp-action="ReportCardPdf" asp-route-studentId="@Model.StudentId" asp-route-termId="@termId" target="_blank" class="btn btn-success">📄 خروجی PDF</a>
+        <a asp-action="ReportCardPdf" asp-route-studentId="@Model.StudentId" asp-route-termId="@termId" target="_blank" class="btn btn-danger">📄 خروجی PDF</a>
+        <a asp-controller="Export" asp-action="StudentReportCardExcel" asp-route-studentId="@Model.StudentId" asp-route-termId="@termId" class="btn btn-success">📊 خروجی Excel</a>
+        <button class="btn btn-info" onclick="window.print()">🖨 پرینت</button>
         <a asp-action="Dashboard" asp-route-studentId="@Model.StudentId" class="btn btn-secondary">بازگشت</a>
     </div>
 </div>

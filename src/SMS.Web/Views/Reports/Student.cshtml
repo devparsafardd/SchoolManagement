@@ -8,7 +8,8 @@
         <div class="subtitle">@Model.SchoolName | @Model.ClassroomName | @Model.TermName</div>
     </div>
     <div>
-        <a asp-action="Pdf" asp-route-studentId="@Model.StudentId" asp-route-termId="@(ViewContext.RouteData.Values["termId"])" target="_blank" class="btn btn-success">📄 خروجی PDF</a>
+        <a asp-action="Pdf" asp-route-studentId="@Model.StudentId" asp-route-termId="@(ViewContext.RouteData.Values["termId"])" target="_blank" class="btn btn-danger">📄 خروجی PDF</a>
+        <a asp-controller="Export" asp-action="StudentReportCardExcel" asp-route-studentId="@Model.StudentId" asp-route-termId="@(ViewContext.RouteData.Values["termId"])" class="btn btn-success">📊 Excel</a>
         <button onclick="window.print()" class="btn btn-outline">🖨 چاپ</button>
     </div>
 </div>

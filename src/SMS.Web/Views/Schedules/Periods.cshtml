@@ -1,0 +1,79 @@
+@using SMS.Application.DTOs
+@using SMS.Shared.Helpers
+@model List<SchoolPeriodDto>
+@{ ViewData["Title"] = "زنگ‌های مدرسه"; }
+
+<div class="page-header">
+    <div>
+        <h1>⏰ زنگ‌های مدرسه</h1>
+        <div class="subtitle">
+            <strong>راهنما:</strong> اول زنگ‌های مدرسه را تعریف کنید (مثل زنگ اول 8:00-8:45). سپس از منوی
+            <a asp-controller="Classrooms" asp-action="Index">کلاس‌ها</a> روی هر کلاس دکمه "📅 برنامه" را بزنید تا برنامه هفتگی آن را بسازید.
+        </div>
+    </div>
+    <form method="get" style="display:flex; gap:6px; align-items:flex-end">
+        <div class="form-group" style="margin:0">
+            <label>مدرسه</label>
+            <select name="schoolId" class="form-control" onchange="this.form.submit()" style="min-width:200px">
+                <option value="">انتخاب کنید</option>
+                @foreach (var s in (List<SchoolDto>)ViewBag.Schools)
+                {
+                    var sel = (int?)ViewBag.SchoolId == s.SchoolId ? "selected" : "";
+                    @Html.Raw($"<option value='{s.SchoolId}' {sel}>{s.Name}</option>")
+                }
+            </select>
+        </div>
+    </form>
+</div>
+
+@if (ViewBag.SchoolId != null)
+{
+    <div class="row" style="display:grid; grid-template-columns:1fr 2fr; gap:16px">
+        <div class="card">
+            <div class="card-header"><h2>➕ ثبت زنگ جدید</h2></div>
+            <div class="card-body">
+                <form method="post" asp-action="CreatePeriod">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="SchoolId" value="@ViewBag.SchoolId" />
+                    <div class="form-group"><label>شماره زنگ</label><input name="PeriodNo" type="number" min="1" max="20" required class="form-control" /></div>
+                    <div class="form-group"><label>نام</label><input name="Name" required class="form-control" placeholder="زنگ اول" /></div>
+                    <div class="form-row">
+                        <div class="form-group"><label>ساعت شروع</label><input name="StartTime" required class="form-control" placeholder="08:00" /></div>
+                        <div class="form-group"><label>ساعت پایان</label><input name="EndTime" required class="form-control" placeholder="08:45" /></div>
+                    </div>
+                    <div class="form-group"><label><input name="IsBreak" type="checkbox" value="true" /> زنگ تفریح</label></div>
+                    <button class="btn btn-success">💾 ثبت</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header"><h2>📋 لیست زنگ‌ها</h2></div>
+            <div class="card-body">
+                <table class="data-table">
+                    <thead><tr><th>#</th><th>نام</th><th>شروع</th><th>پایان</th><th>نوع</th><th>عملیات</th></tr></thead>
+                    <tbody>
+                        @foreach (var p in Model)
+                        {
+                            <tr>
+                                <td>@PersianDate.ToPersianDigits(p.PeriodNo.ToString())</td>
+                                <td>@p.Name</td>
+                                <td>@PersianDate.ToPersianDigits(p.StartTime)</td>
+                                <td>@PersianDate.ToPersianDigits(p.EndTime)</td>
+                                <td>@(p.IsBreak ? "🍪 تفریح" : "📖 درس")</td>
+                                <td>
+                                    <form method="post" asp-action="DeletePeriod" style="display:inline" onsubmit="return confirm('حذف شود؟')">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@p.PeriodId" />
+                                        <input type="hidden" name="schoolId" value="@p.SchoolId" />
+                                        <button class="btn btn-sm btn-danger">🗑</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}

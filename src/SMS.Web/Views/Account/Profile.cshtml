@@ -1,6 +1,10 @@
 @using SMS.Shared.Helpers
 @model ProfileDto
-@{ ViewData["Title"] = "پروفایل من"; }
+@{
+    ViewData["Title"] = "پروفایل من";
+    var initials = Model.FirstName.Length > 0 ? Model.FirstName.Substring(0, 1) : "?";
+    initials += Model.LastName.Length > 0 ? Model.LastName.Substring(0, 1) : "";
+}
 
 <div class="page-header">
     <div>
@@ -9,54 +13,89 @@
     </div>
 </div>
 
-<div class="card">
-    <div class="card-header">
-        <h2>اطلاعات کاربری</h2>
+<div class="row" style="display:grid; grid-template-columns:1fr 2fr; gap:16px">
+    <!-- کارت عکس پروفایل -->
+    <div class="card">
+        <div class="card-header"><h2>📷 عکس پروفایل</h2></div>
+        <div class="card-body" style="text-align:center">
+            @if (!string.IsNullOrEmpty(Model.PhotoPath))
+            {
+                <img src="@Model.PhotoPath" alt="عکس پروفایل"
+                     style="width:160px; height:160px; border-radius:50%; object-fit:cover; border:4px solid #e7f1ff" />
+            }
+            else
+            {
+                <div style="width:160px; height:160px; border-radius:50%; background:#4361ee; color:white; display:flex; align-items:center; justify-content:center; font-size:54px; font-weight:bold; margin:0 auto">
+                    @initials
+                </div>
+            }
+
+            <form method="post" asp-action="UploadPhoto" enctype="multipart/form-data" style="margin-top:14px">
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <input type="file" name="photo" accept="image/*" class="form-control" required onchange="this.form.submit()" />
+                    <small class="text-muted">JPG, PNG, GIF — حداکثر ۳ مگابایت</small>
+                </div>
+            </form>
+
+            @if (!string.IsNullOrEmpty(Model.PhotoPath))
+            {
+                <form method="post" asp-action="RemovePhoto" style="margin-top:8px" onsubmit="return confirm('عکس حذف شود؟')">
+                    @Html.AntiForgeryToken()
+                    <button class="btn btn-sm btn-danger">🗑 حذف عکس</button>
+                </form>
+            }
+        </div>
     </div>
-    <div class="card-body">
-        <form method="post" asp-action="UpdateProfile">
-            @Html.AntiForgeryToken()
-            <div class="form-row">
-                <div class="form-group">
-                    <label>نام <span class="required">*</span></label>
-                    <input name="firstName" value="@Model.FirstName" class="form-control" required />
+
+    <!-- اطلاعات کاربری -->
+    <div class="card">
+        <div class="card-header"><h2>✏️ اطلاعات کاربری</h2></div>
+        <div class="card-body">
+            <form method="post" asp-action="UpdateProfile">
+                @Html.AntiForgeryToken()
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>نام <span class="required">*</span></label>
+                        <input name="firstName" value="@Model.FirstName" class="form-control" required />
+                    </div>
+                    <div class="form-group">
+                        <label>نام خانوادگی <span class="required">*</span></label>
+                        <input name="lastName" value="@Model.LastName" class="form-control" required />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>موبایل</label>
+                        <input name="mobile" value="@Model.Mobile" class="form-control" placeholder="09xxxxxxxxx" />
+                    </div>
+                    <div class="form-group">
+                        <label>ایمیل</label>
+                        <input name="email" value="@Model.Email" class="form-control" type="email" />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>نام کاربری</label>
+                        <input value="@Model.Username" class="form-control" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label>آخرین ورود</label>
+                        <input value="@PersianDate.ToPersianDateTime(Model.LastLoginAt)" class="form-control" readonly />
+                    </div>
                 </div>
                 <div class="form-group">
-                    <label>نام خانوادگی <span class="required">*</span></label>
-                    <input name="lastName" value="@Model.LastName" class="form-control" required />
+                    <label>نقش‌ها</label>
+                    <div>
+                        @foreach (var r in Model.Roles)
+                        {
+                            <span class="badge badge-info">@r</span>
+                        }
+                    </div>
                 </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>موبایل</label>
-                    <input name="mobile" value="@Model.Mobile" class="form-control" placeholder="09xxxxxxxxx" />
-                </div>
-                <div class="form-group">
-                    <label>ایمیل</label>
-                    <input name="email" value="@Model.Email" class="form-control" type="email" />
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>نام کاربری</label>
-                    <input value="@Model.Username" class="form-control" readonly />
-                </div>
-                <div class="form-group">
-                    <label>آخرین ورود</label>
-                    <input value="@PersianDate.ToPersianDateTime(Model.LastLoginAt)" class="form-control" readonly />
-                </div>
-            </div>
-            <div class="form-group">
-                <label>نقش‌ها</label>
-                <div>
-                    @foreach (var r in Model.Roles)
-                    {
-                        <span class="badge badge-info">@r</span>
-                    }
-                </div>
-            </div>
-            <button type="submit" class="btn btn-primary">💾 ذخیره تغییرات</button>
-            <a asp-action="ChangePassword" class="btn btn-secondary">🔒 تغییر رمز عبور</a>
-        </form>
+                <button type="submit" class="btn btn-primary">💾 ذخیره تغییرات</button>
+                <a asp-action="ChangePassword" class="btn btn-secondary">🔒 تغییر رمز عبور</a>
+            </form>
+        </div>
     </div>
 </div>

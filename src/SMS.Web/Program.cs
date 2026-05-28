@@ -37,6 +37,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<LoginDtoValidator>();
 
 // ====== Infrastructure ======
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddScoped<SMS.Web.Services.IFileUploadService, SMS.Web.Services.FileUploadService>();
 
 // ====== Cookie Authentication ======
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -53,6 +54,14 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 builder.Services.AddAuthorization();
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(opt =>
+{
+    opt.IdleTimeout = TimeSpan.FromHours(8);
+    opt.Cookie.HttpOnly = true;
+    opt.Cookie.IsEssential = true;
+    opt.Cookie.Name = "SMS.Session";
+});
 
 // ====== Localization فارسی ======
 builder.Services.Configure<Microsoft.AspNetCore.Builder.RequestLocalizationOptions>(opt =>
@@ -74,6 +83,13 @@ using (var scope = app.Services.CreateScope())
         var db = scope.ServiceProvider.GetRequiredService<SmsDbContext>();
         await DbInitializer.SeedAsync(db);
         Log.Information("✅ Database seeded successfully");
+
+        // داده‌های نمونه فقط در محیط Development
+        if (app.Environment.IsDevelopment())
+        {
+            var demoLogger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("DemoSeeder");
+            await DemoDataSeeder.SeedDemoAsync(db, demoLogger);
+        }
     }
     catch (Exception ex)
     {
@@ -96,6 +112,7 @@ app.UseRequestLocalization();
 app.UseSerilogRequestLogging();
 
 app.UseRouting();
+app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 

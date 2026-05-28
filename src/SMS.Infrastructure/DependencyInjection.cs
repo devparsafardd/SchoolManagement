@@ -26,7 +26,7 @@ public static class DependencyInjection
         {
             opt.UseSqlServer(config.GetConnectionString("DefaultConnection"), sql =>
             {
-                sql.EnableRetryOnFailure(3);
+                // sql.EnableRetryOnFailure(3); // غیرفعال شد تا BeginTransaction به‌درستی کار کند
                 sql.CommandTimeout(60);
             });
             opt.AddInterceptors(sp.GetRequiredService<AuditSaveChangesInterceptor>());
@@ -62,9 +62,20 @@ public static class DependencyInjection
         services.AddScoped<IAnnouncementService, AnnouncementService>();
         services.AddScoped<ISmsLogService, SmsLogService>();
         services.AddScoped<IPortalService, PortalService>();
+        services.AddScoped<ITeacherPortalService, TeacherPortalService>();
+        services.AddScoped<IPrincipalPortalService, PrincipalPortalService>();
+        services.AddScoped<IAnalyticsService, AnalyticsService>();
+        services.AddScoped<IHomeworkService, HomeworkService>();
+        services.AddScoped<IMessageService, MessageService>();
+        services.AddScoped<IScheduleService, ScheduleService>();
+        services.AddScoped<INotificationService, NotificationService>();
+        services.AddScoped<IBulkImportService, BulkImportService>();
+        services.AddScoped<ICalendarService, CalendarService>();
+        services.AddScoped<ISurveyService, SurveyService>();
 
         // Helpers
         services.AddScoped<IExcelExporter, ExcelExporter>();
+        services.AddScoped<IPdfExporter, PdfExporter>();
         services.AddScoped<ISmsSender, FakeSmsSender>();
 
         return services;

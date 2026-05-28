@@ -19,7 +19,7 @@
             <input type="hidden" name="classroomId" value="@Model.ClassroomId" />
             <div class="form-group">
                 <label>تاریخ (شمسی)</label>
-                <input name="date" value="@ViewBag.PersianDate" class="form-control" placeholder="1404/03/15" style="width:140px" />
+                <input name="date" value="@ViewBag.PersianDate" class="form-control persian-date" placeholder="1404/03/15" style="width:140px" autocomplete="off" />
             </div>
             <button class="btn btn-primary">مشاهده</button>
         </form>
@@ -84,3 +84,12 @@
         document.querySelectorAll('.status-select').forEach(s => s.value = statusId);
     }
 </script>
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.persian-date').smsPersianDatePicker();
+        });
+    </script>
+}

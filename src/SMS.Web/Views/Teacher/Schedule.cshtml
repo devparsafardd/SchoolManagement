@@ -1,0 +1,87 @@
+@using SMS.Shared.Helpers
+@model List<SMS.Application.DTOs.TeacherTodayClassDto>
+@{ ViewData["Title"] = "برنامه هفتگی"; }
+
+<div class="page-header">
+    <div>
+        <h1>📅 برنامه هفتگی من</h1>
+    </div>
+    <div>
+        <button class="btn btn-info" onclick="window.print()">🖨 پرینت / ذخیره PDF</button>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        برنامه هفتگی هنوز برای کلاس‌های شما تنظیم نشده است. لطفاً با مدیریت مدرسه تماس بگیرید.
+    </div>
+}
+else
+{
+    var days = new[] { "شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنج‌شنبه", "جمعه" };
+    var periods = Model.Select(m => new { No = m.SessionNo ?? 0, Start = m.StartTime, End = m.EndTime })
+                       .DistinctBy(p => p.No).OrderBy(p => p.No).ToList();
+
+    <div style="overflow-x:auto">
+        <table class="data-table" style="min-width:800px">
+            <thead>
+                <tr>
+                    <th>زنگ</th>
+                    @for (byte d = 0; d < 7; d++)
+                    {
+                        if (d == 6) continue; // جمعه معمولاً تعطیل
+                        <th>@days[d]</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in periods)
+                {
+                    <tr>
+                        <td style="background:#f8f9fa">
+                            <strong>زنگ @PersianDate.ToPersianDigits(p.No.ToString())</strong><br />
+                            <small>@PersianDate.ToPersianDigits(p.Start)-@PersianDate.ToPersianDigits(p.End)</small>
+                        </td>
+                        @for (byte d = 0; d < 7; d++)
+                        {
+                            if (d == 6) continue;
+                            var entry = Model.FirstOrDefault(m => m.DayOfWeek == d && (m.SessionNo ?? 0) == p.No);
+                            <td>
+                                @if (entry != null)
+                                {
+                                    <div style="background:#d1fae5; padding:8px; border-radius:6px; border-right:3px solid #198754">
+                                        <strong>@entry.SubjectName</strong><br />
+                                        <small class="text-muted">@entry.ClassroomName</small>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">—</span>
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin-top:14px" class="text-muted">
+        <small>💡 برای ثبت حضور و غیاب کلاس‌های امروز، به <a asp-action="Dashboard">داشبورد</a> بروید.</small>
+    </div>
+}
+
+
+@section Styles {
+    <style>
+        @@media print {
+            .topbar, .sidebar, .alert, .page-header > div:last-child,
+            button, .btn { display: none !important; }
+            .main-content { margin: 0 !important; padding: 10px !important; }
+            body { padding: 0 !important; }
+            table { font-size: 12px; }
+            .page-header h1 { font-size: 22px; }
+        }
+    </style>
+}

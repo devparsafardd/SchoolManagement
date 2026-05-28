@@ -1,0 +1,89 @@
+@{ ViewData["Title"] = "راهنما"; }
+
+<div class="page-header">
+    <h1>❓ راهنمای استفاده از سیستم</h1>
+</div>
+
+<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:16px">
+
+    <div class="card">
+        <div class="card-header"><h2>🎯 شروع به کار</h2></div>
+        <div class="card-body">
+            <ol>
+                <li>اول <a asp-controller="Schools" asp-action="Index">مدارس</a> رو ثبت کنید</li>
+                <li>سپس <a asp-controller="Staff" asp-action="Index">معلمان و کارکنان</a> رو اضافه کنید</li>
+                <li>کلاس‌ها را در <a asp-controller="Classrooms" asp-action="Index">صفحه کلاس‌ها</a> تعریف کنید</li>
+                <li>برای هر کلاس، درس‌ها و معلم‌ها رو تخصیص دهید</li>
+                <li>دانش‌آموزان رو ثبت‌نام کنید</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header"><h2>📅 برنامه هفتگی</h2></div>
+        <div class="card-body">
+            <ol>
+                <li>اول <a asp-controller="Schedules" asp-action="Periods">زنگ‌های مدرسه</a> را تعریف کنید</li>
+                <li>سپس از <a asp-controller="Schedules" asp-action="Index">برنامه هفتگی</a>، روی هر کلاس کلیک کنید</li>
+                <li>هر سلول جدول رو پر کنید (روز × زنگ × درس)</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header"><h2>✅ حضور و غیاب</h2></div>
+        <div class="card-body">
+            <p>معلم از <a asp-controller="Teacher" asp-action="Dashboard">داشبورد خودش</a> یا منوی "ثبت حضور" می‌تونه روزانه ثبت کنه.</p>
+            <p>گزارش‌ها در <a asp-controller="Analytics" asp-action="Attendance">آمار حضور و غیاب</a> قابل مشاهده‌ست.</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header"><h2>📝 آزمون و نمره</h2></div>
+        <div class="card-body">
+            <p>معلم از <a asp-controller="Teacher" asp-action="MyClasses">کلاس‌های من</a>، روی دکمه "آزمون" کلاس مورد نظر کلیک می‌کنه.</p>
+            <p>سپس آزمون عددی یا توصیفی می‌سازه و نمرات رو وارد می‌کنه.</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header"><h2>💰 مالی و شهریه</h2></div>
+        <div class="card-body">
+            <p>از منوی <a asp-controller="Finance" asp-action="Index">شهریه و فاکتور</a> برای هر دانش‌آموز فاکتور صادر کنید.</p>
+            <p>پرداخت‌ها هم همانجا ثبت می‌شوند.</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header"><h2>📊 گزارش‌ها</h2></div>
+        <div class="card-body">
+            <ul>
+                <li><a asp-controller="Analytics" asp-action="Index">گزارش‌های جامع</a> - با نمودار</li>
+                <li>گزارش هر <strong>کلاس</strong>: از لیست کلاس‌ها → 📊 گزارش</li>
+                <li>گزارش هر <strong>معلم</strong>: از لیست معلمان → 📊</li>
+                <li>گزارش هر <strong>دانش‌آموز</strong>: از لیست دانش‌آموزان → 📊</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header"><h2>👥 نقش‌های کاربری</h2></div>
+        <div class="card-body">
+            <ul style="line-height:1.8">
+                <li><strong>SuperAdmin</strong>: مدیر ارشد - دسترسی به همه</li>
+                <li><strong>Principal</strong>: مدیر مدرسه - فقط مدرسه خودش</li>
+                <li><strong>Teacher</strong>: معلم - فقط کلاس‌های خودش</li>
+                <li><strong>Parent</strong>: ولی - فقط فرزندانش</li>
+                <li><strong>Student</strong>: دانش‌آموز - فقط اطلاعات خودش</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header"><h2>💬 پیام‌رسان</h2></div>
+        <div class="card-body">
+            <p>همه کاربران می‌تونن از <a asp-controller="Messages" asp-action="Index">پیام‌های داخلی</a> با هم در ارتباط باشن.</p>
+            <p>تعداد پیام‌های خوانده نشده در زنگوله 🔔 بالای صفحه نمایش داده میشه.</p>
+        </div>
+    </div>
+</div>

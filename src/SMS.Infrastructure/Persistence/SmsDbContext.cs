@@ -71,6 +71,21 @@ public class SmsDbContext : DbContext
     public DbSet<SystemSetting> SystemSettings => Set<SystemSetting>();
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
 
+    // برنامه هفتگی و زنگ‌ها
+    public DbSet<SchoolPeriod> SchoolPeriods => Set<SchoolPeriod>();
+    public DbSet<ClassSchedule> ClassSchedules => Set<ClassSchedule>();
+
+    // تکالیف و پیام‌ها
+    public DbSet<Homework> Homeworks => Set<Homework>();
+    public DbSet<HomeworkSubmission> HomeworkSubmissions => Set<HomeworkSubmission>();
+    public DbSet<Message> Messages => Set<Message>();
+
+    // تقویم و نظرسنجی
+    public DbSet<CalendarEvent> CalendarEvents => Set<CalendarEvent>();
+    public DbSet<Survey> Surveys => Set<Survey>();
+    public DbSet<SurveyQuestion> SurveyQuestions => Set<SurveyQuestion>();
+    public DbSet<SurveyAnswer> SurveyAnswers => Set<SurveyAnswer>();
+
     protected override void OnModelCreating(ModelBuilder b)
     {
         base.OnModelCreating(b);
@@ -115,6 +130,51 @@ public class SmsDbContext : DbContext
         b.Entity<StudentTermGPA>().HasKey(s => s.StudentTermGPAId);
         b.Entity<SystemSetting>().HasKey(s => s.SettingId);
         b.Entity<AuditLog>().HasKey(a => a.AuditId);
+        // برنامه هفتگی و زنگ‌ها
+        b.Entity<SchoolPeriod>().HasKey(p => p.PeriodId);
+        b.Entity<SchoolPeriod>().HasIndex(p => new { p.SchoolId, p.PeriodNo }).IsUnique();
+        b.Entity<SchoolPeriod>().HasOne(p => p.School).WithMany().HasForeignKey(p => p.SchoolId).OnDelete(DeleteBehavior.Restrict);
+
+        b.Entity<ClassSchedule>().HasKey(s => s.ScheduleId);
+        b.Entity<ClassSchedule>().HasIndex(s => new { s.ClassroomId, s.DayOfWeek, s.PeriodId }).IsUnique();
+        // برای جلوگیری از multiple cascade paths همه را Restrict می‌کنیم
+        b.Entity<ClassSchedule>().HasOne(s => s.Classroom).WithMany().HasForeignKey(s => s.ClassroomId).OnDelete(DeleteBehavior.Restrict);
+        b.Entity<ClassSchedule>().HasOne(s => s.ClassSubject).WithMany().HasForeignKey(s => s.ClassSubjectId).OnDelete(DeleteBehavior.Restrict);
+        b.Entity<ClassSchedule>().HasOne(s => s.Period).WithMany().HasForeignKey(s => s.PeriodId).OnDelete(DeleteBehavior.Restrict);
+
+        // تکالیف
+        b.Entity<Homework>().HasKey(h => h.HomeworkId);
+        b.Entity<Homework>().Property(h => h.MaxScore).HasPrecision(5, 2);
+        b.Entity<Homework>().HasOne(h => h.ClassSubject).WithMany().HasForeignKey(h => h.ClassSubjectId).OnDelete(DeleteBehavior.Restrict);
+        b.Entity<Homework>().HasOne(h => h.CreatedBy).WithMany().HasForeignKey(h => h.CreatedByStaffId).OnDelete(DeleteBehavior.Restrict);
+
+        b.Entity<HomeworkSubmission>().HasKey(s => s.SubmissionId);
+        b.Entity<HomeworkSubmission>().Property(s => s.Score).HasPrecision(5, 2);
+        b.Entity<HomeworkSubmission>().HasIndex(s => new { s.HomeworkId, s.StudentId }).IsUnique();
+        b.Entity<HomeworkSubmission>().HasOne(s => s.Homework).WithMany(h => h.Submissions).HasForeignKey(s => s.HomeworkId).OnDelete(DeleteBehavior.Cascade);
+        b.Entity<HomeworkSubmission>().HasOne(s => s.Student).WithMany().HasForeignKey(s => s.StudentId).OnDelete(DeleteBehavior.Restrict);
+
+        // پیام‌های داخلی
+        b.Entity<Message>().HasKey(m => m.MessageId);
+        b.Entity<Message>().HasIndex(m => new { m.ToUserId, m.ReadAt });
+        b.Entity<Message>().HasOne(m => m.FromUser).WithMany().HasForeignKey(m => m.FromUserId).OnDelete(DeleteBehavior.Restrict);
+        b.Entity<Message>().HasOne(m => m.ToUser).WithMany().HasForeignKey(m => m.ToUserId).OnDelete(DeleteBehavior.Restrict);
+
+        // تقویم
+        b.Entity<CalendarEvent>().HasKey(e => e.EventId);
+        b.Entity<CalendarEvent>().HasOne(e => e.School).WithMany().HasForeignKey(e => e.SchoolId).OnDelete(DeleteBehavior.Restrict);
+        b.Entity<CalendarEvent>().HasOne(e => e.Classroom).WithMany().HasForeignKey(e => e.ClassroomId).OnDelete(DeleteBehavior.Restrict);
+        b.Entity<CalendarEvent>().HasOne(e => e.CreatedBy).WithMany().HasForeignKey(e => e.CreatedByUserId).OnDelete(DeleteBehavior.Restrict);
+
+        // نظرسنجی
+        b.Entity<Survey>().HasKey(s => s.SurveyId);
+        b.Entity<Survey>().HasOne(s => s.CreatedBy).WithMany().HasForeignKey(s => s.CreatedByUserId).OnDelete(DeleteBehavior.Restrict);
+        b.Entity<SurveyQuestion>().HasKey(q => q.QuestionId);
+        b.Entity<SurveyQuestion>().HasOne(q => q.Survey).WithMany(s => s.Questions).HasForeignKey(q => q.SurveyId).OnDelete(DeleteBehavior.Cascade);
+        b.Entity<SurveyAnswer>().HasKey(a => a.AnswerId);
+        b.Entity<SurveyAnswer>().HasOne(a => a.Survey).WithMany().HasForeignKey(a => a.SurveyId).OnDelete(DeleteBehavior.Restrict);
+        b.Entity<SurveyAnswer>().HasOne(a => a.Question).WithMany().HasForeignKey(a => a.QuestionId).OnDelete(DeleteBehavior.Restrict);
+        b.Entity<SurveyAnswer>().HasOne(a => a.User).WithMany().HasForeignKey(a => a.UserId).OnDelete(DeleteBehavior.Restrict);
 
         // ====== Value Generation ======
         b.Entity<AttendanceStatus>().Property(s => s.StatusId).ValueGeneratedNever();

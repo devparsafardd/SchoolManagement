@@ -1,0 +1,67 @@
+@using SMS.Application.DTOs
+@using SMS.Shared.Helpers
+@model List<SurveyDto>
+@{
+    ViewData["Title"] = "نظرسنجی‌ها";
+    var canManage = (bool)(ViewBag.CanManage ?? false);
+    var responded = (Dictionary<int, bool>)ViewBag.Responded;
+}
+
+<div class="page-header">
+    <h1>📊 نظرسنجی‌ها</h1>
+    @if (canManage)
+    {
+        <a asp-action="Create" class="btn btn-success">➕ نظرسنجی جدید</a>
+    }
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">نظرسنجی فعالی موجود نیست.</div>
+}
+else
+{
+    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:14px">
+        @foreach (var s in Model)
+        {
+            var hasResp = responded.GetValueOrDefault(s.SurveyId, false);
+            <div class="card">
+                <div class="card-body">
+                    <h3 style="margin:0 0 6px">@s.Title</h3>
+                    @if (!string.IsNullOrEmpty(s.Description))
+                    {
+                        <p class="text-muted" style="font-size:0.9em">@s.Description</p>
+                    }
+                    <div style="font-size:0.85em; color:#666">
+                        <div>📅 @PersianDate.ToPersian(s.StartDate) تا @PersianDate.ToPersian(s.EndDate)</div>
+                        <div>👥 @(s.TargetAudience switch { "All" => "همه", "Students" => "دانش‌آموزان", "Parents" => "اولیا", "Teachers" => "معلمان", _ => s.TargetAudience })</div>
+                        <div>📝 @PersianDate.ToPersianDigits(s.QuestionCount.ToString()) سوال
+                            @if (canManage) { <span>| 📊 @PersianDate.ToPersianDigits(s.ResponseCount.ToString()) پاسخ</span> }
+                        </div>
+                        @if (s.IsAnonymous) { <span class="badge badge-info">ناشناس</span> }
+                        @if (s.IsExpired) { <span class="badge badge-secondary">منقضی</span> }
+                    </div>
+                    <div style="margin-top:12px">
+                        @if (hasResp)
+                        {
+                            <span class="btn btn-sm btn-success" style="cursor:default">✓ پاسخ داده‌اید</span>
+                        }
+                        else if (!s.IsExpired && s.IsActive)
+                        {
+                            <a asp-action="Take" asp-route-id="@s.SurveyId" class="btn btn-sm btn-primary">📝 شرکت در نظرسنجی</a>
+                        }
+                        @if (canManage)
+                        {
+                            <a asp-action="Results" asp-route-id="@s.SurveyId" class="btn btn-sm btn-info">📊 نتایج</a>
+                            <form method="post" asp-action="Delete" style="display:inline" onsubmit="return confirm('غیرفعال شود؟')">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@s.SurveyId" />
+                                <button class="btn btn-sm btn-danger">🗑</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

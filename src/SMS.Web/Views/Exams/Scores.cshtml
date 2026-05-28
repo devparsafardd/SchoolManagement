@@ -29,6 +29,15 @@
         else
         {
             <span class="badge badge-success" style="padding:8px 14px;font-size:13px">🔒 نهایی شده</span>
+            @if (User.IsInRole("SuperAdmin") || User.IsInRole("SchoolAdmin") || User.IsInRole("Principal"))
+            {
+                <form method="post" asp-action="Unfinalize" style="display:inline" onsubmit="return confirm('این آزمون به حالت قابل ویرایش بازخواهد گشت. ادامه می‌دهید؟');">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@exam.ExamId" />
+                    <input type="hidden" name="classSubjectId" value="@exam.ClassSubjectId" />
+                    <button class="btn btn-warning" title="فقط مدیران می‌توانند بازگشایی کنند">🔓 بازگشایی</button>
+                </form>
+            }
         }
         <a asp-action="Index" asp-route-classSubjectId="@exam.ClassSubjectId" class="btn btn-secondary">بازگشت</a>
     </div>

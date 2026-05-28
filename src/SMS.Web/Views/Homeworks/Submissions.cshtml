@@ -1,0 +1,90 @@
+@using SMS.Application.DTOs
+@using SMS.Shared.Helpers
+@model List<HomeworkSubmissionDto>
+@{
+    var hw = (HomeworkDto)ViewBag.Homework;
+    ViewData["Title"] = "تحویل تکلیف: " + hw.Title;
+    Layout = "_TeacherLayout";
+}
+
+<div class="page-header">
+    <div>
+        <h1>📋 @hw.Title</h1>
+        <div class="subtitle">@hw.ClassroomName | @hw.SubjectName | مهلت: @PersianDate.ToPersian(hw.DueDate)</div>
+    </div>
+    <a class="btn btn-secondary" asp-action="Teacher" asp-route-classSubjectId="@hw.ClassSubjectId">↩ بازگشت</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <table class="data-table enhanced">
+            <thead>
+                <tr>
+                    <th>دانش‌آموز</th><th>تاریخ تحویل</th><th>متن جواب</th>
+                    <th>فایل</th><th>نمره @(hw.MaxScore.HasValue ? $"(از {hw.MaxScore})" : "")</th>
+                    <th>بازخورد</th><th>عملیات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var s in Model)
+                {
+                    <tr>
+                        <td><strong>@s.FullName</strong></td>
+                        <td>
+                            @if (s.SubmissionId > 0)
+                            {
+                                <span class="@(s.IsLate ? "text-warning" : "")">
+                                    @PersianDate.ToPersian(s.SubmittedAt)
+                                    @if (s.IsLate) { <small>(دیر)</small> }
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="text-danger">تحویل نداده</span>
+                            }
+                        </td>
+                        <td style="max-width:300px">
+                            @if (!string.IsNullOrEmpty(s.TextAnswer))
+                            {
+                                <details>
+                                    <summary>مشاهده</summary>
+                                    <div style="white-space:pre-wrap; margin-top:6px">@s.TextAnswer</div>
+                                </details>
+                            }
+                            else { <span class="text-muted">—</span> }
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(s.AttachmentPath))
+                            {
+                                <a href="@s.AttachmentPath" target="_blank">📎 دانلود</a>
+                            }
+                            else { <span>—</span> }
+                        </td>
+                        <td>
+                            @if (s.SubmissionId > 0)
+                            {
+                                <form method="post" asp-action="Grade" style="display:flex; gap:4px">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="SubmissionId" value="@s.SubmissionId" />
+                                    <input type="hidden" name="homeworkId" value="@hw.HomeworkId" />
+                                    <input type="number" name="Score" step="0.25" value="@s.Score"
+                                           class="form-control" style="width:70px" />
+                                    <input type="text" name="TeacherFeedback" value="@s.TeacherFeedback"
+                                           class="form-control" placeholder="بازخورد" style="width:140px" />
+                                    <button class="btn btn-sm btn-success">💾</button>
+                                </form>
+                            }
+                        </td>
+                        <td>@s.TeacherFeedback</td>
+                        <td>
+                            @if (s.IsGraded)
+                            {
+                                <span class="badge badge-success">✓ نمره داده شد</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

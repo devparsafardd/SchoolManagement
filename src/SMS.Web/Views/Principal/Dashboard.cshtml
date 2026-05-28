@@ -1,0 +1,261 @@
+@using SMS.Application.DTOs
+@using SMS.Shared.Helpers
+@model PrincipalDashboardDto
+@{ ViewData["Title"] = "داشبورد " + Model.SchoolName; }
+
+@section Styles {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+}
+
+<div class="page-header">
+    <div>
+        <h1>🏫 @Model.SchoolName</h1>
+        <div class="subtitle">
+            کد مدرسه: @PersianDate.ToPersianDigits(Model.SchoolCode) | سال تحصیلی: @Model.AcademicYearTitle
+        </div>
+    </div>
+    <form method="get" style="display:flex; gap:6px; align-items:flex-end">
+        <input type="hidden" name="schoolId" value="@Model.SchoolId" />
+        <div class="form-group" style="margin:0">
+            <label style="display:block">سال تحصیلی</label>
+            <select name="academicYearId" class="form-control" onchange="this.form.submit()">
+                @foreach (var y in (List<LookupDto>)ViewBag.AcademicYears)
+                {
+                    var sel = Model.AcademicYearId == y.Id ? "selected" : "";
+                    @Html.Raw($"<option value='{y.Id}' {sel}>{y.Name}</option>")
+                }
+            </select>
+        </div>
+    </form>
+</div>
+
+<!-- دسترسی‌های سریع -->
+<div class="card" style="margin-bottom:14px">
+    <div class="card-body" style="display:flex; gap:8px; flex-wrap:wrap; padding:14px">
+        <a asp-action="Classrooms" asp-route-schoolId="@Model.SchoolId" class="btn btn-outline btn-sm">📚 کلاس‌های مدرسه</a>
+        <a asp-controller="Students" asp-action="Index" asp-route-schoolId="@Model.SchoolId" class="btn btn-outline btn-sm">👥 دانش‌آموزان</a>
+        <a asp-controller="Staff" asp-action="Index" asp-route-schoolId="@Model.SchoolId" class="btn btn-outline btn-sm">👨‍🏫 کارکنان</a>
+        <a asp-controller="Attendance" asp-action="Index" asp-route-schoolId="@Model.SchoolId" class="btn btn-outline btn-sm">✅ حضور و غیاب</a>
+        <a asp-controller="Analytics" asp-action="Attendance" asp-route-schoolId="@Model.SchoolId" class="btn btn-outline btn-sm">📊 تحلیل حضور</a>
+        <a asp-controller="Analytics" asp-action="Academic" asp-route-schoolId="@Model.SchoolId" class="btn btn-outline btn-sm">🎓 تحلیل تحصیلی</a>
+        <a asp-controller="Analytics" asp-action="Financial" asp-route-schoolId="@Model.SchoolId" class="btn btn-outline btn-sm">💰 تحلیل مالی</a>
+        <a asp-controller="Announcements" asp-action="Create" class="btn btn-success btn-sm">📢 اعلان جدید</a>
+        <a asp-controller="Sms" asp-action="SendBulk" class="btn btn-warning btn-sm">📱 پیامک گروهی</a>
+    </div>
+</div>
+
+<!-- آمار سریع -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">دانش‌آموزان</div>
+            <div class="stat-number">@PersianDate.ToPersianDigits(Model.TotalStudents.ToString())</div>
+            <div class="stat-trend text-muted">
+                پسر: @PersianDate.ToPersianDigits(Model.TotalMaleStudents.ToString()) |
+                دختر: @PersianDate.ToPersianDigits(Model.TotalFemaleStudents.ToString())
+            </div>
+        </div>
+        <div class="stat-icon bg-primary">👥</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">کلاس‌ها</div>
+            <div class="stat-number">@PersianDate.ToPersianDigits(Model.TotalClassrooms.ToString())</div>
+            <div class="stat-trend text-muted">@PersianDate.ToPersianDigits(Model.TotalSubjects.ToString()) درس</div>
+        </div>
+        <div class="stat-icon bg-info">📚</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">معلمان و کارکنان</div>
+            <div class="stat-number">@PersianDate.ToPersianDigits(Model.TotalTeachers.ToString())</div>
+            <div class="stat-trend text-muted">مجموع کارکنان: @PersianDate.ToPersianDigits(Model.TotalStaff.ToString())</div>
+        </div>
+        <div class="stat-icon bg-success">👨‍🏫</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">حضور امروز</div>
+            <div class="stat-number @(Model.TodayPresentRate >= 90 ? "text-success" : Model.TodayPresentRate >= 75 ? "" : "text-danger")">
+                @PersianDate.ToPersianDigits(Model.TodayPresentRate.ToString("0.0"))%
+            </div>
+            <div class="stat-trend text-muted">
+                ✓ @PersianDate.ToPersianDigits(Model.TodayPresent.ToString()) |
+                ✗ @PersianDate.ToPersianDigits(Model.TodayAbsent.ToString()) |
+                ⏰ @PersianDate.ToPersianDigits(Model.TodayTardy.ToString())
+            </div>
+        </div>
+        <div class="stat-icon bg-warning">✅</div>
+    </div>
+</div>
+
+<!-- ردیف ۲: مالی و انضباطی -->
+<div class="stats-grid" style="margin-top:12px">
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">کل درآمد سال</div>
+            <div class="stat-number">@PersianDate.ToPersianDigits(Model.TotalRevenue.ToString("N0"))</div>
+            <div class="stat-trend text-muted">تومان</div>
+        </div>
+        <div class="stat-icon bg-success">💰</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">پرداخت‌شده</div>
+            <div class="stat-number text-success">@PersianDate.ToPersianDigits(Model.TotalPaid.ToString("N0"))</div>
+            <div class="stat-trend text-muted">تومان</div>
+        </div>
+        <div class="stat-icon bg-primary">💵</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">معوقات</div>
+            <div class="stat-number text-danger">@PersianDate.ToPersianDigits(Model.TotalUnpaid.ToString("N0"))</div>
+            <div class="stat-trend text-danger">
+                @PersianDate.ToPersianDigits(Model.OverdueInvoicesCount.ToString()) فاکتور سررسید گذشته
+            </div>
+        </div>
+        <div class="stat-icon bg-danger">⚠️</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">انضباطی این ماه</div>
+            <div class="stat-number">
+                <span class="text-success">+@PersianDate.ToPersianDigits(Model.RewardsThisMonth.ToString())</span>
+                /
+                <span class="text-danger">-@PersianDate.ToPersianDigits(Model.PunishmentsThisMonth.ToString())</span>
+            </div>
+            <div class="stat-trend text-muted">تشویق / تنبیه</div>
+        </div>
+        <div class="stat-icon bg-info">⭐</div>
+    </div>
+</div>
+
+<!-- نمودارها -->
+<div class="row" style="display:grid; grid-template-columns:2fr 1fr; gap:16px; margin-top:16px">
+    <div class="card">
+        <div class="card-header"><h2>📊 روند حضور و غیاب ۷ روز اخیر</h2></div>
+        <div class="card-body">
+            <canvas id="attendanceChart" height="100"></canvas>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header"><h2>🥧 توزیع دانش‌آموزان</h2></div>
+        <div class="card-body">
+            <canvas id="distributionChart" height="200"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- جدول کلاس‌های برتر -->
+<div class="card" style="margin-top:16px">
+    <div class="card-header" style="display:flex; justify-content:space-between; align-items:center">
+        <h2>📚 کلاس‌های مدرسه</h2>
+        <a asp-action="Classrooms" asp-route-schoolId="@Model.SchoolId" class="btn btn-sm btn-outline">مشاهده همه</a>
+    </div>
+    <div class="card-body">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>کلاس</th><th>پایه</th><th>دانش‌آموزان</th><th>مدیر کلاس</th><th>میانگین معدل</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model.TopClassrooms)
+                {
+                    <tr>
+                        <td><strong>@c.ClassroomName</strong></td>
+                        <td>@c.GradeName</td>
+                        <td>@PersianDate.ToPersianDigits(c.StudentCount.ToString())</td>
+                        <td>@(string.IsNullOrEmpty(c.HeadTeacherName) ? "—" : c.HeadTeacherName)</td>
+                        <td>@(c.AverageGPA.HasValue ? PersianDate.ToPersianDigits(c.AverageGPA.Value.ToString("0.00")) : "—")</td>
+                    </tr>
+                }
+                @if (!Model.TopClassrooms.Any())
+                {
+                    <tr><td colspan="5" class="empty-state">کلاسی ثبت نشده</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- فعالیت‌های اخیر -->
+@if (Model.RecentActivities.Any())
+{
+    <div class="card" style="margin-top:16px">
+        <div class="card-header"><h2>🕒 فعالیت‌های اخیر</h2></div>
+        <div class="card-body">
+            <ul style="list-style:none; padding:0; margin:0">
+                @foreach (var a in Model.RecentActivities)
+                {
+                    <li style="padding:10px 0; border-bottom:1px solid #eee">
+                        <span style="display:inline-block; width:90px; color:#999; font-size:0.85em">
+                            @PersianDate.ToPersian(a.At)
+                        </span>
+                        @if (!string.IsNullOrEmpty(a.Link))
+                        {
+                            <a href="@a.Link">@a.Description</a>
+                        }
+                        else
+                        {
+                            <span>@a.Description</span>
+                        }
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        // نمودار حضور و غیاب
+        const attendanceCtx = document.getElementById('attendanceChart').getContext('2d');
+        new Chart(attendanceCtx, {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AttendanceLast7Days.Select(p => p.Label))),
+                datasets: [
+                    {
+                        label: 'حاضر',
+                        data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AttendanceLast7Days.Select(p => p.Present))),
+                        backgroundColor: '#198754'
+                    },
+                    {
+                        label: 'غایب',
+                        data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AttendanceLast7Days.Select(p => p.Absent))),
+                        backgroundColor: '#dc3545'
+                    },
+                    {
+                        label: 'تاخیر',
+                        data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AttendanceLast7Days.Select(p => p.Tardy))),
+                        backgroundColor: '#ffc107'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'bottom' } },
+                scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } }
+            }
+        });
+
+        // نمودار توزیع دانش‌آموزان بر اساس پایه
+        const distCtx = document.getElementById('distributionChart').getContext('2d');
+        new Chart(distCtx, {
+            type: 'doughnut',
+            data: {
+                labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.StudentsByGrade.Select(p => p.GradeName))),
+                datasets: [{
+                    data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.StudentsByGrade.Select(p => p.StudentCount))),
+                    backgroundColor: ['#6f42c1', '#0d6efd', '#198754', '#ffc107', '#dc3545', '#fd7e14', '#20c997', '#6610f2']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'bottom' } }
+            }
+        });
+    </script>
+}

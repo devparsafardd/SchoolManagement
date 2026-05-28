@@ -1,0 +1,49 @@
+@using SMS.Application.DTOs
+@using SMS.Shared.Helpers
+@model List<MessageDto>
+@{ ViewData["Title"] = "صندوق دریافت"; }
+
+<div class="page-header">
+    <h1>📥 صندوق دریافت</h1>
+    <div>
+        <a class="btn btn-primary" asp-action="Compose">✏️ پیام جدید</a>
+        <a class="btn btn-outline" asp-action="Sent">📤 ارسال شده</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div style="margin-bottom:10px">
+            <a asp-action="Index" asp-route-unreadOnly="false" class="btn btn-sm @(ViewBag.UnreadOnly == false ? "btn-primary" : "btn-outline")">همه</a>
+            <a asp-action="Index" asp-route-unreadOnly="true" class="btn btn-sm @(ViewBag.UnreadOnly == true ? "btn-primary" : "btn-outline")">خوانده نشده</a>
+        </div>
+
+        <table class="data-table enhanced">
+            <thead>
+                <tr><th>فرستنده</th><th>موضوع</th><th>تاریخ</th><th>وضعیت</th><th>عملیات</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var m in Model)
+                {
+                    <tr style="@(m.ReadAt == null ? "font-weight:bold;background:#f8f9fa" : "")">
+                        <td>@m.FromUserName</td>
+                        <td><a asp-action="View" asp-route-id="@m.MessageId">@(string.IsNullOrEmpty(m.Subject) ? "(بدون موضوع)" : m.Subject)</a></td>
+                        <td>@PersianDate.ToPersian(m.SentAt)</td>
+                        <td>@(m.ReadAt == null ? Html.Raw("<span class='badge badge-warning'>خوانده نشده</span>") : Html.Raw("<span class='badge badge-success'>خوانده شد</span>"))</td>
+                        <td>
+                            <form method="post" asp-action="Delete" style="display:inline" onsubmit="return confirm('حذف شود؟')">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@m.MessageId" />
+                                <button class="btn btn-sm btn-danger">🗑</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="5" class="empty-state">پیامی وجود ندارد.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

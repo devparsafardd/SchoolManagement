@@ -36,9 +36,30 @@ public class AccountService : IAccountService
             Mobile = user.Person.Mobile,
             Email = user.Person.Email,
             Username = user.Username,
+            PhotoPath = user.Person.PhotoPath,
             LastLoginAt = user.LastLoginAt,
             Roles = user.UserRoles.Where(r => r.IsActive).Select(r => r.Role.DisplayName).Distinct().ToList()
         });
+    }
+
+    public async Task<Result> UpdatePhotoAsync(int personId, string photoPath)
+    {
+        var person = await _db.Persons.FirstOrDefaultAsync(p => p.PersonId == personId);
+        if (person is null) return Result.Fail("کاربر یافت نشد");
+        person.PhotoPath = photoPath;
+        person.ModifiedAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync();
+        return Result.Ok("عکس پروفایل با موفقیت به‌روزرسانی شد");
+    }
+
+    public async Task<Result> RemovePhotoAsync(int personId)
+    {
+        var person = await _db.Persons.FirstOrDefaultAsync(p => p.PersonId == personId);
+        if (person is null) return Result.Fail("کاربر یافت نشد");
+        person.PhotoPath = null;
+        person.ModifiedAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync();
+        return Result.Ok("عکس پروفایل حذف شد");
     }
 
     public async Task<Result> ChangePasswordAsync(int userId, ChangePasswordDto dto)

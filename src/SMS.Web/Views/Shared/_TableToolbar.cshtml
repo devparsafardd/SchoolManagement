@@ -1,0 +1,19 @@
+@model SMS.Web.Models.TableToolbarModel
+@*
+    نوار ابزار جدول: شامل دکمه‌های Excel، Print و... 
+    استفاده:
+        @await Html.PartialAsync("_TableToolbar", new SMS.Web.Models.TableToolbarModel { 
+            ExcelUrl = Url.Action("StudentsExcel", "Export"),
+            PrintTarget = "#myTable"
+        })
+*@
+<div style="display:flex; gap:6px; justify-content:flex-end; margin-bottom:10px">
+    @if (!string.IsNullOrEmpty(Model.ExcelUrl))
+    {
+        <a href="@Model.ExcelUrl" class="btn btn-sm btn-success">📊 خروجی Excel</a>
+    }
+    @if (Model.ShowPrint)
+    {
+        <button type="button" class="btn btn-sm btn-info" onclick="window.print()">🖨 پرینت / PDF</button>
+    }
+</div>

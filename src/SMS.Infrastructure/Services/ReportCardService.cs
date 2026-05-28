@@ -13,6 +13,25 @@ namespace SMS.Infrastructure.Services;
 
 public class ReportCardService : IReportCardService
 {
+    private static readonly string _fontFamily = LoadFontFamily();
+    private static string LoadFontFamily()
+    {
+        try
+        {
+            var fontPath = Path.Combine(AppContext.BaseDirectory, "wwwroot", "fonts", "Vazirmatn-Regular.ttf");
+            if (File.Exists(fontPath))
+            {
+                QuestPDF.Drawing.FontManager.RegisterFont(File.OpenRead(fontPath));
+                var bold = Path.Combine(AppContext.BaseDirectory, "wwwroot", "fonts", "Vazirmatn-Bold.ttf");
+                if (File.Exists(bold))
+                    QuestPDF.Drawing.FontManager.RegisterFont(File.OpenRead(bold));
+                return "Vazirmatn";
+            }
+        }
+        catch { }
+        return "Tahoma";
+    }
+
     private readonly SmsDbContext _db;
 
     public ReportCardService(SmsDbContext db) => _db = db;
@@ -208,7 +227,7 @@ public class ReportCardService : IReportCardService
             {
                 page.Size(PageSizes.A4);
                 page.Margin(20);
-                page.DefaultTextStyle(x => x.FontSize(11).FontFamily("Tahoma"));
+                page.DefaultTextStyle(x => x.FontSize(11).FontFamily(_fontFamily));
                 page.ContentFromRightToLeft();
 
                 page.Header().Column(col =>

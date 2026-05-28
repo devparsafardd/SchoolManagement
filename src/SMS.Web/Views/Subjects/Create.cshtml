@@ -7,7 +7,10 @@
     <div class="card-body">
         <form method="post">
             @Html.AntiForgeryToken()
-            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            }
             <div class="form-group"><label>نام درس *</label><input asp-for="Name" class="form-control" /></div>
             <div class="form-group"><label>کد</label><input asp-for="Code" class="form-control" /></div>
             <div class="form-group"><label>توضیحات</label><textarea asp-for="Description" class="form-control" rows="2"></textarea></div>

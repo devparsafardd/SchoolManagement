@@ -1,0 +1,5 @@
+@model SMS.Application.DTOs.TeacherAnalyticsDto
+@{ Layout = "_TeacherLayout"; }
+@{
+    await Html.RenderPartialAsync("~/Views/Analytics/Teacher.cshtml", Model);
+}

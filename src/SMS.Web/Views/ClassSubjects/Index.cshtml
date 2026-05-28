@@ -1,0 +1,73 @@
+@model List<ClassSubjectTeacherDto>
+@{
+    var classroom = (ClassroomDto)ViewBag.Classroom;
+    ViewData["Title"] = "دروس کلاس " + classroom.Name;
+}
+
+<div class="page-header">
+    <div>
+        <h1>📚 دروس کلاس: @classroom.Name</h1>
+        <div class="subtitle">@classroom.SchoolName | @classroom.GradeName | @classroom.AcademicYearTitle</div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header"><h2>➕ تخصیص معلم به درس</h2></div>
+    <div class="card-body">
+        <form method="post" asp-action="Assign" class="filters-bar">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="classroomId" value="@classroom.ClassroomId" />
+            <div class="form-group" style="flex:1">
+                <label>درس</label>
+                <select name="gradeSubjectId" class="form-control" required>
+                    <option value="">انتخاب درس</option>
+                    @foreach (var gs in (List<GradeSubjectDto>)ViewBag.GradeSubjects)
+                    {
+                        <option value="@gs.GradeSubjectId">@gs.SubjectName (ضریب: @gs.Coefficient)</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group" style="flex:1">
+                <label>معلم</label>
+                <select name="staffId" class="form-control" required>
+                    <option value="">انتخاب معلم</option>
+                    @foreach (var t in (List<StaffDto>)ViewBag.Teachers)
+                    {
+                        <option value="@t.StaffId">@t.FullName</option>
+                    }
+                </select>
+            </div>
+            <button class="btn btn-success">➕ تخصیص</button>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <table class="data-table">
+            <thead><tr><th>درس</th><th>ضریب</th><th>معلم</th><th>عملیات</th></tr></thead>
+            <tbody>
+                @foreach (var cst in Model)
+                {
+                    <tr>
+                        <td><strong>@cst.SubjectName</strong></td>
+                        <td>@cst.Coefficient</td>
+                        <td>@cst.TeacherName</td>
+                        <td>
+                            <a asp-controller="Exams" asp-action="Index" asp-route-classSubjectId="@cst.ClassSubjectId" class="btn btn-primary btn-sm">📝 آزمون‌ها</a>
+                            <form method="post" asp-action="Unassign" style="display:inline" onsubmit="return confirm('حذف شود؟');">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="classSubjectId" value="@cst.ClassSubjectId" />
+                                <input type="hidden" name="classroomId" value="@classroom.ClassroomId" />
+                                <button class="btn btn-danger btn-sm">🗑</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any()) { <tr><td colspan="4" class="empty-state">هنوز معلمی برای این کلاس تخصیص داده نشده</td></tr> }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<a asp-controller="Classrooms" asp-action="Index" asp-route-schoolId="@classroom.SchoolId" class="btn btn-secondary">بازگشت به کلاس‌ها</a>

@@ -1,0 +1,81 @@
+@using SMS.Shared.Helpers
+@model GuardianDto
+@{ ViewData["Title"] = "جزئیات ولی"; }
+
+<div class="page-header">
+    <div>
+        <h1>👤 @Model.FullName</h1>
+        <div class="subtitle">@Model.Mobile | @Model.Occupation</div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header"><h2>اطلاعات شخصی</h2></div>
+    <div class="card-body">
+        <table class="data-table">
+            <tr><th>کد ملی:</th><td>@Model.NationalCode</td>
+                <th>موبایل:</th><td>@Model.Mobile</td></tr>
+            <tr><th>شغل:</th><td>@Model.Occupation</td>
+                <th>تحصیلات:</th><td>@Model.EducationLevel</td></tr>
+            <tr><th>تلفن محل کار:</th><td>@Model.WorkplacePhone</td>
+                <th>تعداد فرزند:</th><td>@PersianDate.ToPersianDigits(Model.StudentCount.ToString())</td></tr>
+        </table>
+    </div>
+</div>
+
+<!-- بخش حساب کاربری ولی -->
+<div class="card">
+    <div class="card-header"><h2>🔐 حساب کاربری ولی</h2></div>
+    <div class="card-body">
+        @if (Model.UserId.HasValue)
+        {
+            <table class="data-table">
+                <tr>
+                    <th>نام کاربری:</th>
+                    <td><code style="font-size:14px">@Model.Username</code></td>
+                    <th>وضعیت:</th>
+                    <td>@(Model.IsUserLocked ? Html.Raw("<span class='badge badge-danger'>قفل شده</span>") : Html.Raw("<span class='badge badge-success'>فعال</span>"))</td>
+                </tr>
+            </table>
+            <div style="margin-top:12px">
+                <form method="post" asp-controller="UserAccounts" asp-action="ResetPassword" style="display:inline" onsubmit="return confirm('رمز ریست شود؟');">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="userId" value="@Model.UserId" />
+                    <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                    <button class="btn btn-warning btn-sm">🔄 ریست رمز</button>
+                </form>
+                <form method="post" asp-controller="UserAccounts" asp-action="ToggleLock" style="display:inline">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="userId" value="@Model.UserId" />
+                    <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                    <button class="btn btn-outline btn-sm">@(Model.IsUserLocked ? "🔓 باز کردن" : "🔒 قفل کردن")</button>
+                </form>
+            </div>
+            <div class="alert alert-info" style="margin-top:12px">
+                💡 ولی با این حساب می‌تواند به <strong>پنل ولی</strong> وارد شود و گزارشات فرزند(ان) خود را مشاهده کند.
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-warning">⚠ هنوز حساب کاربری برای این ولی ساخته نشده. تا حساب نسازید نمی‌تواند وارد سیستم شود.</div>
+            <form method="post" asp-controller="UserAccounts" asp-action="Create" class="filters-bar">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="personId" value="@Model.PersonId" />
+                <input type="hidden" name="role" value="Parent" />
+                <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                <div class="form-group">
+                    <label>نام کاربری</label>
+                    <input name="username" value="@Model.Mobile" class="form-control" required minlength="4" />
+                    <small class="text-muted">پیش‌فرض: شماره موبایل</small>
+                </div>
+                <div class="form-group">
+                    <label>رمز عبور</label>
+                    <input name="password" value="Parent@123" type="text" class="form-control" required minlength="6" />
+                </div>
+                <button class="btn btn-success">➕ ایجاد حساب</button>
+            </form>
+        }
+    </div>
+</div>
+
+<a asp-action="Index" class="btn btn-secondary">بازگشت</a>

@@ -1,0 +1,51 @@
+@using SMS.Shared.Helpers
+@model List<ChildSummaryDto>
+@{ ViewData["Title"] = "فرزندان من"; }
+
+<div class="page-header">
+    <div>
+        <h1>👨‍👩‍👧 فرزندان من</h1>
+        <div class="subtitle">برای مشاهده اطلاعات، روی هر فرزند کلیک کنید</div>
+    </div>
+</div>
+
+<div class="stats-grid">
+    @foreach (var c in Model)
+    {
+        <a href="@Url.Action("Dashboard", "MyPortal", new { studentId = c.StudentId })" style="text-decoration:none; color:inherit">
+            <div class="stat-card" style="cursor:pointer; transition:0.2s" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                <div class="stat-info">
+                    <div class="stat-label">@c.SchoolName</div>
+                    <div style="font-size:18px; font-weight:bold; color:var(--primary); margin-bottom:8px">@c.FullName</div>
+                    <div class="stat-label">کلاس: @c.ClassroomName</div>
+                    <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap">
+                        @if (c.CurrentGPA.HasValue)
+                        {
+                            <span class="badge badge-info">معدل: @PersianDate.ToPersianDigits(c.CurrentGPA.Value.ToString("0.00"))</span>
+                        }
+                        @if (c.RecentAbsences > 0)
+                        {
+                            <span class="badge badge-warning">@PersianDate.ToPersianDigits(c.RecentAbsences.ToString()) غیبت ماه اخیر</span>
+                        }
+                        @if (c.RemainingDebt > 0)
+                        {
+                            <span class="badge badge-danger">بدهی: @PersianDate.ToPersianDigits(c.RemainingDebt.ToString("N0"))</span>
+                        }
+                    </div>
+                </div>
+                <div class="stat-icon bg-primary">👤</div>
+            </div>
+        </a>
+    }
+</div>
+
+@if (!Model.Any())
+{
+    <div class="card">
+        <div class="card-body empty-state">
+            <div class="empty-icon">😕</div>
+            <div class="empty-text">هیچ فرزندی به حساب شما متصل نیست</div>
+            <p class="text-muted">با مدرسه تماس بگیرید</p>
+        </div>
+    </div>
+}

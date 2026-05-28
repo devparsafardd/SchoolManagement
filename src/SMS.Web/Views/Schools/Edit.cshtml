@@ -1,0 +1,87 @@
+@model SchoolUpdateDto
+@{ ViewData["Title"] = "ویرایش مدرسه"; }
+
+<div class="card">
+    <div class="card-header"><h2>✏️ ویرایش مدرسه</h2></div>
+    <form method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="SchoolId" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label>نام مدرسه *</label>
+                    <input asp-for="Name" class="form-control" />
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label>کد مدرسه *</label>
+                    <input asp-for="Code" class="form-control" />
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label>شهر *</label>
+                    <select asp-for="CityId" class="form-control">
+                        @foreach (var c in (List<CityLookupDto>)ViewBag.Cities)
+                        {
+                            <option value="@c.Id">@c.Name (@c.ProvinceName)</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label>مقطع *</label>
+                    <select asp-for="EducationLevelId" class="form-control">
+                        @foreach (var l in (List<LookupDto>)ViewBag.EducationLevels)
+                        {
+                            <option value="@l.Id">@l.Name</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label>جنسیت</label>
+                    <select asp-for="Gender" class="form-control">
+                        <option value="B">مختلط</option>
+                        <option value="M">پسرانه</option>
+                        <option value="F">دخترانه</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label>تلفن</label>
+                    <input asp-for="Phone" class="form-control" />
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label>وضعیت</label>
+                    <select asp-for="IsActive" class="form-control">
+                        <option value="true">فعال</option>
+                        <option value="false">غیرفعال</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>آدرس</label>
+            <textarea asp-for="Address" class="form-control" rows="2"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-success">💾 ذخیره تغییرات</button>
+        <a asp-action="Index" class="btn" style="background:#95a5a6;color:white">انصراف</a>
+    </form>
+</div>

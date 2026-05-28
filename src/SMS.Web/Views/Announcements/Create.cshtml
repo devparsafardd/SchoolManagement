@@ -1,0 +1,41 @@
+@model AnnouncementCreateDto
+@{ ViewData["Title"] = "اعلان جدید"; }
+
+<div class="page-header"><h1>➕ اعلان جدید</h1></div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post">
+            @Html.AntiForgeryToken()
+            <div class="form-group"><label>عنوان *</label><input asp-for="Title" class="form-control" required /></div>
+            <div class="form-group"><label>متن اعلان *</label><textarea asp-for="Body" class="form-control" rows="6" required></textarea></div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>مدرسه (خالی = همه مدارس)</label>
+                    <select asp-for="SchoolId" class="form-control">
+                        <option value="">همه مدارس</option>
+                        @foreach (var s in (IEnumerable<SchoolDto>)ViewBag.Schools)
+                        {
+                            <option value="@s.SchoolId">@s.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>مخاطب</label>
+                    <select asp-for="TargetAudience" class="form-control">
+                        <option value="All">همه</option>
+                        <option value="Students">دانش‌آموزان</option>
+                        <option value="Parents">اولیا</option>
+                        <option value="Teachers">معلمان</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>تاریخ انقضا (اختیاری)</label>
+                    <input asp-for="ExpiryDate" class="form-control" type="date" />
+                </div>
+            </div>
+            <button class="btn btn-success">📢 انتشار</button>
+            <a asp-action="Index" class="btn btn-secondary">انصراف</a>
+        </form>
+    </div>
+</div>

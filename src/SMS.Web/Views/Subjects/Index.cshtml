@@ -1,0 +1,33 @@
+@model List<SubjectDto>
+@{ ViewData["Title"] = "دروس"; }
+
+<div class="page-header">
+    <h1>📖 دروس</h1>
+    <a asp-action="Create" class="btn btn-success">➕ افزودن درس</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <table class="data-table">
+            <thead><tr><th>نام درس</th><th>کد</th><th>توضیحات</th><th>تعداد پایه</th><th>وضعیت</th><th></th></tr></thead>
+            <tbody>
+                @foreach (var s in Model)
+                {
+                    <tr>
+                        <td><strong>@s.Name</strong></td>
+                        <td><code>@s.Code</code></td>
+                        <td class="text-muted">@s.Description</td>
+                        <td>@s.GradeCount</td>
+                        <td>@(s.IsActive ? Html.Raw("<span class='badge badge-success'>فعال</span>") : Html.Raw("<span class='badge badge-secondary'>غیرفعال</span>"))</td>
+                        <td>
+                            <form method="post" asp-action="Delete" asp-route-id="@s.SubjectId" style="display:inline" onsubmit="return confirm('غیرفعال شود؟');">
+                                @Html.AntiForgeryToken()
+                                <button class="btn btn-danger btn-sm">🗑</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

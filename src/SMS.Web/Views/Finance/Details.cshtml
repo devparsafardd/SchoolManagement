@@ -1,0 +1,117 @@
+@using SMS.Shared.Helpers
+@model InvoiceDto
+@{ ViewData["Title"] = "فاکتور " + Model.InvoiceNumber; }
+
+<div class="page-header">
+    <div>
+        <h1>💳 فاکتور #@Model.InvoiceNumber</h1>
+        <div class="subtitle">@Model.StudentName | @Model.FeeTypeName</div>
+    </div>
+    @if (Model.Status != "پرداخت‌شده")
+    {
+        <form method="post" asp-action="DeleteInvoice" asp-route-id="@Model.InvoiceId" style="display:inline" onsubmit="return confirm('فاکتور حذف شود؟');">
+            @Html.AntiForgeryToken()
+            <button class="btn btn-danger">🗑 حذف فاکتور</button>
+        </form>
+    }
+</div>
+
+<div class="card">
+    <div class="card-header"><h2>اطلاعات فاکتور</h2></div>
+    <div class="card-body">
+        <table class="data-table">
+            <tr>
+                <th>دانش‌آموز:</th><td>@Model.StudentName (@Model.StudentCode)</td>
+                <th>مدرسه:</th><td>@Model.SchoolName</td>
+            </tr>
+            <tr>
+                <th>سال تحصیلی:</th><td>@Model.AcademicYearTitle</td>
+                <th>تاریخ صدور:</th><td>@PersianDate.ToPersianDateTime(Model.CreatedAt)</td>
+            </tr>
+            <tr>
+                <th>مبلغ کل:</th><td>@PersianDate.ToPersianDigits(Model.Amount.ToString("N0")) تومان</td>
+                <th>تخفیف:</th><td>@PersianDate.ToPersianDigits(Model.Discount.ToString("N0")) تومان</td>
+            </tr>
+            <tr>
+                <th>مبلغ خالص:</th><td><strong>@PersianDate.ToPersianDigits(Model.NetAmount.ToString("N0"))</strong> تومان</td>
+                <th>پرداخت شده:</th><td class="text-success"><strong>@PersianDate.ToPersianDigits(Model.PaidAmount.ToString("N0"))</strong> تومان</td>
+            </tr>
+            <tr>
+                <th>باقی‌مانده:</th><td class="text-danger"><strong>@PersianDate.ToPersianDigits(Model.RemainingAmount.ToString("N0"))</strong> تومان</td>
+                <th>وضعیت:</th><td>
+                    @switch (Model.Status)
+                    {
+                        case "پرداخت‌شده": <span class="badge badge-success">@Model.Status</span> break;
+                        case "پرداخت ناقص": <span class="badge badge-warning">@Model.Status</span> break;
+                        default: <span class="badge badge-info">@Model.Status</span> break;
+                    }
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+@if (Model.RemainingAmount > 0)
+{
+    <div class="card">
+        <div class="card-header"><h2>➕ ثبت پرداخت جدید</h2></div>
+        <div class="card-body">
+            <form method="post" asp-action="AddPayment" class="filters-bar">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="invoiceId" value="@Model.InvoiceId" />
+                <div class="form-group">
+                    <label>مبلغ (تومان)</label>
+                    <input name="amount" type="number" class="form-control" required max="@Model.RemainingAmount" />
+                </div>
+                <div class="form-group">
+                    <label>تاریخ</label>
+                    <input name="paymentDate" type="date" class="form-control" value="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                </div>
+                <div class="form-group">
+                    <label>روش پرداخت</label>
+                    <select name="paymentMethod" class="form-control">
+                        <option>نقد</option><option>کارت</option>
+                        <option>حواله</option><option>آنلاین</option>
+                    </select>
+                </div>
+                <div class="form-group" style="flex:1">
+                    <label>شماره پیگیری</label>
+                    <input name="referenceNumber" class="form-control" />
+                </div>
+                <button class="btn btn-success">💾 ثبت پرداخت</button>
+            </form>
+        </div>
+    </div>
+}
+
+<div class="card">
+    <div class="card-header"><h2>📋 تاریخچه پرداخت‌ها</h2></div>
+    <div class="card-body">
+        <table class="data-table">
+            <thead><tr><th>تاریخ</th><th>مبلغ</th><th>روش</th><th>شماره پیگیری</th><th>توضیحات</th><th></th></tr></thead>
+            <tbody>
+                @foreach (var p in (List<PaymentDto>)ViewBag.Payments)
+                {
+                    <tr>
+                        <td>@PersianDate.ToPersian(p.PaymentDate)</td>
+                        <td class="text-success">@PersianDate.ToPersianDigits(p.Amount.ToString("N0"))</td>
+                        <td>@p.PaymentMethod</td>
+                        <td>@p.ReferenceNumber</td>
+                        <td>@p.Description</td>
+                        <td>
+                            <form method="post" asp-action="DeletePayment" style="display:inline" onsubmit="return confirm('حذف شود؟');">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="paymentId" value="@p.PaymentId" />
+                                <input type="hidden" name="invoiceId" value="@Model.InvoiceId" />
+                                <button class="btn btn-danger btn-sm">🗑</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                @if (!((List<PaymentDto>)ViewBag.Payments).Any()) { <tr><td colspan="6" class="empty-state">هنوز پرداختی ثبت نشده</td></tr> }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<a asp-action="Index" class="btn btn-secondary">بازگشت</a>

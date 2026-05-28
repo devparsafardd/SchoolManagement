@@ -1,0 +1,64 @@
+@using SMS.Shared.Helpers
+@model List<ClassroomDto>
+@{ ViewData["Title"] = "کلاس‌ها"; }
+
+<div class="page-header">
+    <div>
+        <h1>📚 کلاس‌ها</h1>
+        <div class="subtitle">@(ViewBag.SchoolId != null ? $"تعداد: {PersianDate.ToPersianDigits(Model.Count.ToString())}" : "ابتدا مدرسه را انتخاب کنید")</div>
+    </div>
+    <a asp-action="Create" asp-route-schoolId="@ViewBag.SchoolId" class="btn btn-success">➕ افزودن کلاس</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="get" class="filters-bar">
+            <div class="form-group" style="flex:1">
+                <label>مدرسه</label>
+                <select name="schoolId" class="form-control" onchange="this.form.submit()">
+                    <option value="">انتخاب</option>
+                    @foreach (var s in (IEnumerable<SchoolDto>)ViewBag.Schools)
+                    {
+                        var sel = ViewBag.SchoolId != null && (int)ViewBag.SchoolId == s.SchoolId ? "selected" : "";
+                        @Html.Raw($"<option value='{s.SchoolId}' {sel}>{s.Name}</option>")
+                    }
+                </select>
+            </div>
+        </form>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>نام کلاس</th><th>پایه</th><th>سال تحصیلی</th>
+                    <th>ظرفیت</th><th>دانش‌آموزان</th><th>سرپرست</th><th>اتاق</th><th>عملیات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model)
+                {
+                    <tr>
+                        <td><strong>@c.Name</strong></td>
+                        <td>@c.GradeName</td>
+                        <td>@c.AcademicYearTitle</td>
+                        <td>@(c.Capacity?.ToString() ?? "-")</td>
+                        <td>
+                            @PersianDate.ToPersianDigits(c.CurrentStudentCount.ToString())
+                            @if (c.Capacity.HasValue) {<small class="text-muted">/ @PersianDate.ToPersianDigits(c.Capacity.ToString()!)</small>}
+                        </td>
+                        <td>@(c.HeadTeacherName ?? "-")</td>
+                        <td>@(c.RoomNumber ?? "-")</td>
+                        <td>
+                            <a asp-controller="ClassSubjects" asp-action="Index" asp-route-classroomId="@c.ClassroomId" class="btn btn-primary btn-sm">📚 دروس</a>
+                            <a asp-controller="Attendance" asp-action="Take" asp-route-classroomId="@c.ClassroomId" class="btn btn-outline btn-sm">✓ حضور</a>
+                            <form method="post" asp-action="Delete" asp-route-id="@c.ClassroomId" asp-route-schoolId="@c.SchoolId" style="display:inline" onsubmit="return confirm('حذف شود؟');">
+                                @Html.AntiForgeryToken()
+                                <button class="btn btn-danger btn-sm">🗑</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any()) { <tr><td colspan="8" class="empty-state">کلاسی برای این مدرسه ثبت نشده</td></tr> }
+            </tbody>
+        </table>
+    </div>
+</div>

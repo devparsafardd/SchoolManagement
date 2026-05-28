@@ -1,0 +1,96 @@
+@model SchoolCreateDto
+@{ ViewData["Title"] = "افزودن مدرسه"; }
+
+<div class="card">
+    <div class="card-header"><h2>➕ افزودن مدرسه جدید</h2></div>
+    <form method="post">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label>نام مدرسه *</label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label>کد مدرسه *</label>
+                    <input asp-for="Code" class="form-control" />
+                    <span asp-validation-for="Code" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label>شهر *</label>
+                    <select asp-for="CityId" class="form-control">
+                        <option value="">انتخاب کنید...</option>
+                        @foreach (var c in (List<CityLookupDto>)ViewBag.Cities)
+                        {
+                            <option value="@c.Id">@c.Name (@c.ProvinceName)</option>
+                        }
+                    </select>
+                    <span asp-validation-for="CityId" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label>مقطع *</label>
+                    <select asp-for="EducationLevelId" class="form-control">
+                        <option value="">انتخاب کنید...</option>
+                        @foreach (var l in (List<LookupDto>)ViewBag.EducationLevels)
+                        {
+                            <option value="@l.Id">@l.Name</option>
+                        }
+                    </select>
+                    <span asp-validation-for="EducationLevelId" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label>جنسیت *</label>
+                    <select asp-for="Gender" class="form-control">
+                        <option value="B">مختلط</option>
+                        <option value="M">پسرانه</option>
+                        <option value="F">دخترانه</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label>نوع مدرسه</label>
+                    <select asp-for="SchoolType" class="form-control">
+                        <option value="">انتخاب نشده</option>
+                        <option value="دولتی">دولتی</option>
+                        <option value="غیرانتفاعی">غیرانتفاعی</option>
+                        <option value="نمونه">نمونه</option>
+                        <option value="تیزهوشان">تیزهوشان</option>
+                        <option value="شاهد">شاهد</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label>تلفن</label>
+                    <input asp-for="Phone" class="form-control" />
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>آدرس</label>
+            <textarea asp-for="Address" class="form-control" rows="2"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-success">💾 ذخیره</button>
+        <a asp-action="Index" class="btn" style="background:#95a5a6;color:white">انصراف</a>
+    </form>
+</div>

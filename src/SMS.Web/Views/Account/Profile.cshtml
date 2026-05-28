@@ -1,0 +1,62 @@
+@using SMS.Shared.Helpers
+@model ProfileDto
+@{ ViewData["Title"] = "پروفایل من"; }
+
+<div class="page-header">
+    <div>
+        <h1>👤 پروفایل من</h1>
+        <div class="subtitle">@Model.FullName</div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2>اطلاعات کاربری</h2>
+    </div>
+    <div class="card-body">
+        <form method="post" asp-action="UpdateProfile">
+            @Html.AntiForgeryToken()
+            <div class="form-row">
+                <div class="form-group">
+                    <label>نام <span class="required">*</span></label>
+                    <input name="firstName" value="@Model.FirstName" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>نام خانوادگی <span class="required">*</span></label>
+                    <input name="lastName" value="@Model.LastName" class="form-control" required />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>موبایل</label>
+                    <input name="mobile" value="@Model.Mobile" class="form-control" placeholder="09xxxxxxxxx" />
+                </div>
+                <div class="form-group">
+                    <label>ایمیل</label>
+                    <input name="email" value="@Model.Email" class="form-control" type="email" />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>نام کاربری</label>
+                    <input value="@Model.Username" class="form-control" readonly />
+                </div>
+                <div class="form-group">
+                    <label>آخرین ورود</label>
+                    <input value="@PersianDate.ToPersianDateTime(Model.LastLoginAt)" class="form-control" readonly />
+                </div>
+            </div>
+            <div class="form-group">
+                <label>نقش‌ها</label>
+                <div>
+                    @foreach (var r in Model.Roles)
+                    {
+                        <span class="badge badge-info">@r</span>
+                    }
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">💾 ذخیره تغییرات</button>
+            <a asp-action="ChangePassword" class="btn btn-secondary">🔒 تغییر رمز عبور</a>
+        </form>
+    </div>
+</div>

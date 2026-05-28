@@ -1,0 +1,75 @@
+@using SMS.Shared.Helpers
+@model PagedResult<AuditLogDto>
+@{ ViewData["Title"] = "لاگ سیستم"; }
+
+<div class="page-header">
+    <h1>📋 لاگ تغییرات سیستم</h1>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="get" class="filters-bar">
+            <div class="form-group">
+                <label>نام موجودیت</label>
+                <input name="entityName" value="@ViewBag.EntityName" class="form-control" placeholder="مثلاً Student" />
+            </div>
+            <div class="form-group">
+                <label>عملیات</label>
+                <select name="action" class="form-control">
+                    <option value="">همه</option>
+                    <option value="Added" selected="@(ViewBag.Action as string == "Added")">افزودن</option>
+                    <option value="Modified" selected="@(ViewBag.Action as string == "Modified")">ویرایش</option>
+                    <option value="Deleted" selected="@(ViewBag.Action as string == "Deleted")">حذف</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>از تاریخ</label>
+                <input name="fromDate" value="@ViewBag.FromDate" class="form-control" placeholder="1404/01/01" style="width:130px" />
+            </div>
+            <div class="form-group">
+                <label>تا تاریخ</label>
+                <input name="toDate" value="@ViewBag.ToDate" class="form-control" placeholder="1404/12/29" style="width:130px" />
+            </div>
+            <button class="btn btn-primary">🔍</button>
+        </form>
+
+        <table class="data-table">
+            <thead><tr><th>زمان</th><th>کاربر</th><th>عملیات</th><th>موجودیت</th><th>شناسه</th><th>فیلدهای تغییر</th><th>IP</th><th></th></tr></thead>
+            <tbody>
+                @foreach (var a in Model.Items)
+                {
+                    <tr>
+                        <td>@PersianDate.ToPersianDateTime(a.CreatedAt)</td>
+                        <td>@a.Username</td>
+                        <td>
+                            @switch (a.Action)
+                            {
+                                case "Added": <span class="badge badge-success">افزودن</span> break;
+                                case "Modified": <span class="badge badge-warning">ویرایش</span> break;
+                                case "Deleted": <span class="badge badge-danger">حذف</span> break;
+                                default: <span class="badge badge-info">@a.Action</span> break;
+                            }
+                        </td>
+                        <td><code>@a.EntityName</code></td>
+                        <td>@a.EntityId</td>
+                        <td><small class="text-muted">@a.ChangedColumns</small></td>
+                        <td><small>@a.IpAddress</small></td>
+                        <td><a asp-action="Details" asp-route-id="@a.AuditId" class="btn btn-outline btn-sm">👁</a></td>
+                    </tr>
+                }
+                @if (!Model.Items.Any()) { <tr><td colspan="8" class="empty-state">رکوردی یافت نشد</td></tr> }
+            </tbody>
+        </table>
+
+        @if (Model.TotalPages > 1)
+        {
+            <div class="pagination">
+                @for (int i = Math.Max(1, Model.Page - 5); i <= Math.Min(Model.TotalPages, Model.Page + 5); i++)
+                {
+                    if (i == Model.Page) { <span class="active">@PersianDate.ToPersianDigits(i.ToString())</span> }
+                    else { <a asp-action="Index" asp-route-page="@i" asp-route-entityName="@ViewBag.EntityName" asp-route-action="@ViewBag.Action">@PersianDate.ToPersianDigits(i.ToString())</a> }
+                }
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,38 @@
+@using SMS.Shared.Helpers
+@model List<StudentAttendanceRow>
+@{ ViewData["Title"] = "حضور و غیاب من"; }
+
+<div class="page-header">
+    <h1>✅ تاریخچه حضور و غیاب</h1>
+    <a asp-action="Dashboard" asp-route-studentId="@ViewBag.StudentId" class="btn btn-secondary">بازگشت</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="get" class="filters-bar">
+            <input type="hidden" name="studentId" value="@ViewBag.StudentId" />
+            <div class="form-group"><label>از تاریخ (شمسی)</label><input name="fromDate" value="@ViewBag.FromDate" class="form-control" style="width:130px" /></div>
+            <div class="form-group"><label>تا تاریخ (شمسی)</label><input name="toDate" value="@ViewBag.ToDate" class="form-control" style="width:130px" /></div>
+            <button class="btn btn-primary">🔍 نمایش</button>
+        </form>
+
+        <table class="data-table">
+            <thead><tr><th>تاریخ</th><th>روز هفته</th><th>وضعیت</th><th>دقایق تاخیر</th><th>توضیح</th></tr></thead>
+            <tbody>
+                @foreach (var a in Model)
+                {
+                    <tr>
+                        <td>@PersianDate.ToPersian(a.AttendanceDate)</td>
+                        <td>@a.DayOfWeek</td>
+                        <td>
+                            <span class="badge" style="background:@(a.StatusColor ?? "#666"); color:white">@a.StatusName</span>
+                        </td>
+                        <td>@(a.TardyMinutes.HasValue ? PersianDate.ToPersianDigits(a.TardyMinutes.ToString()!) + " دقیقه" : "—")</td>
+                        <td>@a.Description</td>
+                    </tr>
+                }
+                @if (!Model.Any()) { <tr><td colspan="5" class="empty-state">رکوردی در این بازه ثبت نشده</td></tr> }
+            </tbody>
+        </table>
+    </div>
+</div>

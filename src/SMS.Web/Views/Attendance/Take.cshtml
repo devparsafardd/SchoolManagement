@@ -1,0 +1,86 @@
+@using SMS.Shared.Helpers
+@model TakeAttendanceDto
+@{
+    var classroom = ViewBag.Classroom as ClassroomDto;
+    var statuses = (List<AttendanceStatusDto>)ViewBag.Statuses;
+    ViewData["Title"] = "ثبت حضور و غیاب";
+}
+
+<div class="page-header">
+    <div>
+        <h1>✅ ثبت حضور و غیاب</h1>
+        <div class="subtitle">@classroom?.Name | @ViewBag.PersianDate</div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="get" class="filters-bar">
+            <input type="hidden" name="classroomId" value="@Model.ClassroomId" />
+            <div class="form-group">
+                <label>تاریخ (شمسی)</label>
+                <input name="date" value="@ViewBag.PersianDate" class="form-control" placeholder="1404/03/15" style="width:140px" />
+            </div>
+            <button class="btn btn-primary">مشاهده</button>
+        </form>
+    </div>
+</div>
+
+<form method="post" asp-action="Take">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="ClassroomId" />
+    <input type="hidden" asp-for="AttendanceDate" />
+    <input type="hidden" asp-for="ClassSubjectId" />
+
+    <div class="card">
+        <div class="card-header">
+            <h2>دانش‌آموزان (@PersianDate.ToPersianDigits(Model.Students.Count.ToString()))</h2>
+            <div>
+                <button type="button" class="btn btn-outline btn-sm" onclick="setAll(1)">✓ همه حاضر</button>
+                <button type="submit" class="btn btn-success">💾 ذخیره</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>#</th><th>کد</th><th>نام</th><th>وضعیت</th><th>دقیقه تاخیر</th><th>توضیحات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.Students.Count; i++)
+                    {
+                        var s = Model.Students[i];
+                        <tr>
+                            <td>@PersianDate.ToPersianDigits((i + 1).ToString())</td>
+                            <td><code>@s.StudentCode</code></td>
+                            <td><strong>@s.FullName</strong></td>
+                            <td>
+                                <input type="hidden" name="Students[@i].StudentId" value="@s.StudentId" />
+                                <select name="Students[@i].StatusId" class="form-control status-select" style="min-width:140px">
+                                    @foreach (var st in statuses)
+                                    {
+                                        var sel = st.StatusId == s.StatusId ? "selected" : "";
+                                        @Html.Raw($"<option value='{st.StatusId}' {sel}>{st.Name}</option>")
+                                    }
+                                </select>
+                            </td>
+                            <td>
+                                <input name="Students[@i].TardyMinutes" value="@s.TardyMinutes" type="number" class="form-control" style="width:80px" />
+                            </td>
+                            <td>
+                                <input name="Students[@i].Description" value="@s.Description" class="form-control" />
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</form>
+
+<script>
+    function setAll(statusId) {
+        document.querySelectorAll('.status-select').forEach(s => s.value = statusId);
+    }
+</script>

@@ -1,0 +1,106 @@
+@using SMS.Shared.Helpers
+@model PagedResult<InvoiceDto>
+@{ ViewData["Title"] = "مالی - فاکتورها"; }
+
+<div class="page-header">
+    <div>
+        <h1>💰 مالی</h1>
+        <div class="subtitle">@PersianDate.ToPersianDigits(Model.TotalCount.ToString()) فاکتور</div>
+    </div>
+    <div>
+        <a asp-action="FeeTypes" class="btn btn-outline">⚙ انواع شهریه</a>
+        <a asp-action="Create" class="btn btn-success">➕ صدور فاکتور</a>
+    </div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">کل بدهی</div>
+            <div class="stat-number">@PersianDate.ToPersianDigits(((decimal)ViewBag.TotalDebt).ToString("N0"))</div>
+            <div class="stat-trend text-muted">تومان</div>
+        </div>
+        <div class="stat-icon bg-danger">📉</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">کل وصول شده</div>
+            <div class="stat-number">@PersianDate.ToPersianDigits(((decimal)ViewBag.TotalCollected).ToString("N0"))</div>
+            <div class="stat-trend text-muted">تومان</div>
+        </div>
+        <div class="stat-icon bg-success">💵</div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="get" class="filters-bar">
+            <div class="form-group">
+                <label>مدرسه</label>
+                <select name="schoolId" class="form-control" onchange="this.form.submit()">
+                    <option value="">همه</option>
+                    @foreach (var s in (IEnumerable<SchoolDto>)ViewBag.Schools)
+                    {
+                        var sel = ViewBag.SchoolId != null && (int)ViewBag.SchoolId == s.SchoolId ? "selected" : "";
+                        @Html.Raw($"<option value='{s.SchoolId}' {sel}>{s.Name}</option>")
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label>وضعیت</label>
+                <select name="status" class="form-control">
+                    <option value="">همه</option>
+                    <option value="صادرشده" selected="@(ViewBag.Status as string == "صادرشده")">صادرشده</option>
+                    <option value="پرداخت ناقص" selected="@(ViewBag.Status as string == "پرداخت ناقص")">پرداخت ناقص</option>
+                    <option value="پرداخت‌شده" selected="@(ViewBag.Status as string == "پرداخت‌شده")">پرداخت‌شده</option>
+                </select>
+            </div>
+            <button class="btn btn-primary">🔍</button>
+        </form>
+
+        <table class="data-table">
+            <thead><tr><th>شماره</th><th>دانش‌آموز</th><th>نوع</th><th>مبلغ کل</th><th>پرداخت شده</th><th>باقی‌مانده</th><th>سررسید</th><th>وضعیت</th><th>عملیات</th></tr></thead>
+            <tbody>
+                @foreach (var i in Model.Items)
+                {
+                    <tr>
+                        <td><code>@i.InvoiceNumber</code></td>
+                        <td>
+                            <strong>@i.StudentName</strong><br />
+                            <small class="text-muted">@i.StudentCode</small>
+                        </td>
+                        <td>@i.FeeTypeName</td>
+                        <td>@PersianDate.ToPersianDigits(i.NetAmount.ToString("N0"))</td>
+                        <td class="text-success">@PersianDate.ToPersianDigits(i.PaidAmount.ToString("N0"))</td>
+                        <td class="text-danger">@PersianDate.ToPersianDigits(i.RemainingAmount.ToString("N0"))</td>
+                        <td>@(i.DueDate.HasValue ? PersianDate.ToPersian(i.DueDate.Value) : "-")</td>
+                        <td>
+                            @switch (i.Status)
+                            {
+                                case "پرداخت‌شده": <span class="badge badge-success">@i.Status</span> break;
+                                case "پرداخت ناقص": <span class="badge badge-warning">@i.Status</span> break;
+                                case "لغو": <span class="badge badge-secondary">@i.Status</span> break;
+                                default: <span class="badge badge-info">@i.Status</span> break;
+                            }
+                        </td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@i.InvoiceId" class="btn btn-primary btn-sm">💳 پرداخت</a>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Items.Any()) { <tr><td colspan="9" class="empty-state">فاکتوری یافت نشد</td></tr> }
+            </tbody>
+        </table>
+
+        @if (Model.TotalPages > 1)
+        {
+            <div class="pagination">
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    if (i == Model.Page) { <span class="active">@PersianDate.ToPersianDigits(i.ToString())</span> }
+                    else { <a asp-action="Index" asp-route-page="@i" asp-route-schoolId="@ViewBag.SchoolId" asp-route-status="@ViewBag.Status">@PersianDate.ToPersianDigits(i.ToString())</a> }
+                }
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,10 @@
+@{ ViewData["Title"] = "دسترسی غیرمجاز"; Layout = "_Layout"; }
+
+<div class="card" style="max-width: 500px; margin: 60px auto; text-align: center;">
+    <div class="card-body">
+        <div style="font-size: 64px; margin: 20px 0;">🚫</div>
+        <h2 style="color: var(--danger);">دسترسی غیرمجاز</h2>
+        <p class="text-muted">شما اجازه دسترسی به این بخش را ندارید.</p>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary">بازگشت به داشبورد</a>
+    </div>
+</div>

@@ -1,0 +1,50 @@
+@using SMS.Shared.Helpers
+@model List<AttendanceReportRow>
+@{
+    var classroom = ViewBag.Classroom as ClassroomDto;
+    ViewData["Title"] = "گزارش حضور و غیاب";
+}
+
+<div class="page-header">
+    <div>
+        <h1>📊 گزارش حضور و غیاب</h1>
+        <div class="subtitle">@classroom?.Name | از @ViewBag.FromDate تا @ViewBag.ToDate</div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="get" class="filters-bar">
+            <input type="hidden" name="classroomId" value="@classroom?.ClassroomId" />
+            <div class="form-group"><label>از تاریخ (شمسی)</label><input name="fromDate" value="@ViewBag.FromDate" class="form-control" style="width:130px" /></div>
+            <div class="form-group"><label>تا تاریخ (شمسی)</label><input name="toDate" value="@ViewBag.ToDate" class="form-control" style="width:130px" /></div>
+            <button class="btn btn-primary">🔍 نمایش</button>
+        </form>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>#</th><th>کد</th><th>نام</th>
+                    <th>حاضر</th><th>غایب غیرموجه</th><th>غایب موجه</th><th>تاخیر</th><th>مرخصی</th><th>کل غیبت</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    var r = Model[i];
+                    <tr>
+                        <td>@PersianDate.ToPersianDigits((i + 1).ToString())</td>
+                        <td><code>@r.StudentCode</code></td>
+                        <td><strong>@r.FullName</strong></td>
+                        <td><span class="badge badge-success">@PersianDate.ToPersianDigits(r.PresentCount.ToString())</span></td>
+                        <td><span class="badge badge-danger">@PersianDate.ToPersianDigits(r.UnexcusedAbsenceCount.ToString())</span></td>
+                        <td><span class="badge badge-warning">@PersianDate.ToPersianDigits(r.ExcusedAbsenceCount.ToString())</span></td>
+                        <td><span class="badge badge-warning">@PersianDate.ToPersianDigits(r.TardyCount.ToString())</span></td>
+                        <td>@PersianDate.ToPersianDigits(r.LeaveCount.ToString())</td>
+                        <td><strong>@PersianDate.ToPersianDigits(r.TotalAbsences.ToString())</strong></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

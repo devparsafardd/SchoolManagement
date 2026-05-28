@@ -1,0 +1,163 @@
+@{
+    var isAuthenticated = User.Identity?.IsAuthenticated ?? false;
+    var fullName = User.FindFirst("FullName")?.Value ?? User.Identity?.Name ?? "کاربر";
+    var initials = string.IsNullOrEmpty(fullName) ? "?" : fullName.Substring(0, Math.Min(2, fullName.Length));
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var isAdmin = User.IsInRole("SuperAdmin") || User.IsInRole("SchoolAdmin") || User.IsInRole("Principal");
+    var isAccountant = User.IsInRole("Accountant") || isAdmin;
+}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - سیستم مدیریت مدارس</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="@(isAuthenticated ? "" : "no-sidebar")">
+
+    @if (isAuthenticated)
+    {
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="sidebar-toggle" onclick="document.body.classList.toggle('sidebar-collapsed')" title="منو">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" />
+                    </svg>
+                </button>
+                <div class="brand">
+                    <span class="brand-icon">🎓</span>
+                    <span class="brand-text">سیستم مدیریت مدارس</span>
+                </div>
+            </div>
+            <div class="topbar-right">
+                <div class="user-menu" onclick="this.classList.toggle('open')">
+                    <div class="avatar">@initials</div>
+                    <div class="user-info">
+                        <div class="user-name">@fullName</div>
+                        <div class="user-role">@(User.IsInRole("SuperAdmin") ? "مدیر ارشد" : "کاربر")</div>
+                    </div>
+                    <div class="user-dropdown">
+                        <a asp-controller="Account" asp-action="Profile">👤 پروفایل من</a>
+                        <a asp-controller="Account" asp-action="ChangePassword">🔒 تغییر رمز عبور</a>
+                        <hr />
+                        <a asp-controller="Account" asp-action="Logout">🚪 خروج</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <aside class="sidebar">
+            <nav class="menu">
+                <a asp-controller="Home" asp-action="Index" class="menu-item @(currentController == "Home" ? "active" : "")">
+                    <span class="menu-icon">🏠</span><span class="menu-text">داشبورد</span>
+                </a>
+
+                <div class="menu-section">مدیریت پایه</div>
+                <a asp-controller="Schools" asp-action="Index" class="menu-item @(currentController == "Schools" ? "active" : "")">
+                    <span class="menu-icon">🏫</span><span class="menu-text">مدارس</span>
+                </a>
+                <a asp-controller="Classrooms" asp-action="Index" class="menu-item @(currentController == "Classrooms" ? "active" : "")">
+                    <span class="menu-icon">📚</span><span class="menu-text">کلاس‌ها</span>
+                </a>
+                <a asp-controller="Students" asp-action="Index" class="menu-item @(currentController == "Students" ? "active" : "")">
+                    <span class="menu-icon">👥</span><span class="menu-text">دانش‌آموزان</span>
+                </a>
+                <a asp-controller="Guardians" asp-action="Index" class="menu-item @(currentController == "Guardians" ? "active" : "")">
+                    <span class="menu-icon">👨‍👩‍👧</span><span class="menu-text">اولیا</span>
+                </a>
+                <a asp-controller="Staff" asp-action="Index" class="menu-item @(currentController == "Staff" ? "active" : "")">
+                    <span class="menu-icon">👨‍🏫</span><span class="menu-text">معلمان و کارکنان</span>
+                </a>
+
+                <div class="menu-section">آموزشی</div>
+                <a asp-controller="Subjects" asp-action="Index" class="menu-item @(currentController == "Subjects" || currentController == "ClassSubjects" ? "active" : "")">
+                    <span class="menu-icon">📖</span><span class="menu-text">دروس</span>
+                </a>
+                <a asp-controller="Attendance" asp-action="Index" class="menu-item @(currentController == "Attendance" ? "active" : "")">
+                    <span class="menu-icon">✅</span><span class="menu-text">حضور و غیاب</span>
+                </a>
+                <a asp-controller="Exams" asp-action="Browse" class="menu-item @(currentController == "Exams" ? "active" : "")">
+                    <span class="menu-icon">📝</span><span class="menu-text">آزمون و نمره</span>
+                </a>
+                <a asp-controller="Discipline" asp-action="Index" class="menu-item @(currentController == "Discipline" ? "active" : "")">
+                    <span class="menu-icon">⭐</span><span class="menu-text">انضباطی</span>
+                </a>
+                <a asp-controller="Reports" asp-action="Index" class="menu-item @(currentController == "Reports" ? "active" : "")">
+                    <span class="menu-icon">📋</span><span class="menu-text">کارنامه و گزارش</span>
+                </a>
+
+                @if (isAccountant)
+                {
+                    <div class="menu-section">مالی</div>
+                    <a asp-controller="Finance" asp-action="Index" class="menu-item @(currentController == "Finance" ? "active" : "")">
+                        <span class="menu-icon">💰</span><span class="menu-text">شهریه و فاکتور</span>
+                    </a>
+                }
+
+                <div class="menu-section">ارتباطات</div>
+                <a asp-controller="Announcements" asp-action="Index" class="menu-item @(currentController == "Announcements" ? "active" : "")">
+                    <span class="menu-icon">📢</span><span class="menu-text">اعلان‌ها</span>
+                </a>
+                <a asp-controller="Sms" asp-action="Index" class="menu-item @(currentController == "Sms" ? "active" : "")">
+                    <span class="menu-icon">📱</span><span class="menu-text">پیامک</span>
+                </a>
+
+                @if (isAdmin)
+                {
+                    <div class="menu-section">سیستم</div>
+                    <a asp-controller="AuditLog" asp-action="Index" class="menu-item @(currentController == "AuditLog" ? "active" : "")">
+                        <span class="menu-icon">📜</span><span class="menu-text">لاگ سیستم</span>
+                    </a>
+                    <a asp-controller="Settings" asp-action="Index" class="menu-item @(currentController == "Settings" ? "active" : "")">
+                        <span class="menu-icon">⚙</span><span class="menu-text">تنظیمات</span>
+                    </a>
+                }
+            </nav>
+            <div class="sidebar-footer">
+                <small>نسخه ۲.۰.۰ | @DateTime.Now.Year</small>
+            </div>
+        </aside>
+    }
+
+    <main class="main-content">
+        @if (TempData["Success"] is string ok)
+        {
+            <div class="alert alert-success alert-dismissible">
+                <span class="alert-icon">✓</span><span>@ok</span>
+                <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+            </div>
+        }
+        @if (TempData["Error"] is string err)
+        {
+            <div class="alert alert-danger alert-dismissible">
+                <span class="alert-icon">✗</span><span>@err</span>
+                <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+            </div>
+        }
+        @if (TempData["Info"] is string info)
+        {
+            <div class="alert alert-info alert-dismissible">
+                <span class="alert-icon">ℹ</span><span>@info</span>
+                <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+            </div>
+        }
+        @RenderBody()
+    </main>
+
+    <script>
+        document.addEventListener('click', function (e) {
+            var menu = document.querySelector('.user-menu');
+            if (menu && !menu.contains(e.target)) menu.classList.remove('open');
+        });
+        setTimeout(function () {
+            document.querySelectorAll('.alert-dismissible').forEach(function (a) {
+                a.style.transition = 'opacity .5s'; a.style.opacity = '0';
+                setTimeout(function () { a.remove(); }, 500);
+            });
+        }, 5000);
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

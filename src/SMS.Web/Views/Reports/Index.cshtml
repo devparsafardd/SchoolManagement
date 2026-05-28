@@ -1,0 +1,90 @@
+@using SMS.Shared.Helpers
+@{ ViewData["Title"] = "گزارش‌ها و کارنامه"; }
+
+<div class="page-header"><h1>📊 کارنامه‌ها</h1></div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="get" class="filters-bar">
+            <div class="form-group" style="flex:1">
+                <label>مدرسه</label>
+                <select name="schoolId" class="form-control" onchange="this.form.submit()">
+                    <option value="">انتخاب</option>
+                    @foreach (var s in (IEnumerable<SchoolDto>)ViewBag.Schools)
+                    {
+                        var sel = ViewBag.SchoolId != null && (int)ViewBag.SchoolId == s.SchoolId ? "selected" : "";
+                        @Html.Raw($"<option value='{s.SchoolId}' {sel}>{s.Name}</option>")
+                    }
+                </select>
+            </div>
+            @if (ViewBag.SchoolId != null)
+            {
+                <div class="form-group" style="flex:1">
+                    <label>کلاس</label>
+                    <select name="classroomId" class="form-control">
+                        <option value="">انتخاب</option>
+                        @foreach (var c in (List<ClassroomDto>)ViewBag.Classrooms)
+                        {
+                            var sel = ViewBag.ClassroomId != null && (int)ViewBag.ClassroomId == c.ClassroomId ? "selected" : "";
+                            @Html.Raw($"<option value='{c.ClassroomId}' {sel}>{c.Name} ({c.GradeName})</option>")
+                        }
+                    </select>
+                    <input type="hidden" name="schoolId" value="@ViewBag.SchoolId" />
+                </div>
+                <div class="form-group">
+                    <label>نوبت</label>
+                    <select name="termId" class="form-control">
+                        <option value="">انتخاب</option>
+                        @foreach (var t in (List<LookupDto>)ViewBag.Terms)
+                        {
+                            var sel = ViewBag.TermId != null && (int)ViewBag.TermId == t.Id ? "selected" : "";
+                            @Html.Raw($"<option value='{t.Id}' {sel}>{t.Name}</option>")
+                        }
+                    </select>
+                </div>
+                <button class="btn btn-primary">🔍 نمایش</button>
+            }
+        </form>
+
+        @if (ViewBag.Reports is List<StudentReportCardDto> reports && reports.Any())
+        {
+            <div style="margin-top:16px; display:flex; justify-content:space-between; align-items:center">
+                <h2>کارنامه‌های کلاس - @reports.First().ClassroomName</h2>
+                <form method="post" asp-action="CalculateGPAs" style="display:inline">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="classroomId" value="@ViewBag.ClassroomId" />
+                    <input type="hidden" name="termId" value="@ViewBag.TermId" />
+                    <button class="btn btn-success">🔄 محاسبه و ذخیره معدل‌ها</button>
+                </form>
+            </div>
+
+            <table class="data-table" style="margin-top:12px">
+                <thead><tr><th>رتبه</th><th>کد</th><th>نام</th><th>معدل</th><th>نمره انضباط</th><th>دروس قبول</th><th>دروس مردود</th><th>غیبت</th><th>تاخیر</th><th>عملیات</th></tr></thead>
+                <tbody>
+                    @foreach (var r in reports)
+                    {
+                        <tr>
+                            <td><strong>@PersianDate.ToPersianDigits((r.RankInClass ?? 0).ToString())</strong></td>
+                            <td><code>@r.StudentCode</code></td>
+                            <td><strong>@r.FullName</strong></td>
+                            <td><span class="badge @(r.GPA >= 17 ? "badge-success" : (r.GPA >= 10 ? "badge-warning" : "badge-danger"))">@PersianDate.ToPersianDigits((r.GPA ?? 0).ToString("0.00"))</span></td>
+                            <td>@PersianDate.ToPersianDigits((r.DisciplineScore ?? 0).ToString("0.##"))</td>
+                            <td class="text-success">@PersianDate.ToPersianDigits(r.PassedCount.ToString())</td>
+                            <td class="text-danger">@PersianDate.ToPersianDigits(r.FailedCount.ToString())</td>
+                            <td>@PersianDate.ToPersianDigits(r.TotalAbsences.ToString())</td>
+                            <td>@PersianDate.ToPersianDigits(r.TotalTardies.ToString())</td>
+                            <td>
+                                <a asp-action="Student" asp-route-studentId="@r.StudentId" asp-route-termId="@ViewBag.TermId" class="btn btn-primary btn-sm">👁</a>
+                                <a asp-action="Pdf" asp-route-studentId="@r.StudentId" asp-route-termId="@ViewBag.TermId" class="btn btn-outline btn-sm" target="_blank">📄 PDF</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else if (ViewBag.ClassroomId != null && ViewBag.TermId != null)
+        {
+            <div class="empty-state"><div class="empty-icon">📊</div><div class="empty-text">داده‌ای برای این کلاس و نوبت یافت نشد</div></div>
+        }
+    </div>
+</div>

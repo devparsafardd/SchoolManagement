@@ -1,0 +1,51 @@
+@using SMS.Shared.Helpers
+@model List<ExamDto>
+@{ ViewData["Title"] = "آزمون‌ها"; }
+
+<div class="page-header">
+    <div>
+        <h1>📝 آزمون‌های این درس</h1>
+        @if (Model.Any())
+        {
+            var first = Model.First();
+            <div class="subtitle">@first.ClassroomName | @first.SubjectName | معلم: @first.TeacherName</div>
+        }
+    </div>
+    <a asp-action="Create" asp-route-classSubjectId="@ViewBag.ClassSubjectId" class="btn btn-success">➕ آزمون جدید</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <table class="data-table">
+            <thead><tr><th>عنوان</th><th>نوع</th><th>نوبت</th><th>تاریخ</th><th>نمره کل</th><th>وزن</th><th>نمرات وارد شده</th><th>وضعیت</th><th>عملیات</th></tr></thead>
+            <tbody>
+                @foreach (var e in Model)
+                {
+                    <tr>
+                        <td><strong>@e.Title</strong></td>
+                        <td><span class="badge badge-info">@e.ExamTypeName</span></td>
+                        <td>@e.TermName</td>
+                        <td>@PersianDate.ToPersian(e.ExamDate)</td>
+                        <td>@e.MaxScore @(e.IsDescriptive ? "(توصیفی)" : "")</td>
+                        <td>@e.Weight</td>
+                        <td>@PersianDate.ToPersianDigits(e.ScoresEntered.ToString()) / @PersianDate.ToPersianDigits(e.TotalStudents.ToString())</td>
+                        <td>@(e.IsFinalized ? Html.Raw("<span class='badge badge-success'>نهایی</span>") : Html.Raw("<span class='badge badge-warning'>پیش‌نویس</span>"))</td>
+                        <td>
+                            <a asp-action="Scores" asp-route-id="@e.ExamId" class="btn btn-primary btn-sm">✏️ نمرات</a>
+                            @if (!e.IsFinalized)
+                            {
+                                <form method="post" asp-action="Delete" style="display:inline" onsubmit="return confirm('حذف شود؟');">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@e.ExamId" />
+                                    <input type="hidden" name="classSubjectId" value="@ViewBag.ClassSubjectId" />
+                                    <button class="btn btn-danger btn-sm">🗑</button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any()) { <tr><td colspan="9" class="empty-state">هنوز آزمونی ثبت نشده</td></tr> }
+            </tbody>
+        </table>
+    </div>
+</div>

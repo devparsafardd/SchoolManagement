@@ -1,0 +1,60 @@
+@model InvoiceCreateDto
+@{ ViewData["Title"] = "صدور فاکتور"; }
+
+<div class="page-header"><h1>➕ صدور فاکتور</h1></div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>شناسه دانش‌آموز *</label>
+                    <input asp-for="StudentId" class="form-control" type="number" required />
+                </div>
+                <div class="form-group">
+                    <label>نوع شهریه *</label>
+                    <select asp-for="FeeTypeId" class="form-control" id="feeType" required>
+                        <option value="">انتخاب</option>
+                        @foreach (var f in (List<FeeTypeDto>)ViewBag.FeeTypes)
+                        {
+                            if (f.IsActive)
+                            {
+                                <option value="@f.FeeTypeId" data-amount="@(f.DefaultAmount ?? 0)">@f.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>مبلغ (تومان) *</label>
+                    <input asp-for="Amount" id="amount" class="form-control" type="number" required />
+                </div>
+                <div class="form-group">
+                    <label>تخفیف (تومان)</label>
+                    <input asp-for="Discount" class="form-control" type="number" value="0" />
+                </div>
+                <div class="form-group">
+                    <label>تاریخ سررسید</label>
+                    <input asp-for="DueDate" class="form-control" type="date" />
+                </div>
+            </div>
+
+            <div class="form-group"><label>توضیحات</label><textarea asp-for="Description" class="form-control" rows="2"></textarea></div>
+
+            <button class="btn btn-success">💾 صدور</button>
+            <a asp-action="Index" class="btn btn-secondary">انصراف</a>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById('feeType').addEventListener('change', function () {
+        var amount = this.options[this.selectedIndex].dataset.amount;
+        if (amount && amount !== '0') document.getElementById('amount').value = amount;
+    });
+</script>

@@ -1,0 +1,32 @@
+@using SMS.Shared.Helpers
+@model AuditLogDto
+@{ ViewData["Title"] = "جزئیات لاگ"; }
+
+<div class="page-header"><h1>📋 جزئیات لاگ</h1></div>
+
+<div class="card">
+    <div class="card-body">
+        <table class="data-table">
+            <tr><th>زمان:</th><td>@PersianDate.ToPersianDateTime(Model.CreatedAt)</td></tr>
+            <tr><th>کاربر:</th><td>@Model.Username (#@Model.UserId)</td></tr>
+            <tr><th>عملیات:</th><td>@Model.Action</td></tr>
+            <tr><th>موجودیت:</th><td>@Model.EntityName</td></tr>
+            <tr><th>شناسه:</th><td>@Model.EntityId</td></tr>
+            <tr><th>فیلدهای تغییر:</th><td>@Model.ChangedColumns</td></tr>
+            <tr><th>IP:</th><td>@Model.IpAddress</td></tr>
+        </table>
+
+        @if (!string.IsNullOrEmpty(Model.OldValues))
+        {
+            <h3 class="section-title">مقادیر قبلی</h3>
+            <pre style="background:#fff5f5; padding:12px; border-radius:6px; overflow:auto; font-family:Consolas; font-size:12px">@Model.OldValues</pre>
+        }
+        @if (!string.IsNullOrEmpty(Model.NewValues))
+        {
+            <h3 class="section-title">مقادیر جدید</h3>
+            <pre style="background:#f0fdf4; padding:12px; border-radius:6px; overflow:auto; font-family:Consolas; font-size:12px">@Model.NewValues</pre>
+        }
+    </div>
+</div>
+
+<a asp-action="Index" class="btn btn-secondary">بازگشت</a>

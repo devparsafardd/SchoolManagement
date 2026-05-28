@@ -1,0 +1,120 @@
+@using SMS.Shared.Helpers
+@{
+    ViewData["Title"] = "داشبورد";
+    var today = PersianDate.ToPersianLong(DateTime.Now);
+}
+
+<div class="page-header">
+    <div>
+        <h1>داشبورد</h1>
+        <div class="subtitle">@today</div>
+    </div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">مدارس فعال</div>
+            <div class="stat-number">@PersianDate.ToPersianDigits(((int)ViewBag.SchoolCount).ToString())</div>
+        </div>
+        <div class="stat-icon bg-primary">🏫</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">دانش‌آموزان</div>
+            <div class="stat-number">@PersianDate.ToPersianDigits(((int)ViewBag.StudentCount).ToString())</div>
+        </div>
+        <div class="stat-icon bg-success">👥</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">کلاس‌ها</div>
+            <div class="stat-number">@PersianDate.ToPersianDigits(((int)ViewBag.ClassroomCount).ToString())</div>
+        </div>
+        <div class="stat-icon bg-warning">📚</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">معلمان</div>
+            <div class="stat-number">@PersianDate.ToPersianDigits(((int)ViewBag.StaffCount).ToString())</div>
+        </div>
+        <div class="stat-icon bg-danger">👨‍🏫</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">دروس تعریف شده</div>
+            <div class="stat-number">@PersianDate.ToPersianDigits(((int)ViewBag.SubjectCount).ToString())</div>
+        </div>
+        <div class="stat-icon bg-primary">📖</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">آزمون‌ها</div>
+            <div class="stat-number">@PersianDate.ToPersianDigits(((int)ViewBag.ExamCount).ToString())</div>
+        </div>
+        <div class="stat-icon bg-success">📝</div>
+    </div>
+</div>
+
+<div class="row" style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+    <div class="card">
+        <div class="card-header"><h2>✅ حضور و غیاب امروز</h2></div>
+        <div class="card-body">
+            <div style="display:flex; gap:20px;">
+                <div style="text-align:center; flex:1; padding:16px; background:#d1f9ed; border-radius:8px;">
+                    <div style="font-size:32px; font-weight:bold; color:#047857;">
+                        @PersianDate.ToPersianDigits(((int)ViewBag.TodayAttendanceCount).ToString())
+                    </div>
+                    <div style="font-size:13px; color:#555;">ثبت کل</div>
+                </div>
+                <div style="text-align:center; flex:1; padding:16px; background:#fde2e9; border-radius:8px;">
+                    <div style="font-size:32px; font-weight:bold; color:#be123c;">
+                        @PersianDate.ToPersianDigits(((int)ViewBag.TodayAbsentCount).ToString())
+                    </div>
+                    <div style="font-size:13px; color:#555;">غایب</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header"><h2>⭐ انضباطی هفته اخیر</h2></div>
+        <div class="card-body">
+            <div style="display:flex; gap:20px;">
+                <div style="text-align:center; flex:1; padding:16px; background:#d1f9ed; border-radius:8px;">
+                    <div style="font-size:32px; font-weight:bold; color:#047857;">
+                        @PersianDate.ToPersianDigits(((int)ViewBag.WeekRewardCount).ToString())
+                    </div>
+                    <div style="font-size:13px; color:#555;">تشویق</div>
+                </div>
+                <div style="text-align:center; flex:1; padding:16px; background:#fde2e9; border-radius:8px;">
+                    <div style="font-size:32px; font-weight:bold; color:#be123c;">
+                        @PersianDate.ToPersianDigits(((int)ViewBag.WeekPunishmentCount).ToString())
+                    </div>
+                    <div style="font-size:13px; color:#555;">تنبیه</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header"><h2>🚀 دسترسی سریع</h2></div>
+    <div class="card-body">
+        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            <a asp-controller="Schools" asp-action="Create" class="btn btn-outline">➕ مدرسه</a>
+            <a asp-controller="Students" asp-action="Create" class="btn btn-outline">➕ دانش‌آموز</a>
+            <a asp-controller="Staff" asp-action="Create" class="btn btn-outline">➕ کارمند</a>
+            <a asp-controller="Classrooms" asp-action="Create" class="btn btn-outline">➕ کلاس</a>
+            <a asp-controller="Subjects" asp-action="Create" class="btn btn-outline">➕ درس</a>
+            <a asp-controller="Attendance" asp-action="Index" class="btn btn-primary">✅ ثبت حضور</a>
+            <a asp-controller="Exams" asp-action="Browse" class="btn btn-primary">📝 آزمون</a>
+            <a asp-controller="Discipline" asp-action="Create" class="btn btn-primary">⭐ تشویق/تنبیه</a>
+        </div>
+    </div>
+</div>

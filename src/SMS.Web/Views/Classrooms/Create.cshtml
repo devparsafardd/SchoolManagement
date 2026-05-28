@@ -1,0 +1,75 @@
+@model ClassroomCreateDto
+@{ ViewData["Title"] = "افزودن کلاس"; }
+
+<div class="card">
+    <div class="card-header"><h2>➕ افزودن کلاس جدید</h2></div>
+    <form method="post">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label>مدرسه *</label>
+                    <select asp-for="SchoolId" class="form-control">
+                        <option value="">انتخاب کنید...</option>
+                        @foreach (var s in (IEnumerable<SchoolDto>)ViewBag.Schools)
+                        {
+                            <option value="@s.SchoolId">@s.Name</option>
+                        }
+                    </select>
+                    <span asp-validation-for="SchoolId" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label>سال تحصیلی *</label>
+                    <select asp-for="AcademicYearId" class="form-control">
+                        @{ var active = (LookupDto?)ViewBag.ActiveYear; }
+                        @foreach (var a in (List<LookupDto>)ViewBag.AcademicYears)
+                        {
+                            var sel = active?.Id == a.Id ? "selected" : "";
+                            @Html.Raw($"<option value='{a.Id}' {sel}>{a.Name}</option>")
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label>پایه *</label>
+                    <select asp-for="GradeId" class="form-control">
+                        <option value="">انتخاب کنید...</option>
+                        @foreach (var g in (List<GradeLookupDto>)ViewBag.Grades)
+                        {
+                            <option value="@g.Id">@g.Name @(g.IsDescriptive ? " (توصیفی)" : "")</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label>نام کلاس * (مثلاً "الف" یا "۲۰۱")</label>
+                    <input asp-for="Name" class="form-control" />
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label>ظرفیت</label>
+                    <input asp-for="Capacity" class="form-control" type="number" />
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label>شماره اتاق</label>
+                    <input asp-for="RoomNumber" class="form-control" />
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-success">💾 ذخیره</button>
+        <a asp-action="Index" class="btn" style="background:#95a5a6;color:white">انصراف</a>
+    </form>
+</div>

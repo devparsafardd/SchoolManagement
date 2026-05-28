@@ -1,0 +1,26 @@
+@model SchoolDto
+@{ ViewData["Title"] = "مشاهده مدرسه"; }
+
+<div class="card">
+    <div class="card-header">
+        <h2>🏫 @Model.Name</h2>
+        <a asp-action="Edit" asp-route-id="@Model.SchoolId" class="btn btn-primary">✏️ ویرایش</a>
+    </div>
+    <table>
+        <tr><th style="width:200px">کد مدرسه:</th><td>@Model.Code</td></tr>
+        <tr><th>استان / شهر:</th><td>@Model.ProvinceName / @Model.CityName</td></tr>
+        <tr><th>مقطع:</th><td>@Model.EducationLevelName</td></tr>
+        <tr><th>جنسیت:</th><td>@Model.GenderText</td></tr>
+        <tr><th>نوع مدرسه:</th><td>@Model.SchoolType</td></tr>
+        <tr><th>تلفن:</th><td>@Model.Phone</td></tr>
+        <tr><th>آدرس:</th><td>@Model.Address</td></tr>
+        <tr><th>وضعیت:</th><td>
+            @if (Model.IsActive) {<span class="badge badge-success">فعال</span>}
+            else {<span class="badge badge-secondary">غیرفعال</span>}
+        </td></tr>
+    </table>
+    <br />
+    <a asp-controller="Classrooms" asp-action="Index" asp-route-schoolId="@Model.SchoolId" class="btn btn-primary">📚 مشاهده کلاس‌ها</a>
+    <a asp-controller="Students" asp-action="Index" asp-route-schoolId="@Model.SchoolId" class="btn btn-primary">👥 دانش‌آموزان</a>
+    <a asp-action="Index" class="btn" style="background:#95a5a6;color:white">بازگشت</a>
+</div>

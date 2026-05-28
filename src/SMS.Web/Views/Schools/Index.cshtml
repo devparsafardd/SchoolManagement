@@ -1,0 +1,101 @@
+@using SMS.Shared.Helpers
+@model PagedResult<SchoolDto>
+@{ ViewData["Title"] = "مدارس"; }
+
+<div class="page-header">
+    <div>
+        <h1>🏫 مدیریت مدارس</h1>
+        <div class="subtitle">مجموع: @PersianDate.ToPersianDigits(Model.TotalCount.ToString()) مدرسه</div>
+    </div>
+    <div>
+        <a asp-action="ExportExcel" asp-route-search="@ViewBag.Search" class="btn btn-outline">📥 خروجی Excel</a>
+        <a asp-action="Create" class="btn btn-success">➕ افزودن مدرسه</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="get" class="filters-bar">
+            <div class="form-group" style="flex:1; min-width: 240px;">
+                <label>جستجو</label>
+                <input name="search" value="@ViewBag.Search" class="form-control" placeholder="نام یا کد مدرسه..." />
+            </div>
+            <button class="btn btn-primary">🔍 جستجو</button>
+            @if (!string.IsNullOrEmpty(ViewBag.Search as string))
+            {
+                <a asp-action="Index" class="btn btn-outline">پاک کردن</a>
+            }
+        </form>
+
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>نام مدرسه</th>
+                        <th>کد</th>
+                        <th>شهر</th>
+                        <th>مقطع</th>
+                        <th>جنسیت</th>
+                        <th>کلاس‌ها</th>
+                        <th>دانش‌آموزان</th>
+                        <th>وضعیت</th>
+                        <th>عملیات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var s in Model.Items)
+                    {
+                        <tr>
+                            <td><strong>@s.Name</strong></td>
+                            <td><code>@s.Code</code></td>
+                            <td>@s.CityName <small class="text-muted">(@s.ProvinceName)</small></td>
+                            <td><span class="badge badge-info">@s.EducationLevelName</span></td>
+                            <td>@s.GenderText</td>
+                            <td>@PersianDate.ToPersianDigits(s.ClassroomCount.ToString())</td>
+                            <td>@PersianDate.ToPersianDigits(s.StudentCount.ToString())</td>
+                            <td>
+                                @if (s.IsActive)
+                                {<span class="badge badge-success">فعال</span>}
+                                else
+                                {<span class="badge badge-secondary">غیرفعال</span>}
+                            </td>
+                            <td>
+                                <a asp-action="Details" asp-route-id="@s.SchoolId" class="btn btn-outline btn-sm">👁</a>
+                                <a asp-action="Edit" asp-route-id="@s.SchoolId" class="btn btn-primary btn-sm">✏️</a>
+                                <form method="post" asp-action="Delete" asp-route-id="@s.SchoolId" style="display:inline" onsubmit="return confirm('حذف شود؟');">
+                                    @Html.AntiForgeryToken()
+                                    <button class="btn btn-danger btn-sm">🗑</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Items.Any())
+                    {
+                        <tr>
+                            <td colspan="9">
+                                <div class="empty-state">
+                                    <div class="empty-icon">🔍</div>
+                                    <div class="empty-text">هیچ مدرسه‌ای یافت نشد</div>
+                                    <a asp-action="Create" class="btn btn-primary">افزودن اولین مدرسه</a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (Model.TotalPages > 1)
+        {
+            <div class="pagination">
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    if (i == Model.Page)
+                    { <span class="active">@PersianDate.ToPersianDigits(i.ToString())</span> }
+                    else
+                    { <a asp-action="Index" asp-route-page="@i" asp-route-search="@ViewBag.Search">@PersianDate.ToPersianDigits(i.ToString())</a> }
+                }
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,31 @@
+@using SMS.Shared.Helpers
+@model List<AnnouncementDto>
+@{ ViewData["Title"] = "اعلان‌ها"; }
+
+<div class="page-header">
+    <h1>📢 اعلان‌های مدرسه</h1>
+    <a asp-action="Dashboard" asp-route-studentId="@ViewBag.StudentId" class="btn btn-secondary">بازگشت</a>
+</div>
+
+@foreach (var a in Model)
+{
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <h2>📌 @a.Title</h2>
+                <small class="text-muted">@PersianDate.ToPersianDateTime(a.PublishDate)</small>
+            </div>
+        </div>
+        <div class="card-body">
+            <p style="white-space: pre-wrap">@a.Body</p>
+        </div>
+    </div>
+}
+
+@if (!Model.Any())
+{
+    <div class="card"><div class="card-body empty-state">
+        <div class="empty-icon">📭</div>
+        <div class="empty-text">اعلانی موجود نیست</div>
+    </div></div>
+}

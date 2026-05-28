@@ -1,0 +1,61 @@
+@model SendBulkSmsDto
+@{ ViewData["Title"] = "ارسال پیامک گروهی"; }
+
+<div class="page-header"><h1>📢 ارسال پیامک گروهی</h1></div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="get" class="filters-bar" style="margin-bottom:16px">
+            <div class="form-group" style="flex:1">
+                <label>مدرسه</label>
+                <select name="schoolId" class="form-control" onchange="this.form.submit()">
+                    <option value="">انتخاب</option>
+                    @foreach (var s in (IEnumerable<SchoolDto>)ViewBag.Schools)
+                    {
+                        var sel = ViewBag.SchoolId != null && (int)ViewBag.SchoolId == s.SchoolId ? "selected" : "";
+                        @Html.Raw($"<option value='{s.SchoolId}' {sel}>{s.Name}</option>")
+                    }
+                </select>
+            </div>
+        </form>
+
+        <form method="post">
+            @Html.AntiForgeryToken()
+            <div class="form-row">
+                <div class="form-group">
+                    <label>مدرسه</label>
+                    <input asp-for="SchoolId" value="@ViewBag.SchoolId" type="hidden" />
+                    <input value="@((ViewBag.Schools as IEnumerable<SchoolDto>)?.FirstOrDefault(s => ViewBag.SchoolId != null && s.SchoolId == (int)ViewBag.SchoolId)?.Name ?? "همه")" class="form-control" readonly />
+                </div>
+                <div class="form-group">
+                    <label>کلاس (اختیاری)</label>
+                    <select asp-for="ClassroomId" class="form-control">
+                        <option value="">همه کلاس‌های مدرسه</option>
+                        @foreach (var c in (List<ClassroomDto>)ViewBag.Classrooms)
+                        {
+                            <option value="@c.ClassroomId">@c.Name - @c.GradeName</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>مخاطب</label>
+                    <select asp-for="Audience" class="form-control">
+                        <option value="Parents">اولیا (سرپرست اصلی)</option>
+                        <option value="Students">دانش‌آموزان</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>متن پیامک *</label>
+                <textarea asp-for="Text" class="form-control" rows="5" required maxlength="500"></textarea>
+                <small class="text-muted">می‌توانید از متغیرها استفاده کنید: {نام}، {کد}</small>
+            </div>
+
+            <div class="alert alert-warning">⚠ این عملیات پیامک به همه مخاطبان فیلتر شده ارسال می‌کند</div>
+
+            <button class="btn btn-success">📤 ارسال گروهی</button>
+            <a asp-action="Index" class="btn btn-secondary">انصراف</a>
+        </form>
+    </div>
+</div>

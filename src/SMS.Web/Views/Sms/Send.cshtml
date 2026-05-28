@@ -1,0 +1,16 @@
+@model SendSmsDto
+@{ ViewData["Title"] = "ارسال پیامک"; }
+
+<div class="page-header"><h1>📱 ارسال پیامک تک</h1></div>
+
+<div class="card" style="max-width:600px">
+    <div class="card-body">
+        <form method="post">
+            @Html.AntiForgeryToken()
+            <div class="form-group"><label>شماره موبایل *</label><input asp-for="Mobile" class="form-control" placeholder="09xxxxxxxxx" required /></div>
+            <div class="form-group"><label>متن پیامک *</label><textarea asp-for="Text" class="form-control" rows="5" required maxlength="500"></textarea></div>
+            <button class="btn btn-success">📤 ارسال</button>
+            <a asp-action="Index" class="btn btn-secondary">انصراف</a>
+        </form>
+    </div>
+</div>

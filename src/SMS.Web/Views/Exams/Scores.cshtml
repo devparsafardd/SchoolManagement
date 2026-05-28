@@ -1,0 +1,98 @@
+@using SMS.Shared.Helpers
+@model EnterScoresDto
+@{
+    var exam = (ExamDto)ViewBag.Exam;
+    var scales = (List<GradeScaleDto>)ViewBag.GradeScales;
+    var currentScale = exam.IsDescriptive && exam.GradeScaleId.HasValue
+        ? scales.FirstOrDefault(s => s.GradeScaleId == exam.GradeScaleId) : null;
+    ViewData["Title"] = "ورود نمرات";
+}
+
+<div class="page-header">
+    <div>
+        <h1>📝 ورود نمرات: @exam.Title</h1>
+        <div class="subtitle">
+            @exam.ClassroomName | @exam.SubjectName | @exam.ExamTypeName | @PersianDate.ToPersian(exam.ExamDate)
+            @if (exam.IsDescriptive) {<span class="badge badge-info">توصیفی</span>} else {<span class="badge badge-secondary">عددی (نمره کل: @exam.MaxScore)</span>}
+        </div>
+    </div>
+    <div>
+        @if (!exam.IsFinalized)
+        {
+            <form method="post" asp-action="Finalize" style="display:inline" onsubmit="return confirm('نهایی شود؟ بعد از این قابل تغییر نخواهد بود.');">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@exam.ExamId" />
+                <input type="hidden" name="classSubjectId" value="@exam.ClassSubjectId" />
+                <button class="btn btn-danger">🔒 نهایی‌سازی</button>
+            </form>
+        }
+        else
+        {
+            <span class="badge badge-success" style="padding:8px 14px;font-size:13px">🔒 نهایی شده</span>
+        }
+        <a asp-action="Index" asp-route-classSubjectId="@exam.ClassSubjectId" class="btn btn-secondary">بازگشت</a>
+    </div>
+</div>
+
+<form method="post" asp-action="Scores">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="ExamId" />
+
+    <div class="card">
+        <div class="card-header"><h2>دانش‌آموزان</h2>
+            @if (!exam.IsFinalized)
+            {
+                <button type="submit" class="btn btn-success">💾 ذخیره نمرات</button>
+            }
+        </div>
+        <div class="card-body">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>#</th><th>کد</th><th>نام</th>
+                        @if (exam.IsDescriptive) { <th>درجه</th> } else { <th>نمره (از @exam.MaxScore)</th> }
+                        <th>غایب</th><th>معاف</th><th>توضیح</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.Scores.Count; i++)
+                    {
+                        var r = Model.Scores[i];
+                        <tr>
+                            <td>@PersianDate.ToPersianDigits((i + 1).ToString())</td>
+                            <td><code>@r.StudentCode</code></td>
+                            <td><strong>@r.FullName</strong></td>
+                            <td>
+                                <input type="hidden" name="Scores[@i].StudentId" value="@r.StudentId" />
+                                @if (exam.IsDescriptive)
+                                {
+                                    <select name="Scores[@i].DescriptiveScaleItemId" class="form-control" @(exam.IsFinalized ? "disabled" : "")>
+                                        <option value="">---</option>
+                                        @if (currentScale != null)
+                                        {
+                                            foreach (var item in currentScale.Items)
+                                            {
+                                                var sel = r.DescriptiveScaleItemId == item.GradeScaleItemId ? "selected" : "";
+                                                @Html.Raw($"<option value='{item.GradeScaleItemId}' {sel}>{item.Label}</option>")
+                                            }
+                                        }
+                                    </select>
+                                }
+                                else
+                                {
+                                    <input name="Scores[@i].NumericScore" value="@(r.NumericScore?.ToString("0.##"))"
+                                           type="number" step="0.25" min="0" max="@exam.MaxScore"
+                                           class="form-control" style="width:90px;text-align:center"
+                                           @(exam.IsFinalized ? "disabled" : "") />
+                                }
+                            </td>
+                            <td><input type="checkbox" name="Scores[@i].IsAbsent" value="true" @(r.IsAbsent ? "checked" : "") @(exam.IsFinalized ? "disabled" : "") /></td>
+                            <td><input type="checkbox" name="Scores[@i].IsExempt" value="true" @(r.IsExempt ? "checked" : "") @(exam.IsFinalized ? "disabled" : "") /></td>
+                            <td><input name="Scores[@i].Comment" value="@r.Comment" class="form-control" @(exam.IsFinalized ? "disabled" : "") /></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</form>

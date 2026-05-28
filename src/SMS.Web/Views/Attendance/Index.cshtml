@@ -1,0 +1,50 @@
+@using SMS.Shared.Helpers
+@{ ViewData["Title"] = "حضور و غیاب"; }
+
+<div class="page-header">
+    <div>
+        <h1>✅ حضور و غیاب</h1>
+        <div class="subtitle">انتخاب کلاس برای ثبت یا گزارش</div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="get" class="filters-bar">
+            <div class="form-group" style="flex:1">
+                <label>مدرسه</label>
+                <select name="schoolId" class="form-control" onchange="this.form.submit()">
+                    <option value="">انتخاب مدرسه</option>
+                    @foreach (var s in (IEnumerable<SchoolDto>)ViewBag.Schools)
+                    {
+                        var sel = ViewBag.SchoolId != null && (int)ViewBag.SchoolId == s.SchoolId ? "selected" : "";
+                        @Html.Raw($"<option value='{s.SchoolId}' {sel}>{s.Name}</option>")
+                    }
+                </select>
+            </div>
+        </form>
+
+        @if (ViewBag.Classrooms is List<ClassroomDto> classes && classes.Any())
+        {
+            <div class="table-responsive" style="margin-top:16px">
+                <table class="data-table">
+                    <thead><tr><th>کلاس</th><th>پایه</th><th>دانش‌آموزان</th><th>عملیات</th></tr></thead>
+                    <tbody>
+                        @foreach (var c in classes)
+                        {
+                            <tr>
+                                <td><strong>@c.Name</strong></td>
+                                <td>@c.GradeName</td>
+                                <td>@PersianDate.ToPersianDigits(c.CurrentStudentCount.ToString())</td>
+                                <td>
+                                    <a asp-action="Take" asp-route-classroomId="@c.ClassroomId" class="btn btn-primary btn-sm">✓ ثبت حضور</a>
+                                    <a asp-action="Report" asp-route-classroomId="@c.ClassroomId" class="btn btn-outline btn-sm">📊 گزارش</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

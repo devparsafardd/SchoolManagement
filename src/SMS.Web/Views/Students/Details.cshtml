@@ -1,0 +1,132 @@
+@using SMS.Shared.Helpers
+@model StudentDto
+@{ ViewData["Title"] = "مشخصات دانش‌آموز"; }
+
+<div class="page-header">
+    <div>
+        <h1>👤 @Model.FullName</h1>
+        <div class="subtitle">@Model.StudentCode | @Model.CurrentClassName</div>
+    </div>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.StudentId" class="btn btn-primary">✏️ ویرایش</a>
+        <a asp-controller="Discipline" asp-action="Create" asp-route-studentId="@Model.StudentId" class="btn btn-outline">⭐ ثبت انضباطی</a>
+        <a asp-controller="Finance" asp-action="Create" asp-route-studentId="@Model.StudentId" class="btn btn-outline">💰 صدور فاکتور</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header"><h2>اطلاعات شخصی</h2></div>
+    <div class="card-body">
+        <table class="data-table">
+            <tr><th>کد دانش‌آموزی:</th><td>@Model.StudentCode</td>
+                <th>نام پدر:</th><td>@Model.FatherName</td></tr>
+            <tr><th>کد ملی:</th><td>@Model.NationalCode</td>
+                <th>جنسیت:</th><td>@(Model.Gender == "M" ? "پسر" : "دختر")</td></tr>
+            <tr><th>تاریخ تولد:</th><td>@PersianDate.ToPersian(Model.BirthDate)</td>
+                <th>موبایل:</th><td>@Model.Mobile</td></tr>
+            <tr><th>گروه خونی:</th><td>@Model.BloodType</td>
+                <th>کلاس فعلی:</th><td>@Model.CurrentClassName</td></tr>
+            <tr><th>مدرسه:</th><td colspan="3">@Model.CurrentSchoolName</td></tr>
+            <tr><th>آدرس:</th><td colspan="3">@Model.Address</td></tr>
+        </table>
+    </div>
+</div>
+
+<!-- بخش حساب کاربری -->
+<div class="card">
+    <div class="card-header"><h2>🔐 حساب کاربری دانش‌آموز</h2></div>
+    <div class="card-body">
+        @if (Model.UserId.HasValue)
+        {
+            <table class="data-table">
+                <tr>
+                    <th>نام کاربری:</th>
+                    <td><code style="font-size:14px">@Model.Username</code></td>
+                    <th>وضعیت:</th>
+                    <td>
+                        @if (Model.IsUserLocked)
+                        {<span class="badge badge-danger">قفل شده</span>}
+                        else
+                        {<span class="badge badge-success">فعال</span>}
+                    </td>
+                </tr>
+            </table>
+            <div style="margin-top:12px">
+                <form method="post" asp-controller="UserAccounts" asp-action="ResetPassword" style="display:inline" onsubmit="return confirm('رمز ریست شود؟');">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="userId" value="@Model.UserId" />
+                    <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                    <button class="btn btn-warning btn-sm">🔄 ریست رمز عبور</button>
+                </form>
+                <form method="post" asp-controller="UserAccounts" asp-action="ToggleLock" style="display:inline">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="userId" value="@Model.UserId" />
+                    <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                    <button class="btn btn-outline btn-sm">@(Model.IsUserLocked ? "🔓 باز کردن قفل" : "🔒 قفل کردن")</button>
+                </form>
+            </div>
+            <div class="alert alert-info" style="margin-top:12px">
+                💡 دانش‌آموز با این حساب می‌تواند به <strong>پنل دانش‌آموز</strong> وارد شود و نمرات، حضور و غیاب و کارنامه خود را مشاهده کند.
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-warning">⚠ هنوز حساب کاربری برای این دانش‌آموز ساخته نشده</div>
+            <form method="post" asp-controller="UserAccounts" asp-action="Create" class="filters-bar">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="personId" value="@Model.PersonId" />
+                <input type="hidden" name="role" value="Student" />
+                <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                <div class="form-group">
+                    <label>نام کاربری</label>
+                    <input name="username" value="@Model.StudentCode" class="form-control" required minlength="4" />
+                    <small class="text-muted">پیش‌فرض: کد دانش‌آموزی</small>
+                </div>
+                <div class="form-group">
+                    <label>رمز عبور</label>
+                    <input name="password" value="Student@123" type="text" class="form-control" required minlength="6" />
+                </div>
+                <button class="btn btn-success">➕ ایجاد حساب</button>
+            </form>
+        }
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2>👨‍👩‍👧 اولیا و سرپرستان</h2>
+        <a asp-controller="Guardians" asp-action="Create" asp-route-studentId="@Model.StudentId" class="btn btn-success btn-sm">➕ افزودن ولی</a>
+    </div>
+    <div class="card-body">
+        <table class="data-table">
+            <thead><tr><th>نام</th><th>نسبت</th><th>موبایل</th><th>سرپرست اصلی</th><th>حق حضانت</th><th>اجازه تحویل</th><th></th></tr></thead>
+            <tbody>
+                @foreach (var g in (List<StudentGuardianDto>)ViewBag.Guardians)
+                {
+                    <tr>
+                        <td><strong>@g.GuardianName</strong></td>
+                        <td>@g.Relationship</td>
+                        <td>@g.Mobile</td>
+                        <td>@(g.IsPrimary ? Html.Raw("<span class='badge badge-success'>✓</span>") : Html.Raw("—"))</td>
+                        <td>@(g.HasCustody ? "✓" : "—")</td>
+                        <td>@(g.CanPickup ? "✓" : "—")</td>
+                        <td>
+                            <form method="post" asp-controller="Guardians" asp-action="Unassign" style="display:inline" onsubmit="return confirm('حذف ارتباط؟');">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="studentId" value="@Model.StudentId" />
+                                <input type="hidden" name="guardianId" value="@g.GuardianId" />
+                                <button class="btn btn-danger btn-sm">🗑</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                @if (!((List<StudentGuardianDto>)ViewBag.Guardians).Any()) { <tr><td colspan="7" class="empty-state">ولی‌ای ثبت نشده. اگر ولی حساب کاربری بسازد می‌تواند گزارشات فرزند را ببیند.</td></tr> }
+            </tbody>
+        </table>
+        <div class="alert alert-info" style="margin-top:8px">
+            💡 برای اینکه ولی بتواند گزارشات این دانش‌آموز را در <strong>پنل ولی</strong> ببیند، ابتدا ولی را ثبت کنید سپس از صفحه ولی، برایش حساب کاربری بسازید.
+        </div>
+    </div>
+</div>
+
+<a asp-action="Index" class="btn btn-secondary">بازگشت</a>

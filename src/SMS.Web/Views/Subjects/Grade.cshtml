@@ -1,0 +1,83 @@
+@model List<GradeSubjectDto>
+@{ ViewData["Title"] = "دروس پایه " + ViewBag.GradeName; }
+
+<div class="page-header">
+    <div>
+        <h1>📚 دروس پایه: @ViewBag.GradeName</h1>
+        <div class="subtitle">تعداد دروس: @Model.Count</div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header"><h2>تخصیص درس جدید به این پایه</h2></div>
+    <div class="card-body">
+        <form method="post" asp-action="AddToGrade" class="filters-bar">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="gradeId" value="@ViewBag.GradeId" />
+            <div class="form-group">
+                <label>درس</label>
+                <select name="subjectId" class="form-control" required style="min-width:200px">
+                    <option value="">انتخاب درس</option>
+                    @foreach (var s in (List<SubjectDto>)ViewBag.AllSubjects)
+                    {
+                        <option value="@s.SubjectId">@s.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group"><label>ضریب</label><input name="coefficient" value="1" type="number" step="0.5" class="form-control" style="width:80px" /></div>
+            <div class="form-group"><label>واحد</label><input name="credits" type="number" step="0.5" class="form-control" style="width:80px" /></div>
+            <div class="form-group"><label>ساعت هفتگی</label><input name="weeklyHours" type="number" step="0.5" class="form-control" style="width:80px" /></div>
+            <div class="form-group"><label>نمره کل</label><input name="maxScore" value="20" type="number" step="0.5" class="form-control" style="width:80px" /></div>
+            <div class="form-group"><label>قبولی</label><input name="passingScore" value="10" type="number" step="0.5" class="form-control" style="width:80px" /></div>
+            <div class="form-group">
+                <label>توصیفی؟</label>
+                <select name="isDescriptive" class="form-control"><option value="false">خیر (عددی)</option><option value="true">بله</option></select>
+            </div>
+            <button class="btn btn-success">➕ افزودن</button>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <table class="data-table">
+            <thead><tr><th>درس</th><th>ضریب</th><th>واحد</th><th>ساعت هفتگی</th><th>نمره کل</th><th>قبولی</th><th>نوع</th><th></th></tr></thead>
+            <tbody>
+                @foreach (var gs in Model)
+                {
+                    <tr>
+                        <td><strong>@gs.SubjectName</strong></td>
+                        <td>@gs.Coefficient</td>
+                        <td>@gs.Credits</td>
+                        <td>@gs.WeeklyHours</td>
+                        <td>@gs.MaxScore</td>
+                        <td>@gs.PassingScore</td>
+                        <td>@(gs.IsDescriptive ? Html.Raw("<span class='badge badge-info'>توصیفی</span>") : Html.Raw("<span class='badge badge-secondary'>عددی</span>"))</td>
+                        <td>
+                            <form method="post" asp-action="RemoveFromGrade" style="display:inline" onsubmit="return confirm('حذف شود؟');">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="gradeSubjectId" value="@gs.GradeSubjectId" />
+                                <input type="hidden" name="gradeId" value="@ViewBag.GradeId" />
+                                <button class="btn btn-danger btn-sm">🗑</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any()) { <tr><td colspan="8" class="empty-state">هنوز درسی برای این پایه ثبت نشده</td></tr> }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header"><h2>🔍 انتخاب پایه دیگر</h2></div>
+    <div class="card-body">
+        <div style="display:flex; gap:8px; flex-wrap:wrap">
+            @foreach (var g in (List<GradeLookupDto>)ViewBag.Grades)
+            {
+                var active = g.Id == (int)ViewBag.GradeId ? "btn-primary" : "btn-outline";
+                <a asp-action="Grade" asp-route-gradeId="@g.Id" class="btn @active btn-sm">@g.Name</a>
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,130 @@
+@{
+    var fullName = User.FindFirst("FullName")?.Value ?? User.Identity?.Name ?? "کاربر";
+    var initials = string.IsNullOrEmpty(fullName) ? "?" : fullName.Substring(0, Math.Min(2, fullName.Length));
+    var isParent = User.IsInRole("Parent");
+    var roleText = isParent ? "ولی دانش‌آموز" : "دانش‌آموز";
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+    var studentId = ViewContext.RouteData.Values["studentId"]?.ToString() ?? ViewBag.StudentId?.ToString();
+}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - پنل @roleText</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <style>
+        .portal-sidebar {
+            background: linear-gradient(180deg, #4361ee 0%, #3a56d4 100%) !important;
+        }
+        .portal-sidebar .menu-section { color: rgba(255,255,255,0.5); }
+        .portal-sidebar .menu-item { color: rgba(255,255,255,0.85); }
+        .portal-sidebar .menu-item:hover { background: rgba(255,255,255,0.1); }
+        .portal-sidebar .menu-item.active {
+            background: rgba(255,255,255,0.2);
+            border-right-color: white;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header class="topbar">
+        <div class="topbar-left">
+            <button class="sidebar-toggle" onclick="document.body.classList.toggle('sidebar-collapsed')">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" />
+                </svg>
+            </button>
+            <div class="brand">
+                <span class="brand-icon">🎓</span>
+                <span class="brand-text">پنل @roleText</span>
+            </div>
+        </div>
+        <div class="topbar-right">
+            <div class="user-menu" onclick="this.classList.toggle('open')">
+                <div class="avatar">@initials</div>
+                <div class="user-info">
+                    <div class="user-name">@fullName</div>
+                    <div class="user-role">@roleText</div>
+                </div>
+                <div class="user-dropdown">
+                    <a asp-controller="Account" asp-action="Profile">👤 پروفایل من</a>
+                    <a asp-controller="Account" asp-action="ChangePassword">🔒 تغییر رمز</a>
+                    @if (isParent)
+                    {
+                        <a asp-controller="MyPortal" asp-action="SwitchChild">🔄 تغییر فرزند</a>
+                    }
+                    <hr />
+                    <a asp-controller="Account" asp-action="Logout">🚪 خروج</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <aside class="sidebar portal-sidebar">
+        <nav class="menu">
+            <a asp-controller="MyPortal" asp-action="Index" class="menu-item @(currentAction == "Index" || currentAction == "Dashboard" ? "active" : "")">
+                <span class="menu-icon">🏠</span><span class="menu-text">داشبورد</span>
+            </a>
+            @if (!string.IsNullOrEmpty(studentId))
+            {
+                <div class="menu-section">اطلاعات تحصیلی</div>
+                <a asp-controller="MyPortal" asp-action="Scores" asp-route-studentId="@studentId" class="menu-item @(currentAction == "Scores" ? "active" : "")">
+                    <span class="menu-icon">📝</span><span class="menu-text">نمرات</span>
+                </a>
+                <a asp-controller="MyPortal" asp-action="Attendance" asp-route-studentId="@studentId" class="menu-item @(currentAction == "Attendance" ? "active" : "")">
+                    <span class="menu-icon">✅</span><span class="menu-text">حضور و غیاب</span>
+                </a>
+                <a asp-controller="MyPortal" asp-action="Discipline" asp-route-studentId="@studentId" class="menu-item @(currentAction == "Discipline" ? "active" : "")">
+                    <span class="menu-icon">⭐</span><span class="menu-text">انضباطی</span>
+                </a>
+                <a asp-controller="MyPortal" asp-action="ReportCard" asp-route-studentId="@studentId" asp-route-termId="1" class="menu-item @(currentAction == "ReportCard" ? "active" : "")">
+                    <span class="menu-icon">📋</span><span class="menu-text">کارنامه</span>
+                </a>
+
+                <div class="menu-section">سایر</div>
+                <a asp-controller="MyPortal" asp-action="Finance" asp-route-studentId="@studentId" class="menu-item @(currentAction == "Finance" ? "active" : "")">
+                    <span class="menu-icon">💰</span><span class="menu-text">شهریه</span>
+                </a>
+                <a asp-controller="MyPortal" asp-action="Announcements" asp-route-studentId="@studentId" class="menu-item @(currentAction == "Announcements" ? "active" : "")">
+                    <span class="menu-icon">📢</span><span class="menu-text">اعلان‌ها</span>
+                </a>
+            }
+        </nav>
+        <div class="sidebar-footer">
+            <small>سیستم مدیریت مدارس</small>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        @if (TempData["Success"] is string ok)
+        {
+            <div class="alert alert-success alert-dismissible">
+                <span class="alert-icon">✓</span><span>@ok</span>
+                <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+            </div>
+        }
+        @if (TempData["Error"] is string err)
+        {
+            <div class="alert alert-danger alert-dismissible">
+                <span class="alert-icon">✗</span><span>@err</span>
+                <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+            </div>
+        }
+        @RenderBody()
+    </main>
+
+    <script>
+        document.addEventListener('click', function (e) {
+            var menu = document.querySelector('.user-menu');
+            if (menu && !menu.contains(e.target)) menu.classList.remove('open');
+        });
+        setTimeout(function () {
+            document.querySelectorAll('.alert-dismissible').forEach(function (a) {
+                a.style.transition = 'opacity .5s'; a.style.opacity = '0';
+                setTimeout(function () { a.remove(); }, 500);
+            });
+        }, 5000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+@model List<SystemSettingDto>
+@{ ViewData["Title"] = "تنظیمات سیستم"; }
+
+<div class="page-header"><h1>⚙ تنظیمات سیستم</h1></div>
+
+<div class="card">
+    <div class="card-body">
+        <div style="margin-bottom:16px; display:flex; gap:8px;">
+            <a asp-action="Index" class="btn @(ViewBag.Category == null ? "btn-primary" : "btn-outline") btn-sm">همه</a>
+            <a asp-action="Index" asp-route-category="General" class="btn @(ViewBag.Category as string == "General" ? "btn-primary" : "btn-outline") btn-sm">عمومی</a>
+            <a asp-action="Index" asp-route-category="Security" class="btn @(ViewBag.Category as string == "Security" ? "btn-primary" : "btn-outline") btn-sm">امنیت</a>
+            <a asp-action="Index" asp-route-category="Sms" class="btn @(ViewBag.Category as string == "Sms" ? "btn-primary" : "btn-outline") btn-sm">پیامک</a>
+            <a asp-action="Index" asp-route-category="Report" class="btn @(ViewBag.Category as string == "Report" ? "btn-primary" : "btn-outline") btn-sm">گزارش</a>
+        </div>
+
+        <table class="data-table">
+            <thead><tr><th>دسته</th><th>کلید</th><th>توضیح</th><th>مقدار</th><th></th></tr></thead>
+            <tbody>
+                @foreach (var s in Model)
+                {
+                    <tr>
+                        <td><span class="badge badge-info">@s.Category</span></td>
+                        <td><code>@s.Key</code></td>
+                        <td class="text-muted">@s.Description</td>
+                        <td colspan="2">
+                            <form method="post" asp-action="Update" style="display:flex; gap:8px;">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="key" value="@s.Key" />
+                                <input type="hidden" name="category" value="@ViewBag.Category" />
+                                <input name="value" value="@s.Value" class="form-control" style="flex:1" />
+                                <button class="btn btn-success btn-sm">💾</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

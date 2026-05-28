@@ -1,0 +1,99 @@
+@model StudentCreateDto
+@{ ViewData["Title"] = "افزودن دانش‌آموز"; }
+
+<div class="card">
+    <div class="card-header"><h2>➕ افزودن دانش‌آموز جدید</h2></div>
+    <form method="post">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <h3 style="margin-top:0;color:#3498db;font-size:15px">📌 اطلاعات شخصی</h3>
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label>نام *</label>
+                    <input asp-for="FirstName" class="form-control" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label>نام خانوادگی *</label>
+                    <input asp-for="LastName" class="form-control" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label>نام پدر</label>
+                    <input asp-for="FatherName" class="form-control" />
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label>کد ملی</label>
+                    <input asp-for="NationalCode" class="form-control" maxlength="10" />
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label>جنسیت *</label>
+                    <select asp-for="Gender" class="form-control">
+                        <option value="M">پسر</option>
+                        <option value="F">دختر</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label>تاریخ تولد</label>
+                    <input asp-for="BirthDate" class="form-control" type="date" />
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label>موبایل</label>
+                    <input asp-for="Mobile" class="form-control" placeholder="09xxxxxxxxx" />
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>آدرس</label>
+            <textarea asp-for="Address" class="form-control" rows="2"></textarea>
+        </div>
+
+        <h3 style="color:#3498db;font-size:15px">📚 اطلاعات تحصیلی</h3>
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label>کد دانش‌آموزی *</label>
+                    <input asp-for="StudentCode" class="form-control" />
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label>گروه خونی</label>
+                    <select asp-for="BloodType" class="form-control">
+                        <option value="">انتخاب نشده</option>
+                        <option value="A+">A+</option><option value="A-">A-</option>
+                        <option value="B+">B+</option><option value="B-">B-</option>
+                        <option value="AB+">AB+</option><option value="AB-">AB-</option>
+                        <option value="O+">O+</option><option value="O-">O-</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>شرایط/بیماری خاص</label>
+            <textarea asp-for="SpecialNeeds" class="form-control" rows="2"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-success">💾 ثبت دانش‌آموز</button>
+        <a asp-action="Index" class="btn" style="background:#95a5a6;color:white">انصراف</a>
+    </form>
+</div>

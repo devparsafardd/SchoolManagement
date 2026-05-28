@@ -1,0 +1,72 @@
+@using SMS.Shared.Helpers
+@model List<InvoiceDto>
+@{ ViewData["Title"] = "مالی من"; }
+
+<div class="page-header">
+    <h1>💰 وضعیت مالی</h1>
+    <a asp-action="Dashboard" asp-route-studentId="@ViewBag.StudentId" class="btn btn-secondary">بازگشت</a>
+</div>
+
+@{
+    var totalDebt = Model.Sum(i => i.NetAmount);
+    var totalPaid = Model.Sum(i => i.PaidAmount);
+    var remaining = totalDebt - totalPaid;
+}
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">کل فاکتورها</div>
+            <div class="stat-number">@PersianDate.ToPersianDigits(totalDebt.ToString("N0"))</div>
+            <div class="stat-trend text-muted">تومان</div>
+        </div>
+        <div class="stat-icon bg-primary">📋</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">پرداخت شده</div>
+            <div class="stat-number text-success">@PersianDate.ToPersianDigits(totalPaid.ToString("N0"))</div>
+            <div class="stat-trend text-muted">تومان</div>
+        </div>
+        <div class="stat-icon bg-success">💵</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">باقی‌مانده</div>
+            <div class="stat-number text-danger">@PersianDate.ToPersianDigits(remaining.ToString("N0"))</div>
+            <div class="stat-trend text-muted">تومان</div>
+        </div>
+        <div class="stat-icon bg-danger">📉</div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header"><h2>📋 فاکتورها</h2></div>
+    <div class="card-body">
+        <table class="data-table">
+            <thead><tr><th>شماره</th><th>نوع</th><th>مبلغ</th><th>پرداخت شده</th><th>باقی‌مانده</th><th>سررسید</th><th>وضعیت</th></tr></thead>
+            <tbody>
+                @foreach (var i in Model)
+                {
+                    <tr>
+                        <td><code>@i.InvoiceNumber</code></td>
+                        <td>@i.FeeTypeName</td>
+                        <td>@PersianDate.ToPersianDigits(i.NetAmount.ToString("N0"))</td>
+                        <td class="text-success">@PersianDate.ToPersianDigits(i.PaidAmount.ToString("N0"))</td>
+                        <td class="text-danger">@PersianDate.ToPersianDigits(i.RemainingAmount.ToString("N0"))</td>
+                        <td>@(i.DueDate.HasValue ? PersianDate.ToPersian(i.DueDate.Value) : "—")</td>
+                        <td>
+                            @switch (i.Status)
+                            {
+                                case "پرداخت‌شده": <span class="badge badge-success">@i.Status</span> break;
+                                case "پرداخت ناقص": <span class="badge badge-warning">@i.Status</span> break;
+                                default: <span class="badge badge-info">@i.Status</span> break;
+                            }
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any()) { <tr><td colspan="7" class="empty-state">فاکتوری ثبت نشده</td></tr> }
+            </tbody>
+        </table>
+    </div>
+</div>

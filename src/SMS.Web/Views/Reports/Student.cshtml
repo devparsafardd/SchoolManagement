@@ -1,0 +1,96 @@
+@using SMS.Shared.Helpers
+@model StudentReportCardDto
+@{ ViewData["Title"] = "کارنامه " + Model.FullName; }
+
+<div class="page-header">
+    <div>
+        <h1>📋 کارنامه: @Model.FullName</h1>
+        <div class="subtitle">@Model.SchoolName | @Model.ClassroomName | @Model.TermName</div>
+    </div>
+    <div>
+        <a asp-action="Pdf" asp-route-studentId="@Model.StudentId" asp-route-termId="@(ViewContext.RouteData.Values["termId"])" target="_blank" class="btn btn-success">📄 خروجی PDF</a>
+        <button onclick="window.print()" class="btn btn-outline">🖨 چاپ</button>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <table class="data-table" style="margin-bottom:16px">
+            <tr>
+                <th>نام:</th><td>@Model.FullName</td>
+                <th>نام پدر:</th><td>@Model.FatherName</td>
+            </tr>
+            <tr>
+                <th>کد ملی:</th><td>@Model.NationalCode</td>
+                <th>کد دانش‌آموزی:</th><td>@Model.StudentCode</td>
+            </tr>
+            <tr>
+                <th>پایه:</th><td>@Model.GradeName</td>
+                <th>سال تحصیلی:</th><td>@Model.AcademicYearTitle</td>
+            </tr>
+        </table>
+
+        <h3 class="section-title">📚 نمرات دروس</h3>
+        <table class="data-table">
+            <thead><tr><th>درس</th><th>ضریب</th><th>نمره</th><th>وضعیت</th><th>معلم</th><th>توضیح معلم</th></tr></thead>
+            <tbody>
+                @foreach (var s in Model.Subjects)
+                {
+                    <tr>
+                        <td><strong>@s.SubjectName</strong></td>
+                        <td>@s.Coefficient</td>
+                        <td>
+                            @if (s.IsDescriptive)
+                            {
+                                <span class="badge badge-info">@s.DescriptiveLabel</span>
+                            }
+                            else
+                            {
+                                <strong>@PersianDate.ToPersianDigits((s.NumericScore ?? 0).ToString("0.##"))</strong>
+                            }
+                        </td>
+                        <td>
+                            @switch (s.IsPassed)
+                            {
+                                case true: <span class="badge badge-success">قبول</span> break;
+                                case false: <span class="badge badge-danger">مردود</span> break;
+                                default: <span class="badge badge-secondary">-</span> break;
+                            }
+                        </td>
+                        <td>@s.TeacherName</td>
+                        <td>@s.TeacherComment</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="row" style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-top:16px">
+            <div class="card" style="background:#e0f2fe;">
+                <div class="card-body">
+                    <h3>📊 خلاصه</h3>
+                    <p><strong>معدل کل:</strong>
+                        <span style="font-size:24px; color:#0c5474">@PersianDate.ToPersianDigits((Model.GPA ?? 0).ToString("0.000"))</span>
+                    </p>
+                    <p><strong>نمره انضباط:</strong> @PersianDate.ToPersianDigits((Model.DisciplineScore ?? 0).ToString("0.##"))</p>
+                    @if (Model.RankInClass.HasValue)
+                    {
+                        <p><strong>رتبه در کلاس:</strong> @PersianDate.ToPersianDigits(Model.RankInClass.ToString()!)</p>
+                    }
+                </div>
+            </div>
+            <div class="card" style="background:#fef3c7;">
+                <div class="card-body">
+                    <h3>📅 حضور و غیاب</h3>
+                    <p><strong>کل غیبت:</strong> @PersianDate.ToPersianDigits(Model.TotalAbsences.ToString()) (@PersianDate.ToPersianDigits(Model.UnexcusedAbsences.ToString()) غیرموجه)</p>
+                    <p><strong>کل تاخیر:</strong> @PersianDate.ToPersianDigits(Model.TotalTardies.ToString())</p>
+                    <p>
+                        <span class="text-success">✓ @PersianDate.ToPersianDigits(Model.PassedCount.ToString()) درس قبول</span> |
+                        <span class="text-danger">✗ @PersianDate.ToPersianDigits(Model.FailedCount.ToString()) درس مردود</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<a asp-action="Index" class="btn btn-secondary">بازگشت</a>

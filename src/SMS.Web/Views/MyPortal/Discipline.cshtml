@@ -1,0 +1,41 @@
+@using SMS.Shared.Helpers
+@model List<DisciplinaryRecordDto>
+@{ ViewData["Title"] = "سوابق انضباطی"; }
+
+<div class="page-header">
+    <h1>⭐ سوابق انضباطی</h1>
+    <a asp-action="Dashboard" asp-route-studentId="@ViewBag.StudentId" class="btn btn-secondary">بازگشت</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <table class="data-table">
+            <thead><tr><th>تاریخ</th><th>نوع</th><th>توضیحات</th><th>اقدام انجام شده</th><th>تاثیر نمره</th><th>ثبت‌کننده</th></tr></thead>
+            <tbody>
+                @foreach (var r in Model)
+                {
+                    <tr>
+                        <td>@PersianDate.ToPersian(r.RecordDate)</td>
+                        <td>
+                            @if (r.Category == "R")
+                            {<span class="badge badge-success">🎁 @r.TypeName</span>}
+                            else
+                            {<span class="badge badge-danger">⚠ @r.TypeName</span>}
+                        </td>
+                        <td style="max-width:300px">@r.Description</td>
+                        <td>@r.ActionTaken</td>
+                        <td>
+                            @if (r.ScoreImpact.HasValue)
+                            {
+                                var cls = r.ScoreImpact > 0 ? "badge-success" : "badge-danger";
+                                <span class="badge @cls">@PersianDate.ToPersianDigits(r.ScoreImpact.Value.ToString("0.##"))</span>
+                            }
+                        </td>
+                        <td>@r.RecordedByName</td>
+                    </tr>
+                }
+                @if (!Model.Any()) { <tr><td colspan="6" class="empty-state">رکوردی ثبت نشده</td></tr> }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,100 @@
+@using SMS.Shared.Helpers
+@model StaffDto
+@{ ViewData["Title"] = "جزئیات کارمند"; }
+
+<div class="page-header">
+    <div>
+        <h1>👤 @Model.FullName</h1>
+        <div class="subtitle">@Model.GenderText - @Model.PersonnelCode</div>
+    </div>
+    <a asp-action="Edit" asp-route-id="@Model.StaffId" class="btn btn-primary">✏️ ویرایش</a>
+</div>
+
+<div class="card">
+    <div class="card-header"><h2>اطلاعات شخصی</h2></div>
+    <div class="card-body">
+        <table class="data-table">
+            <tr><th>کد ملی:</th><td>@Model.NationalCode</td>
+                <th>موبایل:</th><td>@Model.Mobile</td></tr>
+            <tr><th>ایمیل:</th><td>@Model.Email</td>
+                <th>تاریخ استخدام:</th><td>@PersianDate.ToPersian(Model.HireDate)</td></tr>
+            <tr><th>نوع استخدام:</th><td>@Model.EmploymentType</td>
+                <th>مدرک:</th><td>@Model.Degree - @Model.FieldOfStudy</td></tr>
+            <tr><th>شبا:</th><td colspan="3">@Model.IBAN</td></tr>
+        </table>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header"><h2>🏫 تخصیص‌ها به مدارس (@PersianDate.ToPersianDigits(((List<StaffAssignmentDto>)ViewBag.Assignments).Count.ToString()))</h2></div>
+    <div class="card-body">
+        <form method="post" asp-action="AddAssignment" class="filters-bar">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="staffId" value="@Model.StaffId" />
+            <div class="form-group">
+                <label>مدرسه</label>
+                <select name="schoolId" class="form-control" required>
+                    <option value="">انتخاب مدرسه</option>
+                    @foreach (var s in (IEnumerable<SchoolDto>)ViewBag.Schools)
+                    {
+                        <option value="@s.SchoolId">@s.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label>سال تحصیلی</label>
+                <select name="academicYearId" class="form-control" required>
+                    @foreach (var y in (List<LookupDto>)ViewBag.AcademicYears)
+                    {
+                        <option value="@y.Id">@y.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label>سمت</label>
+                <select name="position" class="form-control" required>
+                    <option value="Teacher">معلم</option>
+                    <option value="Principal">مدیر</option>
+                    <option value="VicePrincipal">معاون</option>
+                    <option value="Counselor">مشاور</option>
+                    <option value="Admin">کارشناس اداری</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>ساعت هفتگی</label>
+                <input name="weeklyHours" class="form-control" type="number" step="0.5" style="width:100px" />
+            </div>
+            <button class="btn btn-success">➕ افزودن تخصیص</button>
+        </form>
+
+        <div class="table-responsive" style="margin-top:16px">
+            <table class="data-table">
+                <thead>
+                    <tr><th>مدرسه</th><th>سال تحصیلی</th><th>سمت</th><th>ساعت هفتگی</th><th>وضعیت</th><th></th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var a in (List<StaffAssignmentDto>)ViewBag.Assignments)
+                    {
+                        <tr>
+                            <td>@a.SchoolName</td>
+                            <td>@a.AcademicYearTitle</td>
+                            <td><span class="badge badge-info">@a.PositionText</span></td>
+                            <td>@PersianDate.ToPersianDigits((a.WeeklyHours ?? 0).ToString())</td>
+                            <td>@(a.IsActive ? Html.Raw("<span class='badge badge-success'>فعال</span>") : Html.Raw("<span class='badge badge-secondary'>پایان‌یافته</span>"))</td>
+                            <td>
+                                <form method="post" asp-action="RemoveAssignment" style="display:inline" onsubmit="return confirm('حذف شود؟');">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="assignmentId" value="@a.AssignmentId" />
+                                    <input type="hidden" name="staffId" value="@Model.StaffId" />
+                                    <button class="btn btn-danger btn-sm">🗑</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<a asp-action="Index" class="btn btn-secondary">بازگشت</a>

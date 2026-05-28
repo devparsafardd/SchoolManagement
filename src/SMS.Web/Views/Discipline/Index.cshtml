@@ -1,0 +1,99 @@
+@using SMS.Shared.Helpers
+@model PagedResult<DisciplinaryRecordDto>
+@{ ViewData["Title"] = "انضباطی"; }
+
+<div class="page-header">
+    <div>
+        <h1>⭐ تشویق و تنبیه</h1>
+        <div class="subtitle">مجموع رکوردها: @PersianDate.ToPersianDigits(Model.TotalCount.ToString())</div>
+    </div>
+    <a asp-action="Create" class="btn btn-success">➕ ثبت رکورد جدید</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="get" class="filters-bar">
+            <div class="form-group">
+                <label>مدرسه</label>
+                <select name="schoolId" class="form-control" onchange="this.form.submit()">
+                    <option value="">همه</option>
+                    @foreach (var s in (IEnumerable<SchoolDto>)ViewBag.Schools)
+                    {
+                        var sel = ViewBag.SchoolId != null && (int)ViewBag.SchoolId == s.SchoolId ? "selected" : "";
+                        @Html.Raw($"<option value='{s.SchoolId}' {sel}>{s.Name}</option>")
+                    }
+                </select>
+            </div>
+            @if (ViewBag.Classrooms is List<ClassroomDto> classes && classes.Any())
+            {
+                <div class="form-group">
+                    <label>کلاس</label>
+                    <select name="classroomId" class="form-control">
+                        <option value="">همه</option>
+                        @foreach (var c in classes)
+                        {
+                            var sel = ViewBag.ClassroomId != null && (int)ViewBag.ClassroomId == c.ClassroomId ? "selected" : "";
+                            @Html.Raw($"<option value='{c.ClassroomId}' {sel}>{c.Name}</option>")
+                        }
+                    </select>
+                </div>
+            }
+            <div class="form-group">
+                <label>نوع</label>
+                <select name="category" class="form-control">
+                    <option value="">همه</option>
+                    <option value="R" selected="@(ViewBag.Category == "R")">تشویق</option>
+                    <option value="P" selected="@(ViewBag.Category == "P")">تنبیه</option>
+                </select>
+            </div>
+            <button class="btn btn-primary">🔍</button>
+        </form>
+
+        <table class="data-table">
+            <thead><tr><th>تاریخ</th><th>دانش‌آموز</th><th>کلاس</th><th>نوع</th><th>توضیحات</th><th>تاثیر نمره</th><th>اطلاع‌رسانی</th><th>عملیات</th></tr></thead>
+            <tbody>
+                @foreach (var r in Model.Items)
+                {
+                    <tr>
+                        <td>@PersianDate.ToPersian(r.RecordDate)</td>
+                        <td><strong>@r.StudentName</strong><br /><small class="text-muted">@r.StudentCode</small></td>
+                        <td>@r.ClassroomName</td>
+                        <td>
+                            @if (r.Category == "R")
+                            {<span class="badge badge-success">🎁 @r.TypeName</span>}
+                            else
+                            {<span class="badge badge-danger">⚠ @r.TypeName</span>}
+                        </td>
+                        <td style="max-width:300px">@r.Description</td>
+                        <td>
+                            @if (r.ScoreImpact.HasValue)
+                            {
+                                var cls = r.ScoreImpact > 0 ? "badge-success" : "badge-danger";
+                                <span class="badge @cls">@r.ScoreImpact</span>
+                            }
+                        </td>
+                        <td>@(r.IsParentNotified ? "✓" : "—")</td>
+                        <td>
+                            <form method="post" asp-action="Delete" asp-route-id="@r.RecordId" style="display:inline" onsubmit="return confirm('حذف شود؟');">
+                                @Html.AntiForgeryToken()
+                                <button class="btn btn-danger btn-sm">🗑</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Items.Any()) { <tr><td colspan="8" class="empty-state">رکوردی یافت نشد</td></tr> }
+            </tbody>
+        </table>
+
+        @if (Model.TotalPages > 1)
+        {
+            <div class="pagination">
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    if (i == Model.Page) { <span class="active">@PersianDate.ToPersianDigits(i.ToString())</span> }
+                    else { <a asp-action="Index" asp-route-page="@i" asp-route-schoolId="@ViewBag.SchoolId" asp-route-classroomId="@ViewBag.ClassroomId" asp-route-category="@ViewBag.Category">@PersianDate.ToPersianDigits(i.ToString())</a> }
+                }
+            </div>
+        }
+    </div>
+</div>

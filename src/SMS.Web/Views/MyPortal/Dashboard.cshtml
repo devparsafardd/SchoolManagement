@@ -1,0 +1,105 @@
+@using SMS.Shared.Helpers
+@using SMS.Shared.Constants
+@model StudentPortalSummaryDto
+@{ ViewData["Title"] = "داشبورد " + Model.FullName; }
+
+<div class="page-header">
+    <div>
+        <h1>👤 @Model.FullName</h1>
+        <div class="subtitle">
+            @Model.SchoolName | @Model.GradeName | کلاس @Model.ClassroomName | کد: @Model.StudentCode
+        </div>
+    </div>
+    @if (User.IsInRole(RoleNames.Parent))
+    {
+        <a asp-action="SwitchChild" class="btn btn-outline">🔄 تغییر فرزند</a>
+    }
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">معدل ترم اخیر</div>
+            <div class="stat-number">@PersianDate.ToPersianDigits((Model.CurrentGPA ?? 0).ToString("0.00"))</div>
+            <div class="stat-trend text-muted">@(Model.RankInClass.HasValue ? $"رتبه: {PersianDate.ToPersianDigits(Model.RankInClass.ToString()!)}" : "—")</div>
+        </div>
+        <div class="stat-icon bg-primary">📊</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">کل غیبت‌ها</div>
+            <div class="stat-number">@PersianDate.ToPersianDigits(Model.TotalAbsences.ToString())</div>
+            <div class="stat-trend text-danger">@PersianDate.ToPersianDigits(Model.UnexcusedAbsences.ToString()) غیرموجه</div>
+        </div>
+        <div class="stat-icon bg-warning">❌</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">کل تاخیرها</div>
+            <div class="stat-number">@PersianDate.ToPersianDigits(Model.TotalTardies.ToString())</div>
+            <div class="stat-trend text-muted">امسال</div>
+        </div>
+        <div class="stat-icon bg-warning">⏰</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">تشویق‌ها</div>
+            <div class="stat-number text-success">@PersianDate.ToPersianDigits(Model.RewardsCount.ToString())</div>
+            <div class="stat-trend text-muted">@PersianDate.ToPersianDigits(Model.PunishmentsCount.ToString()) تنبیه</div>
+        </div>
+        <div class="stat-icon bg-success">⭐</div>
+    </div>
+</div>
+
+<div class="row" style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+    <div class="card">
+        <div class="card-header"><h2>💰 وضعیت مالی</h2></div>
+        <div class="card-body">
+            <table class="data-table">
+                <tr><th>کل فاکتورها:</th><td>@PersianDate.ToPersianDigits(Model.TotalDebt.ToString("N0")) تومان</td></tr>
+                <tr><th>پرداخت شده:</th><td class="text-success">@PersianDate.ToPersianDigits(Model.TotalPaid.ToString("N0")) تومان</td></tr>
+                <tr><th>باقی‌مانده:</th><td class="text-danger"><strong>@PersianDate.ToPersianDigits(Model.RemainingDebt.ToString("N0")) تومان</strong></td></tr>
+            </table>
+            <a asp-action="Finance" asp-route-studentId="@Model.StudentId" class="btn btn-primary" style="margin-top:8px">👁 مشاهده جزئیات</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header"><h2>📅 آخرین فعالیت</h2></div>
+        <div class="card-body">
+            @if (Model.LastAttendanceDate.HasValue)
+            {
+                <p><strong>آخرین حضور:</strong> @PersianDate.ToPersianLong(Model.LastAttendanceDate.Value)</p>
+                <p><strong>وضعیت:</strong> <span class="badge badge-info">@Model.LastAttendanceStatus</span></p>
+            }
+            else
+            {
+                <p class="text-muted">هنوز ثبتی موجود نیست</p>
+            }
+            <a asp-action="Attendance" asp-route-studentId="@Model.StudentId" class="btn btn-primary" style="margin-top:8px">📋 تاریخچه حضور</a>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header"><h2>🚀 دسترسی سریع</h2></div>
+    <div class="card-body">
+        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+            <a asp-action="Scores" asp-route-studentId="@Model.StudentId" class="btn btn-primary">📝 نمرات</a>
+            <a asp-action="Attendance" asp-route-studentId="@Model.StudentId" class="btn btn-primary">✅ حضور و غیاب</a>
+            <a asp-action="Discipline" asp-route-studentId="@Model.StudentId" class="btn btn-primary">⭐ انضباطی</a>
+            <a asp-action="Finance" asp-route-studentId="@Model.StudentId" class="btn btn-primary">💰 شهریه</a>
+            <a asp-action="Announcements" asp-route-studentId="@Model.StudentId" class="btn btn-outline">📢 اعلان‌ها</a>
+            @{
+                var terms = ViewBag.Terms as List<LookupDto> ?? new List<LookupDto>();
+            }
+            @foreach (var t in terms)
+            {
+                <a asp-action="ReportCard" asp-route-studentId="@Model.StudentId" asp-route-termId="@t.Id" class="btn btn-success">📋 کارنامه @t.Name</a>
+            }
+        </div>
+    </div>
+</div>

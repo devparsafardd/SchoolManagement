@@ -1,0 +1,64 @@
+@using SMS.Shared.Helpers
+@model PagedResult<GuardianDto>
+@{ ViewData["Title"] = "اولیا"; }
+
+<div class="page-header">
+    <div>
+        <h1>👨‍👩‍👧 اولیا و سرپرستان</h1>
+        <div class="subtitle">مجموع: @PersianDate.ToPersianDigits(Model.TotalCount.ToString())</div>
+    </div>
+    <a asp-action="Create" class="btn btn-success">➕ افزودن ولی</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="get" class="filters-bar">
+            <div class="form-group" style="flex:1">
+                <label>جستجو</label>
+                <input name="search" value="@ViewBag.Search" class="form-control" placeholder="نام / موبایل / کد ملی" />
+            </div>
+            <button class="btn btn-primary">🔍</button>
+        </form>
+
+        <table class="data-table">
+            <thead><tr><th>نام</th><th>کد ملی</th><th>موبایل</th><th>شغل</th><th>تعداد فرزند</th><th>حساب کاربری</th><th>عملیات</th></tr></thead>
+            <tbody>
+                @foreach (var g in Model.Items)
+                {
+                    <tr>
+                        <td><strong>@g.FullName</strong></td>
+                        <td>@g.NationalCode</td>
+                        <td>@g.Mobile</td>
+                        <td>@g.Occupation</td>
+                        <td>@PersianDate.ToPersianDigits(g.StudentCount.ToString())</td>
+                        <td>
+                            @if (g.UserId.HasValue)
+                            {
+                                <span class="badge badge-success">✓ @g.Username</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-warning">⚠ بدون حساب</span>
+                            }
+                        </td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@g.GuardianId" class="btn btn-primary btn-sm">👁 جزئیات / حساب</a>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Items.Any()) { <tr><td colspan="7" class="empty-state">ولی‌ای یافت نشد</td></tr> }
+            </tbody>
+        </table>
+
+        @if (Model.TotalPages > 1)
+        {
+            <div class="pagination">
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    if (i == Model.Page) { <span class="active">@PersianDate.ToPersianDigits(i.ToString())</span> }
+                    else { <a asp-action="Index" asp-route-page="@i" asp-route-search="@ViewBag.Search">@PersianDate.ToPersianDigits(i.ToString())</a> }
+                }
+            </div>
+        }
+    </div>
+</div>

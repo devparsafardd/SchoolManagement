@@ -1,0 +1,47 @@
+@using SMS.Shared.Helpers
+@model PagedResult<SmsLogDto>
+@{ ViewData["Title"] = "تاریخچه پیامک"; }
+
+<div class="page-header">
+    <h1>📱 پیامک‌ها</h1>
+    <div>
+        <a asp-action="Send" class="btn btn-primary">➕ ارسال تک</a>
+        <a asp-action="SendBulk" class="btn btn-success">📢 ارسال گروهی</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <table class="data-table">
+            <thead><tr><th>زمان</th><th>موبایل</th><th>متن</th><th>وضعیت</th><th>خطا</th></tr></thead>
+            <tbody>
+                @foreach (var s in Model.Items)
+                {
+                    <tr>
+                        <td>@PersianDate.ToPersianDateTime(s.CreatedAt)</td>
+                        <td><code>@s.Mobile</code></td>
+                        <td style="max-width:300px">@s.Text</td>
+                        <td>
+                            @if (s.Status == "Sent") { <span class="badge badge-success">ارسال شد</span> }
+                            else if (s.Status == "Failed") { <span class="badge badge-danger">ناموفق</span> }
+                            else { <span class="badge badge-warning">در انتظار</span> }
+                        </td>
+                        <td><small class="text-danger">@s.FailReason</small></td>
+                    </tr>
+                }
+                @if (!Model.Items.Any()) { <tr><td colspan="5" class="empty-state">پیامکی ارسال نشده</td></tr> }
+            </tbody>
+        </table>
+
+        @if (Model.TotalPages > 1)
+        {
+            <div class="pagination">
+                @for (int i = Math.Max(1, Model.Page - 5); i <= Math.Min(Model.TotalPages, Model.Page + 5); i++)
+                {
+                    if (i == Model.Page) { <span class="active">@PersianDate.ToPersianDigits(i.ToString())</span> }
+                    else { <a asp-action="Index" asp-route-page="@i">@PersianDate.ToPersianDigits(i.ToString())</a> }
+                }
+            </div>
+        }
+    </div>
+</div>

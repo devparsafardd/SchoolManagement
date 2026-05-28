@@ -1,0 +1,64 @@
+@model GuardianCreateDto
+@{ ViewData["Title"] = "افزودن ولی"; }
+
+<div class="page-header"><h1>➕ افزودن ولی</h1></div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            @if (ViewBag.StudentId != null)
+            {
+                <input type="hidden" name="studentId" value="@ViewBag.StudentId" />
+            }
+
+            <div class="form-row">
+                <div class="form-group"><label>نام *</label><input asp-for="FirstName" class="form-control" /></div>
+                <div class="form-group"><label>نام خانوادگی *</label><input asp-for="LastName" class="form-control" /></div>
+                <div class="form-group">
+                    <label>جنسیت</label>
+                    <select asp-for="Gender" class="form-control"><option value="M">آقا</option><option value="F">خانم</option></select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>کد ملی</label><input asp-for="NationalCode" class="form-control" maxlength="10" /></div>
+                <div class="form-group"><label>موبایل *</label><input asp-for="Mobile" class="form-control" placeholder="09xxxxxxxxx" /></div>
+                <div class="form-group"><label>ایمیل</label><input asp-for="Email" class="form-control" /></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>شغل</label><input asp-for="Occupation" class="form-control" /></div>
+                <div class="form-group"><label>تلفن محل کار</label><input asp-for="WorkplacePhone" class="form-control" /></div>
+                <div class="form-group">
+                    <label>تحصیلات</label>
+                    <select asp-for="EducationLevel" class="form-control">
+                        <option value="">انتخاب</option>
+                        <option>زیر دیپلم</option><option>دیپلم</option>
+                        <option>فوق دیپلم</option><option>لیسانس</option>
+                        <option>فوق لیسانس</option><option>دکتری</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group"><label>آدرس</label><textarea asp-for="Address" class="form-control" rows="2"></textarea></div>
+
+            @if (ViewBag.StudentId != null)
+            {
+                <div class="form-group">
+                    <label>نسبت با دانش‌آموز</label>
+                    <select name="relationship" class="form-control">
+                        <option value="پدر">پدر</option>
+                        <option value="مادر">مادر</option>
+                        <option value="پدربزرگ">پدربزرگ</option>
+                        <option value="مادربزرگ">مادربزرگ</option>
+                        <option value="عمو">عمو</option><option value="دایی">دایی</option>
+                        <option value="عمه">عمه</option><option value="خاله">خاله</option>
+                        <option value="سرپرست">سرپرست قانونی</option>
+                    </select>
+                </div>
+            }
+
+            <button class="btn btn-success">💾 ذخیره</button>
+            <a asp-action="Index" class="btn btn-secondary">انصراف</a>
+        </form>
+    </div>
+</div>

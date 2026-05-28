@@ -1,0 +1,57 @@
+@{ ViewData["Title"] = "مرور آزمون‌ها"; }
+
+<div class="page-header">
+    <h1>📝 آزمون‌ها و نمرات</h1>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="get" class="filters-bar">
+            <div class="form-group" style="flex:1">
+                <label>مدرسه</label>
+                <select name="schoolId" class="form-control" onchange="this.form.submit()">
+                    <option value="">انتخاب</option>
+                    @foreach (var s in (IEnumerable<SchoolDto>)ViewBag.Schools)
+                    {
+                        var sel = ViewBag.SchoolId != null && (int)ViewBag.SchoolId == s.SchoolId ? "selected" : "";
+                        @Html.Raw($"<option value='{s.SchoolId}' {sel}>{s.Name}</option>")
+                    }
+                </select>
+            </div>
+            @if (ViewBag.SchoolId != null)
+            {
+                <div class="form-group" style="flex:1">
+                    <label>کلاس</label>
+                    <select name="classroomId" class="form-control" onchange="this.form.submit()">
+                        <option value="">انتخاب</option>
+                        @foreach (var c in (List<ClassroomDto>)ViewBag.Classrooms)
+                        {
+                            var sel = ViewBag.ClassroomId != null && (int)ViewBag.ClassroomId == c.ClassroomId ? "selected" : "";
+                            @Html.Raw($"<option value='{c.ClassroomId}' {sel}>{c.Name} ({c.GradeName})</option>")
+                        }
+                    </select>
+                </div>
+                <input type="hidden" name="schoolId" value="@ViewBag.SchoolId" />
+            }
+        </form>
+
+        @if (ViewBag.ClassSubjects is List<ClassSubjectTeacherDto> list && list.Any())
+        {
+            <table class="data-table" style="margin-top:16px">
+                <thead><tr><th>درس</th><th>معلم</th><th>عملیات</th></tr></thead>
+                <tbody>
+                    @foreach (var cs in list)
+                    {
+                        <tr>
+                            <td><strong>@cs.SubjectName</strong></td>
+                            <td>@cs.TeacherName</td>
+                            <td>
+                                <a asp-action="Index" asp-route-classSubjectId="@cs.ClassSubjectId" class="btn btn-primary btn-sm">📝 مشاهده آزمون‌ها</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>

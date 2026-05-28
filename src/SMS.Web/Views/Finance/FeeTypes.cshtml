@@ -1,0 +1,52 @@
+@using SMS.Shared.Helpers
+@model List<FeeTypeDto>
+@{ ViewData["Title"] = "انواع شهریه"; }
+
+<div class="page-header">
+    <h1>⚙ انواع شهریه</h1>
+    <a asp-action="Index" class="btn btn-secondary">بازگشت</a>
+</div>
+
+<div class="card">
+    <div class="card-header"><h2>➕ افزودن نوع جدید</h2></div>
+    <div class="card-body">
+        <form method="post" asp-action="CreateFeeType" class="filters-bar">
+            @Html.AntiForgeryToken()
+            <div class="form-group" style="flex:1"><label>نام</label><input name="name" class="form-control" required /></div>
+            <div class="form-group">
+                <label>دوره‌ای؟</label>
+                <select name="isRecurring" class="form-control">
+                    <option value="false">یکبار</option><option value="true">دوره‌ای (ماهانه و...)</option>
+                </select>
+            </div>
+            <div class="form-group"><label>مبلغ پیش‌فرض</label><input name="defaultAmount" type="number" class="form-control" /></div>
+            <button class="btn btn-success">افزودن</button>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <table class="data-table">
+            <thead><tr><th>نام</th><th>نوع</th><th>مبلغ پیش‌فرض</th><th>وضعیت</th><th></th></tr></thead>
+            <tbody>
+                @foreach (var f in Model)
+                {
+                    <tr>
+                        <td><strong>@f.Name</strong></td>
+                        <td>@(f.IsRecurring ? "دوره‌ای" : "یکبار")</td>
+                        <td>@(f.DefaultAmount.HasValue ? PersianDate.ToPersianDigits(f.DefaultAmount.Value.ToString("N0")) + " تومان" : "-")</td>
+                        <td>@(f.IsActive ? Html.Raw("<span class='badge badge-success'>فعال</span>") : Html.Raw("<span class='badge badge-secondary'>غیرفعال</span>"))</td>
+                        <td>
+                            <form method="post" asp-action="ToggleFeeType" style="display:inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="feeTypeId" value="@f.FeeTypeId" />
+                                <button class="btn btn-outline btn-sm">@(f.IsActive ? "غیرفعال" : "فعال")</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

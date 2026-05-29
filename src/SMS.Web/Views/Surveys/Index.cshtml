@@ -8,10 +8,10 @@
 }
 
 <div class="page-header">
-    <h1>📊 نظرسنجی‌ها</h1>
+    <h1><i class="bi bi-bar-chart-line-fill"></i>نظرسنجی‌ها</h1>
     @if (canManage)
     {
-        <a asp-action="Create" class="btn btn-success">➕ نظرسنجی جدید</a>
+        <a asp-action="Create" class="btn btn-success"><i class="bi bi-plus-lg"></i> نظرسنجی جدید</a>
     }
 </div>
 
@@ -48,15 +48,15 @@ else
                         }
                         else if (!s.IsExpired && s.IsActive)
                         {
-                            <a asp-action="Take" asp-route-id="@s.SurveyId" class="btn btn-sm btn-primary">📝 شرکت در نظرسنجی</a>
+                            <a asp-action="Take" asp-route-id="@s.SurveyId" class="btn btn-sm btn-primary"><i class="bi bi-pencil-square"></i> شرکت در نظرسنجی</a>
                         }
                         @if (canManage)
                         {
-                            <a asp-action="Results" asp-route-id="@s.SurveyId" class="btn btn-sm btn-info">📊 نتایج</a>
+                            <a asp-action="Results" asp-route-id="@s.SurveyId" class="btn btn-sm btn-info"><i class="bi bi-bar-chart"></i> نتایج</a>
                             <form method="post" asp-action="Delete" style="display:inline" onsubmit="return confirm('غیرفعال شود؟')">
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="id" value="@s.SurveyId" />
-                                <button class="btn btn-sm btn-danger">🗑</button>
+                                <button class="btn btn-sm btn-danger"><i class="bi bi-trash"></i> </button>
                             </form>
                         }
                     </div>

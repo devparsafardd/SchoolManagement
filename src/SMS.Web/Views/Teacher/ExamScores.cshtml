@@ -11,7 +11,7 @@
 
 <div class="page-header">
     <div>
-        <h1>📝 ورود نمرات: @exam.Title</h1>
+        <h1><i class="bi bi-pencil-square"></i>ورود نمرات: @exam.Title</h1>
         <div class="subtitle">
             @exam.ClassroomName | @exam.SubjectName | @exam.ExamTypeName | @PersianDate.ToPersian(exam.ExamDate)
             @if (exam.IsDescriptive)
@@ -20,7 +20,7 @@
             { <span class="badge badge-secondary">عددی (نمره کل: @PersianDate.ToPersianDigits(exam.MaxScore.ToString("0.#")))</span> }
         </div>
     </div>
-    <a asp-action="Exams" asp-route-classSubjectId="@exam.ClassSubjectId" class="btn btn-secondary">↩ بازگشت</a>
+    <a asp-action="Exams" asp-route-classSubjectId="@exam.ClassSubjectId" class="btn btn-secondary"><i class="bi bi-arrow-return-left"></i> بازگشت</a>
 </div>
 
 <form method="post" asp-action="ExamScores">
@@ -32,7 +32,7 @@
             <h2>دانش‌آموزان</h2>
             @if (!exam.IsFinalized)
             {
-                <button type="submit" class="btn btn-success">💾 ذخیره نمرات</button>
+                <button type="submit" class="btn btn-success"><i class="bi bi-floppy"></i> ذخیره نمرات</button>
             }
         </div>
         <div class="card-body">

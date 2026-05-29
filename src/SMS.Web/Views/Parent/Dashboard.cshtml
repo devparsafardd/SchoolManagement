@@ -4,7 +4,7 @@
 @{ ViewData["Title"] = "فرزندان من"; }
 
 <div class="page-header">
-    <h1>👨‍👩‍👧 فرزندان من</h1>
+    <h1><i class="bi bi-people"></i>فرزندان من</h1>
 </div>
 
 @if (!Model.Any())
@@ -29,7 +29,7 @@ else
                 <div class="stat-label">مجموع غیبت اخیر</div>
                 <div class="stat-number">@PersianDate.ToPersianDigits(Model.Sum(c => c.RecentAbsences).ToString())</div>
             </div>
-            <div class="stat-icon bg-warning">❌</div>
+            <div class="stat-icon bg-warning"><i class="bi bi-x-circle"></i></div>
         </div>
         <div class="stat-card">
             <div class="stat-info">
@@ -41,7 +41,7 @@ else
                     @PersianDate.ToPersianDigits(avg.ToString("0.00"))
                 </div>
             </div>
-            <div class="stat-icon bg-success">📊</div>
+            <div class="stat-icon bg-success"><i class="bi bi-bar-chart-line-fill"></i></div>
         </div>
         <div class="stat-card">
             <div class="stat-info">
@@ -51,7 +51,7 @@ else
                 </div>
                 <div class="stat-trend text-muted">تومان</div>
             </div>
-            <div class="stat-icon bg-danger">💰</div>
+            <div class="stat-icon bg-danger"><i class="bi bi-cash-stack"></i></div>
         </div>
     </div>
 
@@ -99,12 +99,10 @@ else
                     </div>
 
                     <a asp-action="View" asp-route-studentId="@c.StudentId"
-                       class="btn btn-primary" style="width:100%; margin-top:14px">
-                        🔍 مشاهده جزئیات
+                       class="btn btn-primary" style="width:100%; margin-top:14px"><i class="bi bi-search"></i> مشاهده جزئیات
                     </a>
                     <a asp-controller="Analytics" asp-action="Student" asp-route-id="@c.StudentId"
-                       class="btn btn-info" style="width:100%; margin-top:6px">
-                        📊 گزارش جامع و نمودارها
+                       class="btn btn-info" style="width:100%; margin-top:6px"><i class="bi bi-bar-chart"></i> گزارش جامع و نمودارها
                     </a>
                 </div>
             </div>

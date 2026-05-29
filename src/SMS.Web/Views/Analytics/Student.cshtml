@@ -7,7 +7,7 @@
 
 <div class="page-header">
     <div>
-        <h1>👤 @Model.FullName</h1>
+        <h1><i class="bi bi-person-fill"></i>@Model.FullName</h1>
         <div class="subtitle">
             کد: @PersianDate.ToPersianDigits(Model.StudentCode)
             @if (!string.IsNullOrEmpty(Model.FatherName)) { <span> | فرزند: @Model.FatherName</span> }
@@ -26,8 +26,8 @@
         </div>
     </form>
     <div style="display:flex; gap:6px">
-        <a asp-controller="Export" asp-action="StudentReportExcel" asp-route-id="@Model.StudentId" asp-route-termId="@ViewBag.TermId" class="btn btn-success">📊 خروجی Excel</a>
-        <button class="btn btn-info" onclick="window.print()">🖨 پرینت / PDF</button>
+        <a asp-controller="Export" asp-action="StudentReportExcel" asp-route-id="@Model.StudentId" asp-route-termId="@ViewBag.TermId" class="btn btn-success"><i class="bi bi-bar-chart"></i> خروجی Excel</a>
+        <button class="btn btn-info" onclick="window.print()"><i class="bi bi-printer"></i> پرینت / PDF</button>
     </div>
 </div>
 
@@ -37,14 +37,14 @@
             <div class="stat-label">معدل</div>
             <div class="stat-number">@(Model.OverallAverage.HasValue ? PersianDate.ToPersianDigits(Model.OverallAverage.Value.ToString("0.00")) : "—")</div>
         </div>
-        <div class="stat-icon bg-primary">📊</div>
+        <div class="stat-icon bg-primary"><i class="bi bi-bar-chart-line-fill"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
             <div class="stat-label">غیبت / تاخیر</div>
             <div class="stat-number"><span class="text-danger">@PersianDate.ToPersianDigits(Model.TotalAbsences.ToString())</span> / <span class="text-warning">@PersianDate.ToPersianDigits(Model.TotalTardies.ToString())</span></div>
         </div>
-        <div class="stat-icon bg-warning">⏰</div>
+        <div class="stat-icon bg-warning"><i class="bi bi-clock-fill"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
@@ -55,7 +55,7 @@
                 <span class="text-danger">-@PersianDate.ToPersianDigits(Model.PunishmentsCount.ToString())</span>
             </div>
         </div>
-        <div class="stat-icon bg-info">⭐</div>
+        <div class="stat-icon bg-info"><i class="bi bi-star-fill"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
@@ -65,23 +65,23 @@
             </div>
             <div class="stat-trend text-muted">پرداختی: @PersianDate.ToPersianDigits(Model.TotalPaid.ToString("N0"))</div>
         </div>
-        <div class="stat-icon bg-success">💰</div>
+        <div class="stat-icon bg-success"><i class="bi bi-cash-stack"></i></div>
     </div>
 </div>
 
 <div class="row" style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px">
     <div class="card">
-        <div class="card-header"><h2>📊 میانگین دروس</h2></div>
+        <div class="card-header"><h2><i class="bi bi-bar-chart-line-fill"></i>میانگین دروس</h2></div>
         <div class="card-body"><canvas id="subjChart" height="180"></canvas></div>
     </div>
     <div class="card">
-        <div class="card-header"><h2>📈 حضور و غیاب ۳۰ روز اخیر</h2></div>
+        <div class="card-header"><h2><i class="bi bi-graph-up"></i>حضور و غیاب ۳۰ روز اخیر</h2></div>
         <div class="card-body"><canvas id="attChart" height="180"></canvas></div>
     </div>
 </div>
 
 <div class="card" style="margin-top:16px">
-    <div class="card-header"><h2>📝 آزمون‌های اخیر</h2></div>
+    <div class="card-header"><h2><i class="bi bi-pencil-square"></i>آزمون‌های اخیر</h2></div>
     <div class="card-body">
         <table class="data-table">
             <thead><tr><th>تاریخ</th><th>درس</th><th>عنوان آزمون</th><th>نمره</th></tr></thead>

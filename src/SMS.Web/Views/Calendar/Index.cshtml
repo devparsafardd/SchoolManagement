@@ -9,10 +9,10 @@
 }
 
 <div class="page-header">
-    <h1>📅 تقویم آموزشی</h1>
+    <h1><i class="bi bi-calendar3"></i>تقویم آموزشی</h1>
     @if (canManage)
     {
-        <a asp-action="Create" class="btn btn-success">➕ افزودن رویداد</a>
+        <a asp-action="Create" class="btn btn-success"><i class="bi bi-plus-lg"></i> افزودن رویداد</a>
     }
 </div>
 
@@ -21,9 +21,9 @@
     <!-- لیست رویدادهای ماه -->
     <div class="card">
         <div class="card-header" style="display:flex; justify-content:space-between; align-items:center">
-            <h2>📋 @ViewBag.MonthLabel</h2>
+            <h2><i class="bi bi-clipboard-data"></i>@ViewBag.MonthLabel</h2>
             <div>
-                <a asp-action="Index" asp-route-month="@(monthOffset - 1)" class="btn btn-sm btn-outline">‹ ماه قبل</a>
+                <a asp-action="Index" asp-route-month="@(monthOffset - 1)" class="btn btn-sm btn-outline"><i class="bi bi-chevron-right"></i> ماه قبل</a>
                 <a asp-action="Index" class="btn btn-sm btn-primary">امروز</a>
                 <a asp-action="Index" asp-route-month="@(monthOffset + 1)" class="btn btn-sm btn-outline">ماه بعد ›</a>
             </div>
@@ -70,7 +70,7 @@
                                         <form method="post" asp-action="Delete" style="display:inline" onsubmit="return confirm('حذف؟')">
                                             @Html.AntiForgeryToken()
                                             <input type="hidden" name="id" value="@e.EventId" />
-                                            <button class="btn btn-sm btn-danger">🗑</button>
+                                            <button class="btn btn-sm btn-danger"><i class="bi bi-trash"></i> </button>
                                         </form>
                                     }
                                 </td>
@@ -84,7 +84,7 @@
 
     <!-- رویدادهای پیش رو -->
     <div class="card">
-        <div class="card-header"><h2>🔜 رویدادهای پیش رو (۳۰ روز)</h2></div>
+        <div class="card-header"><h2><i class="bi bi-arrow-right-circle-fill"></i>رویدادهای پیش رو (۳۰ روز)</h2></div>
         <div class="card-body">
             @if (!upcoming.Any())
             {

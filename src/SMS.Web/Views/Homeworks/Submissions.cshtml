@@ -9,10 +9,10 @@
 
 <div class="page-header">
     <div>
-        <h1>📋 @hw.Title</h1>
+        <h1><i class="bi bi-clipboard-data"></i>@hw.Title</h1>
         <div class="subtitle">@hw.ClassroomName | @hw.SubjectName | مهلت: @PersianDate.ToPersian(hw.DueDate)</div>
     </div>
-    <a class="btn btn-secondary" asp-action="Teacher" asp-route-classSubjectId="@hw.ClassSubjectId">↩ بازگشت</a>
+    <a class="btn btn-secondary" asp-action="Teacher" asp-route-classSubjectId="@hw.ClassSubjectId"><i class="bi bi-arrow-return-left"></i> بازگشت</a>
 </div>
 
 <div class="card">
@@ -71,7 +71,7 @@
                                            class="form-control" style="width:70px" />
                                     <input type="text" name="TeacherFeedback" value="@s.TeacherFeedback"
                                            class="form-control" placeholder="بازخورد" style="width:140px" />
-                                    <button class="btn btn-sm btn-success">💾</button>
+                                    <button class="btn btn-sm btn-success"><i class="bi bi-floppy"></i> </button>
                                 </form>
                             }
                         </td>

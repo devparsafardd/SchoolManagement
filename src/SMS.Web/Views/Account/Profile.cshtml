@@ -8,7 +8,7 @@
 
 <div class="page-header">
     <div>
-        <h1>👤 پروفایل من</h1>
+        <h1><i class="bi bi-person-fill"></i>پروفایل من</h1>
         <div class="subtitle">@Model.FullName</div>
     </div>
 </div>
@@ -42,7 +42,7 @@
             {
                 <form method="post" asp-action="RemovePhoto" style="margin-top:8px" onsubmit="return confirm('عکس حذف شود؟')">
                     @Html.AntiForgeryToken()
-                    <button class="btn btn-sm btn-danger">🗑 حذف عکس</button>
+                    <button class="btn btn-sm btn-danger"><i class="bi bi-trash"></i> حذف عکس</button>
                 </form>
             }
         </div>
@@ -93,8 +93,8 @@
                         }
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary">💾 ذخیره تغییرات</button>
-                <a asp-action="ChangePassword" class="btn btn-secondary">🔒 تغییر رمز عبور</a>
+                <button type="submit" class="btn btn-primary"><i class="bi bi-floppy"></i> ذخیره تغییرات</button>
+                <a asp-action="ChangePassword" class="btn btn-secondary"><i class="bi bi-lock"></i> تغییر رمز عبور</a>
             </form>
         </div>
     </div>

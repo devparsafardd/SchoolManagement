@@ -7,7 +7,7 @@
 
 <div class="page-header">
     <div>
-        <h1>👨‍🏫 @Model.TeacherName</h1>
+        <h1><i class="bi bi-person-workspace"></i>@Model.TeacherName</h1>
         <div class="subtitle">کد پرسنلی: @(string.IsNullOrEmpty(Model.PersonnelCode) ? "—" : PersianDate.ToPersianDigits(Model.PersonnelCode))</div>
     </div>
     <form method="get" style="display:flex; gap:6px; align-items:flex-end">
@@ -26,24 +26,24 @@
 <div class="stats-grid">
     <div class="stat-card">
         <div class="stat-info"><div class="stat-label">کلاس‌ها</div><div class="stat-number">@PersianDate.ToPersianDigits(Model.TotalClasses.ToString())</div></div>
-        <div class="stat-icon bg-primary">📚</div>
+        <div class="stat-icon bg-primary"><i class="bi bi-book-half"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info"><div class="stat-label">دانش‌آموزان</div><div class="stat-number">@PersianDate.ToPersianDigits(Model.TotalStudents.ToString())</div></div>
-        <div class="stat-icon bg-success">👥</div>
+        <div class="stat-icon bg-success"><i class="bi bi-people-fill"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info"><div class="stat-label">آزمون‌ها</div><div class="stat-number">@PersianDate.ToPersianDigits(Model.TotalExams.ToString())</div>
             <div class="stat-trend text-muted">@PersianDate.ToPersianDigits(Model.TotalScoredExams.ToString()) نمره‌گذاری شده</div>
         </div>
-        <div class="stat-icon bg-info">📝</div>
+        <div class="stat-icon bg-info"><i class="bi bi-pencil-square"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
             <div class="stat-label">میانگین کلی نمرات</div>
             <div class="stat-number">@(Model.OverallAverage.HasValue ? PersianDate.ToPersianDigits(Model.OverallAverage.Value.ToString("0.00")) : "—")</div>
         </div>
-        <div class="stat-icon bg-warning">📊</div>
+        <div class="stat-icon bg-warning"><i class="bi bi-bar-chart-line-fill"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
@@ -51,7 +51,7 @@
             <div class="stat-number">@PersianDate.ToPersianDigits(Model.AttendanceRecordsTaken.ToString())</div>
             <div class="stat-trend text-muted">رکورد</div>
         </div>
-        <div class="stat-icon bg-info">✅</div>
+        <div class="stat-icon bg-info"><i class="bi bi-check-circle-fill"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
@@ -59,12 +59,12 @@
             <div class="stat-number">@PersianDate.ToPersianDigits(Model.HomeworksAssigned.ToString())</div>
             <div class="stat-trend text-muted">@PersianDate.ToPersianDigits(Model.HomeworksGraded.ToString()) تصحیح شده</div>
         </div>
-        <div class="stat-icon bg-success">📝</div>
+        <div class="stat-icon bg-success"><i class="bi bi-pencil-square"></i></div>
     </div>
 </div>
 
 <div class="card" style="margin-top:16px">
-    <div class="card-header"><h2>📚 عملکرد در هر کلاس</h2></div>
+    <div class="card-header"><h2><i class="bi bi-book-half"></i>عملکرد در هر کلاس</h2></div>
     <div class="card-body">
         <table class="data-table">
             <thead><tr><th>کلاس</th><th>درس</th><th>دانش‌آموز</th><th>آزمون</th><th>میانگین</th><th>درصد قبولی</th></tr></thead>
@@ -93,7 +93,7 @@
 @if (Model.Classes.Any())
 {
     <div class="card" style="margin-top:16px">
-        <div class="card-header"><h2>📊 مقایسه میانگین کلاس‌ها</h2></div>
+        <div class="card-header"><h2><i class="bi bi-bar-chart-line-fill"></i>مقایسه میانگین کلاس‌ها</h2></div>
         <div class="card-body"><canvas id="cmpChart" height="80"></canvas></div>
     </div>
 }

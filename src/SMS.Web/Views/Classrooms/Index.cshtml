@@ -4,12 +4,12 @@
 
 <div class="page-header">
     <div>
-        <h1>📚 کلاس‌ها</h1>
+        <h1><i class="bi bi-book-half"></i>کلاس‌ها</h1>
         <div class="subtitle">@(ViewBag.SchoolId != null ? $"تعداد: {PersianDate.ToPersianDigits(Model.Count.ToString())}" : "ابتدا مدرسه را انتخاب کنید")</div>
     </div>
     <div>
-        <a asp-controller="Export" asp-action="ClassroomsExcel" asp-route-schoolId="@ViewBag.SchoolId" class="btn btn-success">📊 خروجی Excel</a>
-        <a asp-action="Create" asp-route-schoolId="@ViewBag.SchoolId" class="btn btn-primary">➕ افزودن کلاس</a>
+        <a asp-controller="Export" asp-action="ClassroomsExcel" asp-route-schoolId="@ViewBag.SchoolId" class="btn btn-success"><i class="bi bi-bar-chart"></i> خروجی Excel</a>
+        <a asp-action="Create" asp-route-schoolId="@ViewBag.SchoolId" class="btn btn-primary"><i class="bi bi-plus-lg"></i> افزودن کلاس</a>
     </div>
 </div>
 
@@ -51,13 +51,13 @@
                         <td>@(c.HeadTeacherName ?? "-")</td>
                         <td>@(c.RoomNumber ?? "-")</td>
                         <td>
-                            <a asp-controller="ClassSubjects" asp-action="Index" asp-route-classroomId="@c.ClassroomId" class="btn btn-primary btn-sm">📚 دروس</a>
-                            <a asp-controller="Schedules" asp-action="Classroom" asp-route-classroomId="@c.ClassroomId" class="btn btn-info btn-sm">📅 برنامه</a>
-                            <a asp-controller="Analytics" asp-action="Classroom" asp-route-id="@c.ClassroomId" class="btn btn-info btn-sm" title="گزارش جامع">📊 گزارش</a>
-                            <a asp-controller="Attendance" asp-action="Take" asp-route-classroomId="@c.ClassroomId" class="btn btn-outline btn-sm">✓ حضور</a>
+                            <a asp-controller="ClassSubjects" asp-action="Index" asp-route-classroomId="@c.ClassroomId" class="btn btn-primary btn-sm"><i class="bi bi-book"></i> دروس</a>
+                            <a asp-controller="Schedules" asp-action="Classroom" asp-route-classroomId="@c.ClassroomId" class="btn btn-info btn-sm"><i class="bi bi-calendar"></i> برنامه</a>
+                            <a asp-controller="Analytics" asp-action="Classroom" asp-route-id="@c.ClassroomId" class="btn btn-info btn-sm" title="گزارش جامع"><i class="bi bi-bar-chart"></i> گزارش</a>
+                            <a asp-controller="Attendance" asp-action="Take" asp-route-classroomId="@c.ClassroomId" class="btn btn-outline btn-sm"><i class="bi bi-check-lg"></i> حضور</a>
                             <form method="post" asp-action="Delete" asp-route-id="@c.ClassroomId" asp-route-schoolId="@c.SchoolId" style="display:inline" onsubmit="return confirm('حذف شود؟');">
                                 @Html.AntiForgeryToken()
-                                <button class="btn btn-danger btn-sm">🗑</button>
+                                <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i> </button>
                             </form>
                         </td>
                     </tr>

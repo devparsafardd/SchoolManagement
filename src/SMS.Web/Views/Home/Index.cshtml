@@ -8,7 +8,7 @@
 
 <div class="page-header">
     <div>
-        <h1>📊 داشبورد مدیریت</h1>
+        <h1><i class="bi bi-bar-chart-line-fill"></i>داشبورد مدیریت</h1>
         <div class="subtitle">@today</div>
     </div>
     <div>
@@ -23,28 +23,28 @@
             <div class="stat-label">مدارس فعال</div>
             <div class="stat-number">@PersianDate.ToPersianDigits(((int)ViewBag.SchoolCount).ToString())</div>
         </div>
-        <div class="stat-icon bg-primary">🏫</div>
+        <div class="stat-icon bg-primary"><i class="bi bi-building"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
             <div class="stat-label">دانش‌آموزان</div>
             <div class="stat-number">@PersianDate.ToPersianDigits(((int)ViewBag.StudentCount).ToString())</div>
         </div>
-        <div class="stat-icon bg-success">👥</div>
+        <div class="stat-icon bg-success"><i class="bi bi-people-fill"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
             <div class="stat-label">معلمان و کارکنان</div>
             <div class="stat-number">@PersianDate.ToPersianDigits(((int)ViewBag.StaffCount).ToString())</div>
         </div>
-        <div class="stat-icon bg-info">👨‍🏫</div>
+        <div class="stat-icon bg-info"><i class="bi bi-person-workspace"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
             <div class="stat-label">کلاس‌ها</div>
             <div class="stat-number">@PersianDate.ToPersianDigits(((int)ViewBag.ClassroomCount).ToString())</div>
         </div>
-        <div class="stat-icon bg-warning">📚</div>
+        <div class="stat-icon bg-warning"><i class="bi bi-book-half"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
@@ -52,7 +52,7 @@
             <div class="stat-number">@PersianDate.ToPersianDigits(((int)ViewBag.TodayAttendanceCount).ToString())</div>
             <div class="stat-trend text-danger">@PersianDate.ToPersianDigits(((int)ViewBag.TodayAbsentCount).ToString()) غایب</div>
         </div>
-        <div class="stat-icon bg-success">✅</div>
+        <div class="stat-icon bg-success"><i class="bi bi-check-circle-fill"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
@@ -63,7 +63,7 @@
                 <span class="text-danger">-@PersianDate.ToPersianDigits(((int)ViewBag.WeekPunishmentCount).ToString())</span>
             </div>
         </div>
-        <div class="stat-icon bg-info">⭐</div>
+        <div class="stat-icon bg-info"><i class="bi bi-star-fill"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
@@ -71,7 +71,7 @@
             <div class="stat-number">@PersianDate.ToPersianDigits(((decimal)ViewBag.TotalPaid).ToString("N0"))</div>
             <div class="stat-trend text-muted">@PersianDate.ToPersianDigits(((decimal)ViewBag.CollectionRate).ToString("0.0"))% وصولی</div>
         </div>
-        <div class="stat-icon bg-success">💰</div>
+        <div class="stat-icon bg-success"><i class="bi bi-cash-stack"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
@@ -79,7 +79,7 @@
             <div class="stat-number text-danger">@PersianDate.ToPersianDigits(((decimal)ViewBag.TotalDebt).ToString("N0"))</div>
             <div class="stat-trend text-muted">تومان</div>
         </div>
-        <div class="stat-icon bg-danger">⚠️</div>
+        <div class="stat-icon bg-danger"><i class="bi bi-exclamation-triangle-fill"></i></div>
     </div>
 </div>
 
@@ -105,18 +105,18 @@
 <!-- نمودارها -->
 <div class="row" style="display:grid; grid-template-columns:2fr 1fr; gap:16px; margin-top:16px">
     <div class="card">
-        <div class="card-header"><h2>📈 روند حضور و غیاب ۷ روز اخیر</h2></div>
+        <div class="card-header"><h2><i class="bi bi-graph-up"></i>روند حضور و غیاب ۷ روز اخیر</h2></div>
         <div class="card-body"><canvas id="attChart" height="90"></canvas></div>
     </div>
     <div class="card">
-        <div class="card-header"><h2>🥧 توزیع دانش‌آموز در مدارس</h2></div>
+        <div class="card-header"><h2><i class="bi bi-pie-chart-fill"></i>توزیع دانش‌آموز در مدارس</h2></div>
         <div class="card-body"><canvas id="schoolChart" height="220"></canvas></div>
     </div>
 </div>
 
 <div class="row" style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px">
     <div class="card">
-        <div class="card-header"><h2>👥 توزیع نقش‌ها</h2></div>
+        <div class="card-header"><h2><i class="bi bi-people-fill"></i>توزیع نقش‌ها</h2></div>
         <div class="card-body">
             <table class="data-table">
                 <thead><tr><th>نقش</th><th>تعداد</th></tr></thead>
@@ -134,7 +134,7 @@
     </div>
 
     <div class="card">
-        <div class="card-header"><h2>🆕 ثبت‌نام‌های اخیر</h2></div>
+        <div class="card-header"><h2><i class="bi bi-stars"></i>ثبت‌نام‌های اخیر</h2></div>
         <div class="card-body" style="max-height:300px; overflow-y:auto">
             <ul style="list-style:none; padding:0; margin:0">
                 @foreach (var e in (dynamic)ViewBag.RecentEnrollments)

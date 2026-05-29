@@ -4,12 +4,12 @@
 
 <div class="page-header">
     <div>
-        <h1>👥 دانش‌آموزان (@PersianDate.ToPersianDigits(Model.TotalCount.ToString()))</h1>
+        <h1><i class="bi bi-people-fill"></i>دانش‌آموزان (@PersianDate.ToPersianDigits(Model.TotalCount.ToString()))</h1>
     </div>
     <div>
-        <a asp-controller="Export" asp-action="StudentsExcel" asp-route-schoolId="@ViewBag.SchoolId" asp-route-search="@ViewBag.Search" class="btn btn-success">📊 Excel</a>
-        <a asp-controller="Export" asp-action="StudentsPdf" asp-route-schoolId="@ViewBag.SchoolId" asp-route-search="@ViewBag.Search" target="_blank" class="btn btn-danger">📄 PDF</a>
-        <a asp-action="Create" class="btn btn-primary">➕ افزودن دانش‌آموز</a>
+        <a asp-controller="Export" asp-action="StudentsExcel" asp-route-schoolId="@ViewBag.SchoolId" asp-route-search="@ViewBag.Search" class="btn btn-success"><i class="bi bi-bar-chart"></i> Excel</a>
+        <a asp-controller="Export" asp-action="StudentsPdf" asp-route-schoolId="@ViewBag.SchoolId" asp-route-search="@ViewBag.Search" target="_blank" class="btn btn-danger"><i class="bi bi-file-pdf"></i> PDF</a>
+        <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-lg"></i> افزودن دانش‌آموز</a>
     </div>
 </div>
 
@@ -42,7 +42,7 @@
                 <label>جستجوی سرور (نام / کد / کد ملی)</label>
                 <input name="search" value="@ViewBag.Search" class="form-control" placeholder="جستجو در کل دیتابیس" />
             </div>
-            <button class="btn btn-primary">🔍</button>
+            <button class="btn btn-primary"><i class="bi bi-search"></i> </button>
         </form>
 
         <table class="data-table enhanced" id="studentsTable">
@@ -63,9 +63,9 @@
                             {<span class="badge badge-warning">⚠</span>}
                         </td>
                         <td>
-                            <a asp-action="Details" asp-route-id="@s.StudentId" class="btn btn-outline btn-sm">👁</a>
-                            <a asp-controller="Analytics" asp-action="Student" asp-route-id="@s.StudentId" class="btn btn-info btn-sm" title="گزارش جامع">📊</a>
-                            <a asp-action="Edit" asp-route-id="@s.StudentId" class="btn btn-primary btn-sm">✏️</a>
+                            <a asp-action="Details" asp-route-id="@s.StudentId" class="btn btn-outline btn-sm"><i class="bi bi-eye"></i></a>
+                            <a asp-controller="Analytics" asp-action="Student" asp-route-id="@s.StudentId" class="btn btn-info btn-sm" title="گزارش جامع"><i class="bi bi-bar-chart"></i></a>
+                            <a asp-action="Edit" asp-route-id="@s.StudentId" class="btn btn-primary btn-sm"><i class="bi bi-pencil"></i></a>
                         </td>
                     </tr>
                 }

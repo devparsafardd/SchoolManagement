@@ -4,10 +4,10 @@
 @{ ViewData["Title"] = Model.Subject ?? "پیام"; }
 
 <div class="page-header">
-    <h1>📩 @(string.IsNullOrEmpty(Model.Subject) ? "(بدون موضوع)" : Model.Subject)</h1>
+    <h1><i class="bi bi-envelope-fill"></i>@(string.IsNullOrEmpty(Model.Subject) ? "(بدون موضوع)" : Model.Subject)</h1>
     <div>
-        <a class="btn btn-primary" asp-action="Compose" asp-route-replyTo="@Model.MessageId">↩ پاسخ</a>
-        <a class="btn btn-outline" asp-action="Index">📥 بازگشت</a>
+        <a class="btn btn-primary" asp-action="Compose" asp-route-replyTo="@Model.MessageId"><i class="bi bi-arrow-return-left"></i> پاسخ</a>
+        <a class="btn btn-outline" asp-action="Index"><i class="bi bi-download"></i> بازگشت</a>
     </div>
 </div>
 

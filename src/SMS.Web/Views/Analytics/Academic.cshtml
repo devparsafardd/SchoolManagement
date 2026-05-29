@@ -6,7 +6,7 @@
 @section Styles { <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script> }
 
 <div class="page-header">
-    <h1>🎓 تحلیل عملکرد تحصیلی</h1>
+    <h1><i class="bi bi-mortarboard-fill"></i>تحلیل عملکرد تحصیلی</h1>
 </div>
 
 <div class="card">
@@ -28,7 +28,7 @@
                     { var sel = (int?)ViewBag.TermId == t.Id ? "selected" : ""; @Html.Raw($"<option value='{t.Id}' {sel}>{t.Name}</option>") }
                 </select>
             </div>
-            <button class="btn btn-primary">🔍 مشاهده</button>
+            <button class="btn btn-primary"><i class="bi bi-search"></i> مشاهده</button>
         </form>
     </div>
 </div>
@@ -39,7 +39,7 @@
             <div class="stat-label">میانگین کلی</div>
             <div class="stat-number">@(Model.OverallGPA.HasValue ? PersianDate.ToPersianDigits(Model.OverallGPA.Value.ToString("0.00")) : "—")</div>
         </div>
-        <div class="stat-icon bg-primary">📊</div>
+        <div class="stat-icon bg-primary"><i class="bi bi-bar-chart-line-fill"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
@@ -47,38 +47,38 @@
             <div class="stat-number text-success">@PersianDate.ToPersianDigits(Model.PassedStudents.ToString())</div>
             <div class="stat-trend">@PersianDate.ToPersianDigits(Model.PassRate.ToString("0.0"))%</div>
         </div>
-        <div class="stat-icon bg-success">✓</div>
+        <div class="stat-icon bg-success"><i class="bi bi-check-circle"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
             <div class="stat-label">مردودی</div>
             <div class="stat-number text-danger">@PersianDate.ToPersianDigits(Model.FailedStudents.ToString())</div>
         </div>
-        <div class="stat-icon bg-danger">✗</div>
+        <div class="stat-icon bg-danger"><i class="bi bi-x-circle-fill"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
             <div class="stat-label">نوبت</div>
             <div class="stat-number" style="font-size:1.3em">@(Model.TermName ?? "—")</div>
         </div>
-        <div class="stat-icon bg-info">📅</div>
+        <div class="stat-icon bg-info"><i class="bi bi-calendar3"></i></div>
     </div>
 </div>
 
 <div class="row" style="display:grid; grid-template-columns:2fr 1fr; gap:16px; margin-top:16px">
     <div class="card">
-        <div class="card-header"><h2>📊 میانگین دروس</h2></div>
+        <div class="card-header"><h2><i class="bi bi-bar-chart-line-fill"></i>میانگین دروس</h2></div>
         <div class="card-body"><canvas id="subjectsChart" height="80"></canvas></div>
     </div>
     <div class="card">
-        <div class="card-header"><h2>📈 توزیع نمرات</h2></div>
+        <div class="card-header"><h2><i class="bi bi-graph-up"></i>توزیع نمرات</h2></div>
         <div class="card-body"><canvas id="distChart" height="200"></canvas></div>
     </div>
 </div>
 
 <div class="row" style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px">
     <div class="card">
-        <div class="card-header"><h2>🏆 برترین‌ها</h2></div>
+        <div class="card-header"><h2><i class="bi bi-trophy-fill"></i>برترین‌ها</h2></div>
         <div class="card-body">
             <table class="data-table">
                 <thead><tr><th>#</th><th>نام</th><th>کلاس</th><th>معدل</th></tr></thead>
@@ -92,7 +92,7 @@
         </div>
     </div>
     <div class="card">
-        <div class="card-header"><h2>⚠️ ضعیف‌ترین‌ها</h2></div>
+        <div class="card-header"><h2><i class="bi bi-exclamation-triangle-fill"></i>ضعیف‌ترین‌ها</h2></div>
         <div class="card-body">
             <table class="data-table">
                 <thead><tr><th>#</th><th>نام</th><th>کلاس</th><th>معدل</th></tr></thead>

@@ -63,6 +63,9 @@
         if (!$ || !$.fn.DataTable) return;
         $.fn.smsDataTable = function (opts) {
             var defaults = {
+                scrollX: false,
+                autoWidth: false,
+                responsive: false,
                 language: {
                     decimal: '.',
                     emptyTable: 'داده‌ای موجود نیست',
@@ -119,6 +122,28 @@
 
     // ===== Print only main content =====
     function printPage() { window.print(); }
+
+    // ===== Sidebar Toggle هوشمند (موبایل و دسکتاپ) =====
+    window.smsToggleSidebar = function () {
+        var isMobile = window.innerWidth <= 992;
+        if (isMobile) {
+            // در موبایل: کلاس sidebar-collapsed رو پاک کن و sidebar-open رو toggle کن
+            document.body.classList.remove('sidebar-collapsed');
+            document.body.classList.toggle('sidebar-open');
+        } else {
+            // در دسکتاپ: کلاس sidebar-open رو پاک کن و sidebar-collapsed رو toggle کن
+            document.body.classList.remove('sidebar-open');
+            document.body.classList.toggle('sidebar-collapsed');
+        }
+        console.log('Sidebar toggled. Mobile:', isMobile, '| Body classes:', document.body.className);
+    };
+    // بستن سایدبار موبایل با Escape یا تغییر سایز
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') document.body.classList.remove('sidebar-open');
+    });
+    window.addEventListener('resize', function () {
+        if (window.innerWidth > 992) document.body.classList.remove('sidebar-open');
+    });
 
     // ===== Auto-init: همه جداول با کلاس enhanced خودکار DataTable می‌شوند =====
     (function ($) {

@@ -4,10 +4,10 @@
 
 <div class="page-header">
     <div>
-        <h1>👤 @Model.FullName</h1>
+        <h1><i class="bi bi-person-fill"></i>@Model.FullName</h1>
         <div class="subtitle">@Model.GenderText - @Model.PersonnelCode</div>
     </div>
-    <a asp-action="Edit" asp-route-id="@Model.StaffId" class="btn btn-primary">✏️ ویرایش</a>
+    <a asp-action="Edit" asp-route-id="@Model.StaffId" class="btn btn-primary"><i class="bi bi-pencil"></i> ویرایش</a>
 </div>
 
 <div class="card">
@@ -64,7 +64,7 @@
                 <label>ساعت هفتگی</label>
                 <input name="weeklyHours" class="form-control" type="number" step="0.5" style="width:100px" />
             </div>
-            <button class="btn btn-success">➕ افزودن تخصیص</button>
+            <button class="btn btn-success"><i class="bi bi-plus-lg"></i> افزودن تخصیص</button>
         </form>
 
         <div class="table-responsive" style="margin-top:16px">
@@ -86,7 +86,7 @@
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="assignmentId" value="@a.AssignmentId" />
                                     <input type="hidden" name="staffId" value="@Model.StaffId" />
-                                    <button class="btn btn-danger btn-sm">🗑</button>
+                                    <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i> </button>
                                 </form>
                             </td>
                         </tr>

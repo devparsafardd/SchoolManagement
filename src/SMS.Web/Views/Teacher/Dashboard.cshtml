@@ -4,15 +4,15 @@
 
 <div class="page-header">
     <div>
-        <h1>👨‍🏫 خوش آمدی @Model.FullName</h1>
+        <h1><i class="bi bi-person-workspace"></i>خوش آمدی @Model.FullName</h1>
         <div class="subtitle">
             @(string.IsNullOrEmpty(Model.PersonnelCode) ? "" : "کد پرسنلی: " + PersianDate.ToPersianDigits(Model.PersonnelCode))
             | @PersianDate.ToPersianLong(DateTime.Today)
         </div>
     </div>
     <div>
-        <a asp-action="MyReport" class="btn btn-info">📊 گزارش عملکرد من</a>
-        <a asp-action="Schedule" class="btn btn-outline">📅 برنامه هفتگی</a>
+        <a asp-action="MyReport" class="btn btn-info"><i class="bi bi-bar-chart"></i> گزارش عملکرد من</a>
+        <a asp-action="Schedule" class="btn btn-outline"><i class="bi bi-calendar"></i> برنامه هفتگی</a>
     </div>
 </div>
 
@@ -24,7 +24,7 @@
             <div class="stat-number">@PersianDate.ToPersianDigits(Model.TotalClasses.ToString())</div>
             <div class="stat-trend text-muted">سال جاری</div>
         </div>
-        <div class="stat-icon bg-success">📚</div>
+        <div class="stat-icon bg-success"><i class="bi bi-book-half"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
@@ -32,7 +32,7 @@
             <div class="stat-number">@PersianDate.ToPersianDigits(Model.TotalStudents.ToString())</div>
             <div class="stat-trend text-muted">مجموع</div>
         </div>
-        <div class="stat-icon bg-primary">👥</div>
+        <div class="stat-icon bg-primary"><i class="bi bi-people-fill"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
@@ -42,7 +42,7 @@
                 @PersianDate.ToPersianDigits(Model.PendingAttendance.ToString()) ثبت نشده
             </div>
         </div>
-        <div class="stat-icon bg-warning">📅</div>
+        <div class="stat-icon bg-warning"><i class="bi bi-calendar3"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
@@ -50,7 +50,7 @@
             <div class="stat-number">@PersianDate.ToPersianDigits(Model.UpcomingExams.ToString())</div>
             <div class="stat-trend text-muted">۲ هفته آینده</div>
         </div>
-        <div class="stat-icon bg-info">📝</div>
+        <div class="stat-icon bg-info"><i class="bi bi-pencil-square"></i></div>
     </div>
 </div>
 
@@ -58,7 +58,7 @@
 <div class="row" style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px">
     <div class="card">
         <div class="card-header">
-            <h2>📅 برنامه امروز</h2>
+            <h2><i class="bi bi-calendar3"></i>برنامه امروز</h2>
         </div>
         <div class="card-body">
             @if (!Model.TodaySchedule.Any())
@@ -101,7 +101,7 @@
 
     <div class="card">
         <div class="card-header">
-            <h2>📝 آزمون‌های پیش رو</h2>
+            <h2><i class="bi bi-pencil-square"></i>آزمون‌های پیش رو</h2>
         </div>
         <div class="card-body">
             @if (!Model.UpcomingExamsList.Any())
@@ -144,7 +144,7 @@
 <!-- کلاس‌های من -->
 <div class="card" style="margin-top:16px">
     <div class="card-header" style="display:flex; justify-content:space-between; align-items:center">
-        <h2>📚 کلاس‌های من</h2>
+        <h2><i class="bi bi-book-half"></i>کلاس‌های من</h2>
         <a asp-action="MyClasses" class="btn btn-sm btn-outline">مشاهده همه</a>
     </div>
     <div class="card-body">
@@ -183,7 +183,7 @@
 @if (Model.RecentActivities.Any())
 {
     <div class="card" style="margin-top:16px">
-        <div class="card-header"><h2>🕒 فعالیت‌های اخیر</h2></div>
+        <div class="card-header"><h2><i class="bi bi-clock-history"></i>فعالیت‌های اخیر</h2></div>
         <div class="card-body">
             <ul style="list-style:none; padding:0; margin:0">
                 @foreach (var a in Model.RecentActivities)

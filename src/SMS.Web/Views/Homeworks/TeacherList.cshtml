@@ -4,10 +4,10 @@
 @{ ViewData["Title"] = "تکالیف من"; Layout = "_TeacherLayout"; }
 
 <div class="page-header">
-    <h1>📝 تکالیف من</h1>
+    <h1><i class="bi bi-pencil-square"></i>تکالیف من</h1>
     @if (ViewBag.ClassSubjectId != null)
     {
-        <a class="btn btn-success" asp-action="Create" asp-route-classSubjectId="@ViewBag.ClassSubjectId">➕ تکلیف جدید</a>
+        <a class="btn btn-success" asp-action="Create" asp-route-classSubjectId="@ViewBag.ClassSubjectId"><i class="bi bi-plus-lg"></i> تکلیف جدید</a>
     }
 </div>
 
@@ -37,7 +37,7 @@
                             }
                         </td>
                         <td>
-                            <a class="btn btn-sm btn-primary" asp-action="Submissions" asp-route-id="@h.HomeworkId">📋 تحویل‌ها</a>
+                            <a class="btn btn-sm btn-primary" asp-action="Submissions" asp-route-id="@h.HomeworkId"><i class="bi bi-clipboard"></i> تحویل‌ها</a>
                         </td>
                     </tr>
                 }

@@ -6,7 +6,7 @@
 @section Styles { <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script> }
 
 <div class="page-header">
-    <h1>💰 تحلیل مالی</h1>
+    <h1><i class="bi bi-cash-stack"></i>تحلیل مالی</h1>
 </div>
 
 <div class="card">
@@ -30,7 +30,7 @@
             </div>
             <div class="form-group"><label>از تاریخ</label><input name="fromDate" value="@ViewBag.FromDate" class="form-control persian-date" autocomplete="off" style="width:120px" /></div>
             <div class="form-group"><label>تا تاریخ</label><input name="toDate" value="@ViewBag.ToDate" class="form-control persian-date" autocomplete="off" style="width:120px" /></div>
-            <button class="btn btn-primary">🔍 مشاهده</button>
+            <button class="btn btn-primary"><i class="bi bi-search"></i> مشاهده</button>
         </form>
     </div>
 </div>
@@ -42,7 +42,7 @@
             <div class="stat-number">@PersianDate.ToPersianDigits(Model.TotalInvoiced.ToString("N0"))</div>
             <div class="stat-trend text-muted">تومان</div>
         </div>
-        <div class="stat-icon bg-primary">📄</div>
+        <div class="stat-icon bg-primary"><i class="bi bi-file-pdf-fill"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
@@ -50,7 +50,7 @@
             <div class="stat-number text-success">@PersianDate.ToPersianDigits(Model.TotalPaid.ToString("N0"))</div>
             <div class="stat-trend">@PersianDate.ToPersianDigits(Model.CollectionRate.ToString("0.0"))%</div>
         </div>
-        <div class="stat-icon bg-success">💵</div>
+        <div class="stat-icon bg-success"><i class="bi bi-coin"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
@@ -58,7 +58,7 @@
             <div class="stat-number text-danger">@PersianDate.ToPersianDigits(Model.TotalOutstanding.ToString("N0"))</div>
             <div class="stat-trend text-muted">تومان</div>
         </div>
-        <div class="stat-icon bg-danger">⚠️</div>
+        <div class="stat-icon bg-danger"><i class="bi bi-exclamation-triangle-fill"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
@@ -66,18 +66,18 @@
             <div class="stat-number text-warning">@PersianDate.ToPersianDigits(Model.OverdueAmount.ToString("N0"))</div>
             <div class="stat-trend">@PersianDate.ToPersianDigits(Model.OverdueInvoiceCount.ToString()) فاکتور</div>
         </div>
-        <div class="stat-icon bg-warning">⏰</div>
+        <div class="stat-icon bg-warning"><i class="bi bi-clock-fill"></i></div>
     </div>
 </div>
 
 <div class="card" style="margin-top:16px">
-    <div class="card-header"><h2>📈 درآمد ماهانه</h2></div>
+    <div class="card-header"><h2><i class="bi bi-graph-up"></i>درآمد ماهانه</h2></div>
     <div class="card-body"><canvas id="monthlyChart" height="80"></canvas></div>
 </div>
 
 <div class="row" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-top:16px">
     <div class="card">
-        <div class="card-header"><h2>📊 به تفکیک نوع شهریه</h2></div>
+        <div class="card-header"><h2><i class="bi bi-bar-chart-line-fill"></i>به تفکیک نوع شهریه</h2></div>
         <div class="card-body"><canvas id="feeTypeChart" height="200"></canvas></div>
     </div>
     <div class="card">
@@ -85,7 +85,7 @@
         <div class="card-body"><canvas id="methodChart" height="200"></canvas></div>
     </div>
     <div class="card">
-        <div class="card-header"><h2>🔴 برترین بدهکاران</h2></div>
+        <div class="card-header"><h2><i class="bi bi-circle-fill"></i>برترین بدهکاران</h2></div>
         <div class="card-body" style="max-height:300px; overflow-y:auto">
             <table class="data-table" style="font-size:0.85em">
                 <thead><tr><th>دانش‌آموز</th><th>بدهی</th></tr></thead>

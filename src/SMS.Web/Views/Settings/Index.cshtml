@@ -1,7 +1,7 @@
 @model List<SystemSettingDto>
 @{ ViewData["Title"] = "تنظیمات سیستم"; }
 
-<div class="page-header"><h1>⚙ تنظیمات سیستم</h1></div>
+<div class="page-header"><h1><i class="bi bi-gear-fill"></i>تنظیمات سیستم</h1></div>
 
 <div class="card">
     <div class="card-body">
@@ -28,7 +28,7 @@
                                 <input type="hidden" name="key" value="@s.Key" />
                                 <input type="hidden" name="category" value="@ViewBag.Category" />
                                 <input name="value" value="@s.Value" class="form-control" style="flex:1" />
-                                <button class="btn btn-success btn-sm">💾</button>
+                                <button class="btn btn-success btn-sm"><i class="bi bi-floppy"></i> </button>
                             </form>
                         </td>
                     </tr>

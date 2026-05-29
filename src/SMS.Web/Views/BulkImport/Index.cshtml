@@ -10,7 +10,7 @@
 }
 
 <div class="page-header">
-    <h1>📊 ایمپورت دسته‌جمعی از Excel</h1>
+    <h1><i class="bi bi-bar-chart-line-fill"></i>ایمپورت دسته‌جمعی از Excel</h1>
 </div>
 
 @if (errors != null && errors.Any())
@@ -31,7 +31,7 @@
 
     <!-- ایمپورت دانش‌آموزان -->
     <div class="card">
-        <div class="card-header"><h2>👥 ثبت‌نام دسته‌جمعی دانش‌آموزان</h2></div>
+        <div class="card-header"><h2><i class="bi bi-people-fill"></i>ثبت‌نام دسته‌جمعی دانش‌آموزان</h2></div>
         <div class="card-body">
             <p class="text-muted">برای ثبت‌نام چند ده یا چند صد دانش‌آموز همزمان</p>
 
@@ -42,7 +42,7 @@
                 <li>فایل رو آپلود کن</li>
             </ol>
 
-            <a asp-action="StudentsTemplate" class="btn btn-info" style="margin-bottom:14px">📥 دانلود قالب نمونه</a>
+            <a asp-action="StudentsTemplate" class="btn btn-info" style="margin-bottom:14px"><i class="bi bi-download"></i> دانلود قالب نمونه</a>
 
             <form method="post" asp-action="ImportStudents" enctype="multipart/form-data">
                 @Html.AntiForgeryToken()
@@ -72,18 +72,18 @@
                     <label>فایل Excel *</label>
                     <input type="file" name="file" accept=".xlsx" required class="form-control" />
                 </div>
-                <button class="btn btn-success">📤 ایمپورت</button>
+                <button class="btn btn-success"><i class="bi bi-send"></i> ایمپورت</button>
             </form>
         </div>
     </div>
 
     <!-- ایمپورت معلمان -->
     <div class="card">
-        <div class="card-header"><h2>👨‍🏫 ثبت‌نام دسته‌جمعی معلمان</h2></div>
+        <div class="card-header"><h2><i class="bi bi-person-workspace"></i>ثبت‌نام دسته‌جمعی معلمان</h2></div>
         <div class="card-body">
             <p class="text-muted">برای ثبت چندین معلم همزمان</p>
 
-            <a asp-action="StaffTemplate" class="btn btn-info" style="margin-bottom:14px">📥 دانلود قالب نمونه</a>
+            <a asp-action="StaffTemplate" class="btn btn-info" style="margin-bottom:14px"><i class="bi bi-download"></i> دانلود قالب نمونه</a>
 
             <form method="post" asp-action="ImportStaff" enctype="multipart/form-data">
                 @Html.AntiForgeryToken()
@@ -101,7 +101,7 @@
                     <label>فایل Excel *</label>
                     <input type="file" name="file" accept=".xlsx" required class="form-control" />
                 </div>
-                <button class="btn btn-success">📤 ایمپورت</button>
+                <button class="btn btn-success"><i class="bi bi-send"></i> ایمپورت</button>
             </form>
         </div>
     </div>

@@ -6,7 +6,7 @@
 
 <div class="page-header">
     <div>
-        <h1>📚 دروس کلاس: @classroom.Name</h1>
+        <h1><i class="bi bi-book-half"></i>دروس کلاس: @classroom.Name</h1>
         <div class="subtitle">@classroom.SchoolName | @classroom.GradeName | @classroom.AcademicYearTitle</div>
     </div>
 </div>
@@ -37,7 +37,7 @@
                     }
                 </select>
             </div>
-            <button class="btn btn-success">➕ تخصیص</button>
+            <button class="btn btn-success"><i class="bi bi-plus-lg"></i> تخصیص</button>
         </form>
     </div>
 </div>
@@ -54,12 +54,12 @@
                         <td>@cst.Coefficient</td>
                         <td>@cst.TeacherName</td>
                         <td>
-                            <a asp-controller="Exams" asp-action="Index" asp-route-classSubjectId="@cst.ClassSubjectId" class="btn btn-primary btn-sm">📝 آزمون‌ها</a>
+                            <a asp-controller="Exams" asp-action="Index" asp-route-classSubjectId="@cst.ClassSubjectId" class="btn btn-primary btn-sm"><i class="bi bi-pencil-square"></i> آزمون‌ها</a>
                             <form method="post" asp-action="Unassign" style="display:inline" onsubmit="return confirm('حذف شود؟');">
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="classSubjectId" value="@cst.ClassSubjectId" />
                                 <input type="hidden" name="classroomId" value="@classroom.ClassroomId" />
-                                <button class="btn btn-danger btn-sm">🗑</button>
+                                <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i> </button>
                             </form>
                         </td>
                     </tr>

@@ -1,7 +1,7 @@
 @using SMS.Shared.Helpers
 @{ ViewData["Title"] = "گزارش‌ها و کارنامه"; }
 
-<div class="page-header"><h1>📊 کارنامه‌ها</h1></div>
+<div class="page-header"><h1><i class="bi bi-bar-chart-line-fill"></i>کارنامه‌ها</h1></div>
 
 <div class="card">
     <div class="card-body">
@@ -42,7 +42,7 @@
                         }
                     </select>
                 </div>
-                <button class="btn btn-primary">🔍 نمایش</button>
+                <button class="btn btn-primary"><i class="bi bi-search"></i> نمایش</button>
             }
         </form>
 
@@ -54,7 +54,7 @@
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="classroomId" value="@ViewBag.ClassroomId" />
                     <input type="hidden" name="termId" value="@ViewBag.TermId" />
-                    <button class="btn btn-success">🔄 محاسبه و ذخیره معدل‌ها</button>
+                    <button class="btn btn-success"><i class="bi bi-arrow-repeat"></i> محاسبه و ذخیره معدل‌ها</button>
                 </form>
             </div>
 
@@ -74,8 +74,8 @@
                             <td>@PersianDate.ToPersianDigits(r.TotalAbsences.ToString())</td>
                             <td>@PersianDate.ToPersianDigits(r.TotalTardies.ToString())</td>
                             <td>
-                                <a asp-action="Student" asp-route-studentId="@r.StudentId" asp-route-termId="@ViewBag.TermId" class="btn btn-primary btn-sm">👁</a>
-                                <a asp-action="Pdf" asp-route-studentId="@r.StudentId" asp-route-termId="@ViewBag.TermId" class="btn btn-outline btn-sm" target="_blank">📄 PDF</a>
+                                <a asp-action="Student" asp-route-studentId="@r.StudentId" asp-route-termId="@ViewBag.TermId" class="btn btn-primary btn-sm"><i class="bi bi-eye"></i></a>
+                                <a asp-action="Pdf" asp-route-studentId="@r.StudentId" asp-route-termId="@ViewBag.TermId" class="btn btn-outline btn-sm" target="_blank"><i class="bi bi-file-pdf"></i> PDF</a>
                             </td>
                         </tr>
                     }

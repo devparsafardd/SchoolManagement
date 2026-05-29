@@ -3,13 +3,13 @@
 @{ ViewData["Title"] = "اعلان‌ها"; }
 
 <div class="page-header">
-    <h1>📢 اعلان‌ها و اطلاعیه‌ها</h1>
+    <h1><i class="bi bi-megaphone-fill"></i>اعلان‌ها و اطلاعیه‌ها</h1>
     @{
         var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("SchoolAdmin") || User.IsInRole("Principal") || User.IsInRole("VicePrincipal");
     }
     @if (canManage)
     {
-        <a asp-action="Create" class="btn btn-success">➕ اعلان جدید</a>
+        <a asp-action="Create" class="btn btn-success"><i class="bi bi-plus-lg"></i> اعلان جدید</a>
     }
 </div>
 
@@ -39,7 +39,7 @@
                             {
                                 <form method="post" asp-action="Delete" asp-route-id="@a.AnnouncementId" style="display:inline" onsubmit="return confirm('حذف شود؟');">
                                     @Html.AntiForgeryToken()
-                                    <button class="btn btn-danger btn-sm">🗑</button>
+                                    <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i> </button>
                                 </form>
                             }
                         </td>

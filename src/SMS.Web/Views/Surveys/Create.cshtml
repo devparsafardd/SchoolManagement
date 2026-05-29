@@ -2,7 +2,7 @@
 @model SurveyCreateDto
 @{ ViewData["Title"] = "نظرسنجی جدید"; }
 
-<div class="page-header"><h1>➕ ساخت نظرسنجی جدید</h1></div>
+<div class="page-header"><h1><i class="bi bi-plus-circle-fill"></i>ساخت نظرسنجی جدید</h1></div>
 
 <div class="card">
     <div class="card-body">
@@ -41,13 +41,13 @@
             </div>
 
             <hr style="margin:20px 0" />
-            <h3>📝 سوالات</h3>
+            <h3><i class="bi bi-pencil-square"></i>سوالات</h3>
             <div id="questionsContainer"></div>
 
-            <button type="button" class="btn btn-outline" onclick="addQuestion()">➕ افزودن سوال</button>
+            <button type="button" class="btn btn-outline" onclick="addQuestion()"><i class="bi bi-plus-lg"></i> افزودن سوال</button>
 
             <hr style="margin:20px 0" />
-            <button type="submit" class="btn btn-success">💾 ایجاد نظرسنجی</button>
+            <button type="submit" class="btn btn-success"><i class="bi bi-floppy"></i> ایجاد نظرسنجی</button>
             <a asp-action="Index" class="btn btn-secondary">انصراف</a>
         </form>
     </div>

@@ -4,10 +4,10 @@
 
 <div class="page-header">
     <div>
-        <h1>👨‍👩‍👧 اولیا و سرپرستان</h1>
+        <h1><i class="bi bi-people"></i>اولیا و سرپرستان</h1>
         <div class="subtitle">مجموع: @PersianDate.ToPersianDigits(Model.TotalCount.ToString())</div>
     </div>
-    <a asp-action="Create" class="btn btn-success">➕ افزودن ولی</a>
+    <a asp-action="Create" class="btn btn-success"><i class="bi bi-plus-lg"></i> افزودن ولی</a>
 </div>
 
 <div class="card">
@@ -17,7 +17,7 @@
                 <label>جستجو</label>
                 <input name="search" value="@ViewBag.Search" class="form-control" placeholder="نام / موبایل / کد ملی" />
             </div>
-            <button class="btn btn-primary">🔍</button>
+            <button class="btn btn-primary"><i class="bi bi-search"></i> </button>
         </form>
 
         <table class="data-table enhanced">
@@ -42,7 +42,7 @@
                             }
                         </td>
                         <td>
-                            <a asp-action="Details" asp-route-id="@g.GuardianId" class="btn btn-primary btn-sm">👁 جزئیات / حساب</a>
+                            <a asp-action="Details" asp-route-id="@g.GuardianId" class="btn btn-primary btn-sm"><i class="bi bi-eye"></i> جزئیات / حساب</a>
                         </td>
                     </tr>
                 }

@@ -11,10 +11,10 @@
 
 <div class="page-header">
     <div>
-        <h1>📅 برنامه هفتگی @cls.Name</h1>
+        <h1><i class="bi bi-calendar3"></i>برنامه هفتگی @cls.Name</h1>
     </div>
     <div>
-        <button class="btn btn-info" onclick="window.print()">🖨 پرینت / PDF</button>
+        <button class="btn btn-info" onclick="window.print()"><i class="bi bi-printer"></i> پرینت / PDF</button>
     </div>
 </div>
 
@@ -55,7 +55,7 @@
 </div>
 
 <div class="card" style="margin-top:16px">
-    <div class="card-header"><h2>📋 برنامه فعلی</h2></div>
+    <div class="card-header"><h2><i class="bi bi-clipboard-data"></i>برنامه فعلی</h2></div>
     <div class="card-body">
         @if (!periods.Any())
         {
@@ -93,7 +93,7 @@
                                                     @Html.AntiForgeryToken()
                                                     <input type="hidden" name="id" value="@entry.ScheduleId" />
                                                     <input type="hidden" name="classroomId" value="@cls.ClassroomId" />
-                                                    <button class="btn btn-sm btn-danger" style="padding:2px 6px; font-size:0.75em">🗑</button>
+                                                    <button class="btn btn-sm btn-danger" style="padding:2px 6px; font-size:0.75em"><i class="bi bi-trash"></i> </button>
                                                 </form>
                                             </div>
                                         }

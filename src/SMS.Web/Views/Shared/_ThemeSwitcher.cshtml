@@ -1,0 +1,76 @@
+@*
+    دکمه تغییر تم در topbar - نمایش پالت رنگ و حالت Light/Dark
+*@
+<div style="position:relative" id="themeSwitcherContainer">
+    <button type="button" class="topbar-btn" onclick="document.getElementById('themeSwitcher').classList.toggle('open')" title="انتخاب تم">
+        <i class="bi bi-palette-fill"></i>
+    </button>
+
+    <div class="theme-switcher" id="themeSwitcher">
+        <h4>🎨 رنگ تم</h4>
+        <div class="theme-colors">
+            <button type="button" class="theme-color-btn" data-theme="indigo" style="background:#6366f1" title="بنفش"></button>
+            <button type="button" class="theme-color-btn" data-theme="emerald" style="background:#10b981" title="سبز"></button>
+            <button type="button" class="theme-color-btn" data-theme="rose" style="background:#f43f5e" title="صورتی"></button>
+            <button type="button" class="theme-color-btn" data-theme="amber" style="background:#f59e0b" title="نارنجی"></button>
+            <button type="button" class="theme-color-btn" data-theme="ocean" style="background:#0ea5e9" title="آبی"></button>
+        </div>
+
+        <h4>☀️ حالت نمایش</h4>
+        <div class="theme-mode-toggle">
+            <button type="button" data-mode="light"><i class="bi bi-sun-fill"></i> روشن</button>
+            <button type="button" data-mode="dark"><i class="bi bi-moon-fill"></i> تاریک</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        // اعمال تم ذخیره شده در اولین لود
+        function getCookie(name) {
+            var v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+            return v ? v.pop() : null;
+        }
+        function applyTheme(theme, mode) {
+            if (theme) document.documentElement.setAttribute('data-theme', theme);
+            if (mode) document.documentElement.setAttribute('data-mode', mode);
+
+            // علامت‌گذاری active
+            document.querySelectorAll('.theme-color-btn').forEach(b => {
+                b.classList.toggle('active', b.dataset.theme === theme);
+            });
+            document.querySelectorAll('.theme-mode-toggle button').forEach(b => {
+                b.classList.toggle('active', b.dataset.mode === mode);
+            });
+        }
+        var savedTheme = getCookie('sms.theme') || 'indigo';
+        var savedMode = getCookie('sms.mode') || 'light';
+        applyTheme(savedTheme, savedMode);
+
+        // کلیک روی رنگ
+        document.querySelectorAll('.theme-color-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                var t = this.dataset.theme;
+                document.cookie = 'sms.theme=' + t + '; max-age=31536000; path=/';
+                applyTheme(t, getCookie('sms.mode') || 'light');
+                fetch('/Theme/Set?theme=' + encodeURIComponent(t), { method: 'POST' });
+            });
+        });
+        // کلیک روی حالت
+        document.querySelectorAll('.theme-mode-toggle button').forEach(btn => {
+            btn.addEventListener('click', function () {
+                var m = this.dataset.mode;
+                document.cookie = 'sms.mode=' + m + '; max-age=31536000; path=/';
+                applyTheme(getCookie('sms.theme') || 'indigo', m);
+                fetch('/Theme/Set?mode=' + encodeURIComponent(m), { method: 'POST' });
+            });
+        });
+        // بستن با کلیک بیرون
+        document.addEventListener('click', function (e) {
+            var c = document.getElementById('themeSwitcherContainer');
+            if (c && !c.contains(e.target)) {
+                document.getElementById('themeSwitcher').classList.remove('open');
+            }
+        });
+    })();
+</script>

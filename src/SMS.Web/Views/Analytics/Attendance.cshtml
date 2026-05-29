@@ -6,7 +6,7 @@
 @section Styles { <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script> }
 
 <div class="page-header">
-    <h1>📅 تحلیل حضور و غیاب</h1>
+    <h1><i class="bi bi-calendar3"></i>تحلیل حضور و غیاب</h1>
 </div>
 
 <div class="card">
@@ -31,7 +31,7 @@
                 <label>تا تاریخ</label>
                 <input name="toDate" value="@ViewBag.ToDate" class="form-control persian-date" autocomplete="off" placeholder="1404/12/29" style="width:120px" />
             </div>
-            <button class="btn btn-primary">🔍 مشاهده</button>
+            <button class="btn btn-primary"><i class="bi bi-search"></i> مشاهده</button>
         </form>
     </div>
 </div>
@@ -42,7 +42,7 @@
             <div class="stat-label">کل ثبت‌ها</div>
             <div class="stat-number">@PersianDate.ToPersianDigits(Model.TotalRecords.ToString())</div>
         </div>
-        <div class="stat-icon bg-primary">📊</div>
+        <div class="stat-icon bg-primary"><i class="bi bi-bar-chart-line-fill"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
@@ -50,7 +50,7 @@
             <div class="stat-number text-success">@PersianDate.ToPersianDigits(Model.PresentCount.ToString())</div>
             <div class="stat-trend">@PersianDate.ToPersianDigits(Model.PresentRate.ToString("0.0"))%</div>
         </div>
-        <div class="stat-icon bg-success">✓</div>
+        <div class="stat-icon bg-success"><i class="bi bi-check-circle"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
@@ -58,25 +58,25 @@
             <div class="stat-number text-danger">@PersianDate.ToPersianDigits(Model.AbsentCount.ToString())</div>
             <div class="stat-trend">@PersianDate.ToPersianDigits(Model.AbsentRate.ToString("0.0"))%</div>
         </div>
-        <div class="stat-icon bg-danger">✗</div>
+        <div class="stat-icon bg-danger"><i class="bi bi-x-circle-fill"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
             <div class="stat-label">تاخیر</div>
             <div class="stat-number text-warning">@PersianDate.ToPersianDigits(Model.TardyCount.ToString())</div>
         </div>
-        <div class="stat-icon bg-warning">⏰</div>
+        <div class="stat-icon bg-warning"><i class="bi bi-clock-fill"></i></div>
     </div>
 </div>
 
 <div class="card" style="margin-top:16px">
-    <div class="card-header"><h2>📈 روند روزانه</h2></div>
+    <div class="card-header"><h2><i class="bi bi-graph-up"></i>روند روزانه</h2></div>
     <div class="card-body"><canvas id="dailyChart" height="80"></canvas></div>
 </div>
 
 <div class="row" style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px">
     <div class="card">
-        <div class="card-header"><h2>🏫 آمار به تفکیک کلاس</h2></div>
+        <div class="card-header"><h2><i class="bi bi-building"></i>آمار به تفکیک کلاس</h2></div>
         <div class="card-body" style="max-height:400px; overflow-y:auto">
             <table class="data-table">
                 <thead><tr><th>کلاس</th><th>پایه</th><th>حاضر</th><th>غایب</th><th>تاخیر</th><th>%</th></tr></thead>
@@ -98,7 +98,7 @@
     </div>
 
     <div class="card">
-        <div class="card-header"><h2>⚠️ بیشترین غیبت</h2></div>
+        <div class="card-header"><h2><i class="bi bi-exclamation-triangle-fill"></i>بیشترین غیبت</h2></div>
         <div class="card-body" style="max-height:400px; overflow-y:auto">
             <table class="data-table">
                 <thead><tr><th>دانش‌آموز</th><th>کلاس</th><th>غیبت</th><th>تاخیر</th></tr></thead>

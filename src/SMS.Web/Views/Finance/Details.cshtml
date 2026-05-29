@@ -11,7 +11,7 @@
     {
         <form method="post" asp-action="DeleteInvoice" asp-route-id="@Model.InvoiceId" style="display:inline" onsubmit="return confirm('فاکتور حذف شود؟');">
             @Html.AntiForgeryToken()
-            <button class="btn btn-danger">🗑 حذف فاکتور</button>
+            <button class="btn btn-danger"><i class="bi bi-trash"></i> حذف فاکتور</button>
         </form>
     }
 </div>
@@ -78,14 +78,14 @@
                     <label>شماره پیگیری</label>
                     <input name="referenceNumber" class="form-control" />
                 </div>
-                <button class="btn btn-success">💾 ثبت پرداخت</button>
+                <button class="btn btn-success"><i class="bi bi-floppy"></i> ثبت پرداخت</button>
             </form>
         </div>
     </div>
 }
 
 <div class="card">
-    <div class="card-header"><h2>📋 تاریخچه پرداخت‌ها</h2></div>
+    <div class="card-header"><h2><i class="bi bi-clipboard-data"></i>تاریخچه پرداخت‌ها</h2></div>
     <div class="card-body">
         <table class="data-table">
             <thead><tr><th>تاریخ</th><th>مبلغ</th><th>روش</th><th>شماره پیگیری</th><th>توضیحات</th><th></th></tr></thead>
@@ -103,7 +103,7 @@
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="paymentId" value="@p.PaymentId" />
                                 <input type="hidden" name="invoiceId" value="@Model.InvoiceId" />
-                                <button class="btn btn-danger btn-sm">🗑</button>
+                                <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i> </button>
                             </form>
                         </td>
                     </tr>

@@ -3,7 +3,7 @@
 
 <div class="page-header">
     <div>
-        <h1>📚 دروس پایه: @ViewBag.GradeName</h1>
+        <h1><i class="bi bi-book-half"></i>دروس پایه: @ViewBag.GradeName</h1>
         <div class="subtitle">تعداد دروس: @Model.Count</div>
     </div>
 </div>
@@ -33,7 +33,7 @@
                 <label>توصیفی؟</label>
                 <select name="isDescriptive" class="form-control"><option value="false">خیر (عددی)</option><option value="true">بله</option></select>
             </div>
-            <button class="btn btn-success">➕ افزودن</button>
+            <button class="btn btn-success"><i class="bi bi-plus-lg"></i> افزودن</button>
         </form>
     </div>
 </div>
@@ -58,7 +58,7 @@
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="gradeSubjectId" value="@gs.GradeSubjectId" />
                                 <input type="hidden" name="gradeId" value="@ViewBag.GradeId" />
-                                <button class="btn btn-danger btn-sm">🗑</button>
+                                <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i> </button>
                             </form>
                         </td>
                     </tr>

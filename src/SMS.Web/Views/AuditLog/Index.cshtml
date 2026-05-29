@@ -3,7 +3,7 @@
 @{ ViewData["Title"] = "لاگ سیستم"; }
 
 <div class="page-header">
-    <h1>📋 لاگ تغییرات سیستم</h1>
+    <h1><i class="bi bi-clipboard-data"></i>لاگ تغییرات سیستم</h1>
 </div>
 
 <div class="card">
@@ -30,7 +30,7 @@
                 <label>تا تاریخ</label>
                 <input name="toDate" value="@ViewBag.ToDate" class="form-control persian-date" autocomplete="off" placeholder="1404/12/29" style="width:130px" />
             </div>
-            <button class="btn btn-primary">🔍</button>
+            <button class="btn btn-primary"><i class="bi bi-search"></i> </button>
         </form>
 
         <table class="data-table enhanced">
@@ -54,7 +54,7 @@
                         <td>@a.EntityId</td>
                         <td><small class="text-muted">@a.ChangedColumns</small></td>
                         <td><small>@a.IpAddress</small></td>
-                        <td><a asp-action="Details" asp-route-id="@a.AuditId" class="btn btn-outline btn-sm">👁</a></td>
+                        <td><a asp-action="Details" asp-route-id="@a.AuditId" class="btn btn-outline btn-sm"><i class="bi bi-eye"></i></a></td>
                     </tr>
                 }
                 @if (!Model.Items.Any()) { <tr><td colspan="8" class="empty-state">رکوردی یافت نشد</td></tr> }

@@ -4,10 +4,10 @@
 @{ ViewData["Title"] = "صندوق دریافت"; }
 
 <div class="page-header">
-    <h1>📥 صندوق دریافت</h1>
+    <h1><i class="bi bi-inbox-fill"></i>صندوق دریافت</h1>
     <div>
-        <a class="btn btn-primary" asp-action="Compose">✏️ پیام جدید</a>
-        <a class="btn btn-outline" asp-action="Sent">📤 ارسال شده</a>
+        <a class="btn btn-primary" asp-action="Compose"><i class="bi bi-pencil"></i> پیام جدید</a>
+        <a class="btn btn-outline" asp-action="Sent"><i class="bi bi-send"></i> ارسال شده</a>
     </div>
 </div>
 
@@ -34,7 +34,7 @@
                             <form method="post" asp-action="Delete" style="display:inline" onsubmit="return confirm('حذف شود؟')">
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="id" value="@m.MessageId" />
-                                <button class="btn btn-sm btn-danger">🗑</button>
+                                <button class="btn btn-sm btn-danger"><i class="bi bi-trash"></i> </button>
                             </form>
                         </td>
                     </tr>

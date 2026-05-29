@@ -4,14 +4,14 @@
 
 <div class="page-header">
     <div>
-        <h1>📚 @Model.SubjectName</h1>
+        <h1><i class="bi bi-book-half"></i>@Model.SubjectName</h1>
         <div class="subtitle">
             🏫 @Model.SchoolName | @Model.ClassroomName | @Model.GradeName | سال @Model.AcademicYearTitle
         </div>
     </div>
     <div>
         <a class="btn btn-success" asp-action="Attendance" asp-route-classSubjectId="@Model.ClassSubjectId">✅ ثبت حضور</a>
-        <a class="btn btn-info" asp-action="CreateExam" asp-route-classSubjectId="@Model.ClassSubjectId">➕ آزمون جدید</a>
+        <a class="btn btn-info" asp-action="CreateExam" asp-route-classSubjectId="@Model.ClassSubjectId"><i class="bi bi-plus-lg"></i> آزمون جدید</a>
     </div>
 </div>
 
@@ -21,14 +21,14 @@
             <div class="stat-label">تعداد دانش‌آموزان</div>
             <div class="stat-number">@PersianDate.ToPersianDigits(Model.Students.Count.ToString())</div>
         </div>
-        <div class="stat-icon bg-primary">👥</div>
+        <div class="stat-icon bg-primary"><i class="bi bi-people-fill"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
             <div class="stat-label">تعداد آزمون‌ها</div>
             <div class="stat-number">@PersianDate.ToPersianDigits(Model.Exams.Count.ToString())</div>
         </div>
-        <div class="stat-icon bg-info">📝</div>
+        <div class="stat-icon bg-info"><i class="bi bi-pencil-square"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
@@ -38,14 +38,14 @@
                 @PersianDate.ToPersianDigits(avg.ToString("0.00"))
             </div>
         </div>
-        <div class="stat-icon bg-success">📊</div>
+        <div class="stat-icon bg-success"><i class="bi bi-bar-chart-line-fill"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
             <div class="stat-label">ساعت هفتگی</div>
             <div class="stat-number">@(Model.WeeklyHours.HasValue ? PersianDate.ToPersianDigits(Model.WeeklyHours.Value.ToString("0.#")) : "—")</div>
         </div>
-        <div class="stat-icon bg-warning">⏰</div>
+        <div class="stat-icon bg-warning"><i class="bi bi-clock-fill"></i></div>
     </div>
 </div>
 
@@ -53,7 +53,7 @@
 
     <!-- لیست دانش‌آموزان -->
     <div class="card">
-        <div class="card-header"><h2>👥 دانش‌آموزان</h2></div>
+        <div class="card-header"><h2><i class="bi bi-people-fill"></i>دانش‌آموزان</h2></div>
         <div class="card-body">
             <table class="data-table">
                 <thead>
@@ -100,7 +100,7 @@
     <!-- آزمون‌ها + حضور و غیاب اخیر -->
     <div>
         <div class="card">
-            <div class="card-header"><h2>📝 آزمون‌های اخیر</h2></div>
+            <div class="card-header"><h2><i class="bi bi-pencil-square"></i>آزمون‌های اخیر</h2></div>
             <div class="card-body">
                 @if (!Model.Exams.Any())
                 {
@@ -129,7 +129,7 @@
         </div>
 
         <div class="card" style="margin-top:16px">
-            <div class="card-header"><h2>📊 حضور و غیاب اخیر</h2></div>
+            <div class="card-header"><h2><i class="bi bi-bar-chart-line-fill"></i>حضور و غیاب اخیر</h2></div>
             <div class="card-body">
                 @if (!Model.RecentAttendance.Any())
                 {

@@ -9,7 +9,7 @@
             @Html.AntiForgeryToken()
             <div class="form-group"><label>شماره موبایل *</label><input asp-for="Mobile" class="form-control" placeholder="09xxxxxxxxx" required /></div>
             <div class="form-group"><label>متن پیامک *</label><textarea asp-for="Text" class="form-control" rows="5" required maxlength="500"></textarea></div>
-            <button class="btn btn-success">📤 ارسال</button>
+            <button class="btn btn-success"><i class="bi bi-send"></i> ارسال</button>
             <a asp-action="Index" class="btn btn-secondary">انصراف</a>
         </form>
     </div>

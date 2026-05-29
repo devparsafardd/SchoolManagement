@@ -37,8 +37,8 @@
                                 <td>@c.GradeName</td>
                                 <td>@PersianDate.ToPersianDigits(c.CurrentStudentCount.ToString())</td>
                                 <td>
-                                    <a asp-action="Take" asp-route-classroomId="@c.ClassroomId" class="btn btn-primary btn-sm">✓ ثبت حضور</a>
-                                    <a asp-action="Report" asp-route-classroomId="@c.ClassroomId" class="btn btn-outline btn-sm">📊 گزارش</a>
+                                    <a asp-action="Take" asp-route-classroomId="@c.ClassroomId" class="btn btn-primary btn-sm"><i class="bi bi-check-lg"></i> ثبت حضور</a>
+                                    <a asp-action="Report" asp-route-classroomId="@c.ClassroomId" class="btn btn-outline btn-sm"><i class="bi bi-bar-chart"></i> گزارش</a>
                                 </td>
                             </tr>
                         }

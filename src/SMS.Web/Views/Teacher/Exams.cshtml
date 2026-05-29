@@ -5,14 +5,14 @@
 
 <div class="page-header">
     <div>
-        <h1>📝 آزمون‌های این کلاس</h1>
+        <h1><i class="bi bi-pencil-square"></i>آزمون‌های این کلاس</h1>
         @if (Model.Any())
         {
             var f = Model.First();
             <div class="subtitle">@f.ClassroomName | @f.SubjectName</div>
         }
     </div>
-    <a asp-action="CreateExam" asp-route-classSubjectId="@ViewBag.ClassSubjectId" class="btn btn-success">➕ آزمون جدید</a>
+    <a asp-action="CreateExam" asp-route-classSubjectId="@ViewBag.ClassSubjectId" class="btn btn-success"><i class="bi bi-plus-lg"></i> آزمون جدید</a>
 </div>
 
 <div class="card">
@@ -39,7 +39,7 @@
                             else { <span class="badge badge-warning">قابل ویرایش</span> }
                         </td>
                         <td>
-                            <a asp-action="ExamScores" asp-route-examId="@e.ExamId" class="btn btn-primary btn-sm">✏️ ورود نمرات</a>
+                            <a asp-action="ExamScores" asp-route-examId="@e.ExamId" class="btn btn-primary btn-sm"><i class="bi bi-pencil"></i> ورود نمرات</a>
                         </td>
                     </tr>
                 }

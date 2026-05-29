@@ -3,7 +3,7 @@
 @{ ViewData["Title"] = "مالی من"; }
 
 <div class="page-header">
-    <h1>💰 وضعیت مالی</h1>
+    <h1><i class="bi bi-cash-stack"></i>وضعیت مالی</h1>
     <a asp-action="Dashboard" asp-route-studentId="@ViewBag.StudentId" class="btn btn-secondary">بازگشت</a>
 </div>
 
@@ -20,7 +20,7 @@
             <div class="stat-number">@PersianDate.ToPersianDigits(totalDebt.ToString("N0"))</div>
             <div class="stat-trend text-muted">تومان</div>
         </div>
-        <div class="stat-icon bg-primary">📋</div>
+        <div class="stat-icon bg-primary"><i class="bi bi-clipboard-data"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
@@ -28,7 +28,7 @@
             <div class="stat-number text-success">@PersianDate.ToPersianDigits(totalPaid.ToString("N0"))</div>
             <div class="stat-trend text-muted">تومان</div>
         </div>
-        <div class="stat-icon bg-success">💵</div>
+        <div class="stat-icon bg-success"><i class="bi bi-coin"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
@@ -41,7 +41,7 @@
 </div>
 
 <div class="card">
-    <div class="card-header"><h2>📋 فاکتورها</h2></div>
+    <div class="card-header"><h2><i class="bi bi-clipboard-data"></i>فاکتورها</h2></div>
     <div class="card-body">
         <table class="data-table">
             <thead><tr><th>شماره</th><th>نوع</th><th>مبلغ</th><th>پرداخت شده</th><th>باقی‌مانده</th><th>سررسید</th><th>وضعیت</th></tr></thead>

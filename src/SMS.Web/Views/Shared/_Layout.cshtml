@@ -14,6 +14,17 @@
     <title>@ViewData["Title"] - سیستم مدیریت مدارس</title>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <!-- اعمال تم قبل از رندر -->
+    <script>
+        (function() {
+            var t = (document.cookie.match(/sms\.theme=([^;]+)/) || [])[1] || 'indigo';
+            var m = (document.cookie.match(/sms\.mode=([^;]+)/) || [])[1] || 'light';
+            document.documentElement.setAttribute('data-theme', t);
+            document.documentElement.setAttribute('data-mode', m);
+        })();
+    </script>
 </head>
 <body class="@(isAuthenticated ? "" : "no-sidebar")">
 
@@ -21,18 +32,17 @@
     {
         <header class="topbar">
             <div class="topbar-left">
-                <button class="sidebar-toggle" onclick="document.body.classList.toggle('sidebar-collapsed')" title="منو">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" />
-                    </svg>
+                <button class="sidebar-toggle" onclick="smsToggleSidebar()" title="منو">
+                    <i class="bi bi-list"></i>
                 </button>
                 <div class="brand">
-                    <span class="brand-icon">🎓</span>
+                    <span class="brand-icon"><i class="bi bi-mortarboard-fill"></i></span>
                     <span class="brand-text">سیستم مدیریت مدارس</span>
                 </div>
             </div>
             <div class="topbar-right">
-                @await Html.PartialAsync("_NotificationBell")
+                @await Html.PartialAsync("_ThemeSwitcher")
+            @await Html.PartialAsync("_NotificationBell")
                 <div class="user-menu" onclick="this.classList.toggle('open')">
                     @await Html.PartialAsync("_UserAvatar")
                     <div class="user-info">
@@ -40,11 +50,11 @@
                         <div class="user-role">@(User.IsInRole("SuperAdmin") ? "مدیر ارشد" : "کاربر")</div>
                     </div>
                     <div class="user-dropdown">
-                        <a asp-controller="Account" asp-action="Profile">👤 پروفایل من</a>
-                        <a asp-controller="Account" asp-action="ChangePassword">🔒 تغییر رمز عبور</a>
+                        <a asp-controller="Account" asp-action="Profile"><i class="bi bi-person-circle"></i> پروفایل من</a>
+                        <a asp-controller="Account" asp-action="ChangePassword"><i class="bi bi-lock-fill"></i> تغییر رمز عبور</a>
                         <hr />
-                        <a asp-controller="Help" asp-action="Index">❓ راهنما</a>
-                    <a asp-controller="Account" asp-action="Logout">🚪 خروج</a>
+                        <a asp-controller="Help" asp-action="Index"><i class="bi bi-question-circle"></i> راهنما</a>
+                    <a asp-controller="Account" asp-action="Logout"><i class="bi bi-box-arrow-right"></i> خروج</a>
                     </div>
                 </div>
             </div>
@@ -53,88 +63,88 @@
         <aside class="sidebar">
             <nav class="menu">
                 <a asp-controller="Home" asp-action="Index" class="menu-item @(currentController == "Home" ? "active" : "")">
-                    <span class="menu-icon">🏠</span><span class="menu-text">داشبورد</span>
+                    <i class="menu-icon bi bi-house-door-fill"></i><span class="menu-text">داشبورد</span>
                 </a>
 
                 <div class="menu-section">مدیریت پایه</div>
                 <a asp-controller="Schools" asp-action="Index" class="menu-item @(currentController == "Schools" ? "active" : "")">
-                    <span class="menu-icon">🏫</span><span class="menu-text">مدارس</span>
+                    <i class="menu-icon bi bi-building"></i><span class="menu-text">مدارس</span>
                 </a>
                 <a asp-controller="Classrooms" asp-action="Index" class="menu-item @(currentController == "Classrooms" ? "active" : "")">
-                    <span class="menu-icon">📚</span><span class="menu-text">کلاس‌ها</span>
+                    <i class="menu-icon bi bi-book-half"></i><span class="menu-text">کلاس‌ها</span>
                 </a>
                 <a asp-controller="Students" asp-action="Index" class="menu-item @(currentController == "Students" ? "active" : "")">
-                    <span class="menu-icon">👥</span><span class="menu-text">دانش‌آموزان</span>
+                    <i class="menu-icon bi bi-people-fill"></i><span class="menu-text">دانش‌آموزان</span>
                 </a>
                 <a asp-controller="Guardians" asp-action="Index" class="menu-item @(currentController == "Guardians" ? "active" : "")">
-                    <span class="menu-icon">👨‍👩‍👧</span><span class="menu-text">اولیا</span>
+                    <i class="menu-icon bi bi-people"></i><span class="menu-text">اولیا</span>
                 </a>
                 <a asp-controller="Staff" asp-action="Index" class="menu-item @(currentController == "Staff" ? "active" : "")">
-                    <span class="menu-icon">👨‍🏫</span><span class="menu-text">معلمان و کارکنان</span>
+                    <i class="menu-icon bi bi-person-workspace"></i><span class="menu-text">معلمان و کارکنان</span>
                 </a>
 
                 <div class="menu-section">آموزشی</div>
                 <a asp-controller="Subjects" asp-action="Index" class="menu-item @(currentController == "Subjects" || currentController == "ClassSubjects" ? "active" : "")">
-                    <span class="menu-icon">📖</span><span class="menu-text">دروس</span>
+                    <i class="menu-icon bi bi-journal-bookmark-fill"></i><span class="menu-text">دروس</span>
                 </a>
                 <a asp-controller="Schedules" asp-action="Index" class="menu-item @(currentController == "Schedules" ? "active" : "")">
-                    <span class="menu-icon">⏰</span><span class="menu-text">برنامه و زنگ</span>
+                    <i class="menu-icon bi bi-clock-fill"></i><span class="menu-text">برنامه و زنگ</span>
                 </a>
                 <a asp-controller="Attendance" asp-action="Index" class="menu-item @(currentController == "Attendance" ? "active" : "")">
-                    <span class="menu-icon">✅</span><span class="menu-text">حضور و غیاب</span>
+                    <i class="menu-icon bi bi-check-circle-fill"></i><span class="menu-text">حضور و غیاب</span>
                 </a>
                 <a asp-controller="Exams" asp-action="Browse" class="menu-item @(currentController == "Exams" ? "active" : "")">
-                    <span class="menu-icon">📝</span><span class="menu-text">آزمون و نمره</span>
+                    <i class="menu-icon bi bi-pencil-square"></i><span class="menu-text">آزمون و نمره</span>
                 </a>
                 <a asp-controller="Discipline" asp-action="Index" class="menu-item @(currentController == "Discipline" ? "active" : "")">
-                    <span class="menu-icon">⭐</span><span class="menu-text">انضباطی</span>
+                    <i class="menu-icon bi bi-star-fill"></i><span class="menu-text">انضباطی</span>
                 </a>
                 <a asp-controller="Reports" asp-action="Index" class="menu-item @(currentController == "Reports" ? "active" : "")">
-                    <span class="menu-icon">📋</span><span class="menu-text">کارنامه و گزارش</span>
+                    <i class="menu-icon bi bi-clipboard-data"></i><span class="menu-text">کارنامه و گزارش</span>
                 </a>
                 <a asp-controller="Analytics" asp-action="Index" class="menu-item @(currentController == "Analytics" ? "active" : "")">
-                    <span class="menu-icon">📊</span><span class="menu-text">آمار و نمودار</span>
+                    <i class="menu-icon bi bi-bar-chart-line-fill"></i><span class="menu-text">آمار و نمودار</span>
                 </a>
 
                 @if (isAccountant)
                 {
                     <div class="menu-section">مالی</div>
                     <a asp-controller="Finance" asp-action="Index" class="menu-item @(currentController == "Finance" ? "active" : "")">
-                        <span class="menu-icon">💰</span><span class="menu-text">شهریه و فاکتور</span>
+                        <i class="menu-icon bi bi-cash-stack"></i><span class="menu-text">شهریه و فاکتور</span>
                     </a>
                 }
 
                 <div class="menu-section">ارتباطات</div>
                 <a asp-controller="Announcements" asp-action="Index" class="menu-item @(currentController == "Announcements" ? "active" : "")">
-                    <span class="menu-icon">📢</span><span class="menu-text">اعلان‌ها</span>
+                    <i class="menu-icon bi bi-megaphone-fill"></i><span class="menu-text">اعلان‌ها</span>
                 </a>
                 <a asp-controller="Calendar" asp-action="Index" class="menu-item @(currentController == "Calendar" ? "active" : "")">
-                    <span class="menu-icon">📅</span><span class="menu-text">تقویم آموزشی</span>
+                    <i class="menu-icon bi bi-calendar3"></i><span class="menu-text">تقویم آموزشی</span>
                 </a>
                 <a asp-controller="Surveys" asp-action="Index" class="menu-item @(currentController == "Surveys" ? "active" : "")">
-                    <span class="menu-icon">📊</span><span class="menu-text">نظرسنجی‌ها</span>
+                    <i class="menu-icon bi bi-bar-chart-line-fill"></i><span class="menu-text">نظرسنجی‌ها</span>
                 </a>
                 <a asp-controller="Sms" asp-action="Index" class="menu-item @(currentController == "Sms" ? "active" : "")">
-                    <span class="menu-icon">📱</span><span class="menu-text">پیامک</span>
+                    <i class="menu-icon bi bi-phone-fill"></i><span class="menu-text">پیامک</span>
                 </a>
                 <a asp-controller="Notifications" asp-action="Index" class="menu-item @(currentController == "Notifications" ? "active" : "")">
-                    <span class="menu-icon">📲</span><span class="menu-text">ارسال خودکار</span>
+                    <i class="menu-icon bi bi-broadcast"></i><span class="menu-text">ارسال خودکار</span>
                 </a>
                 <a asp-controller="Messages" asp-action="Index" class="menu-item @(currentController == "Messages" ? "active" : "")">
-                    <span class="menu-icon">💬</span><span class="menu-text">پیام‌های داخلی</span>
+                    <i class="menu-icon bi bi-chat-dots-fill"></i><span class="menu-text">پیام‌های داخلی</span>
                 </a>
 
                 @if (isAdmin)
                 {
                     <div class="menu-section">سیستم</div>
                     <a asp-controller="AuditLog" asp-action="Index" class="menu-item @(currentController == "AuditLog" ? "active" : "")">
-                        <span class="menu-icon">📜</span><span class="menu-text">لاگ سیستم</span>
+                        <i class="menu-icon bi bi-file-earmark-text"></i><span class="menu-text">لاگ سیستم</span>
                     </a>
                     <a asp-controller="BulkImport" asp-action="Index" class="menu-item @(currentController == "BulkImport" ? "active" : "")">
-                        <span class="menu-icon">📊</span><span class="menu-text">ایمپورت Excel</span>
+                        <i class="menu-icon bi bi-bar-chart-line-fill"></i><span class="menu-text">ایمپورت Excel</span>
                     </a>
                     <a asp-controller="Settings" asp-action="Index" class="menu-item @(currentController == "Settings" ? "active" : "")">
-                        <span class="menu-icon">⚙</span><span class="menu-text">تنظیمات</span>
+                        <i class="menu-icon bi bi-gear-fill"></i><span class="menu-text">تنظیمات</span>
                     </a>
                 }
             </nav>
@@ -168,6 +178,8 @@
         }
         @RenderBody()
     </main>
+
+    <div class="sidebar-overlay" onclick="document.body.classList.remove('sidebar-open')"></div>
 
     <script>
         document.addEventListener('click', function (e) {

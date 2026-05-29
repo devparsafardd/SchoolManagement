@@ -7,13 +7,13 @@
 
 <div class="page-header">
     <div>
-        <h1>📋 کارنامه: @Model.FullName</h1>
+        <h1><i class="bi bi-clipboard-data"></i>کارنامه: @Model.FullName</h1>
         <div class="subtitle">@Model.SchoolName | @Model.ClassroomName | @Model.TermName</div>
     </div>
     <div>
-        <a asp-action="ReportCardPdf" asp-route-studentId="@Model.StudentId" asp-route-termId="@termId" target="_blank" class="btn btn-danger">📄 خروجی PDF</a>
-        <a asp-controller="Export" asp-action="StudentReportCardExcel" asp-route-studentId="@Model.StudentId" asp-route-termId="@termId" class="btn btn-success">📊 خروجی Excel</a>
-        <button class="btn btn-info" onclick="window.print()">🖨 پرینت</button>
+        <a asp-action="ReportCardPdf" asp-route-studentId="@Model.StudentId" asp-route-termId="@termId" target="_blank" class="btn btn-danger"><i class="bi bi-file-pdf"></i> خروجی PDF</a>
+        <a asp-controller="Export" asp-action="StudentReportCardExcel" asp-route-studentId="@Model.StudentId" asp-route-termId="@termId" class="btn btn-success"><i class="bi bi-bar-chart"></i> خروجی Excel</a>
+        <button class="btn btn-info" onclick="window.print()"><i class="bi bi-printer"></i> پرینت</button>
         <a asp-action="Dashboard" asp-route-studentId="@Model.StudentId" class="btn btn-secondary">بازگشت</a>
     </div>
 </div>
@@ -61,14 +61,14 @@
         <div class="row" style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px">
             <div class="card" style="background:#e0f2fe">
                 <div class="card-body">
-                    <h3>📊 خلاصه</h3>
+                    <h3><i class="bi bi-bar-chart-line-fill"></i>خلاصه</h3>
                     <p><strong>معدل کل:</strong> <span style="font-size:24px; color:#0c5474">@PersianDate.ToPersianDigits((Model.GPA ?? 0).ToString("0.000"))</span></p>
                     <p><strong>نمره انضباط:</strong> @PersianDate.ToPersianDigits((Model.DisciplineScore ?? 0).ToString("0.##"))</p>
                 </div>
             </div>
             <div class="card" style="background:#fef3c7">
                 <div class="card-body">
-                    <h3>📅 حضور و غیاب</h3>
+                    <h3><i class="bi bi-calendar3"></i>حضور و غیاب</h3>
                     <p><strong>غیبت:</strong> @PersianDate.ToPersianDigits(Model.TotalAbsences.ToString())</p>
                     <p><strong>تاخیر:</strong> @PersianDate.ToPersianDigits(Model.TotalTardies.ToString())</p>
                 </div>

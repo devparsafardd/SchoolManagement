@@ -4,12 +4,12 @@
 
 <div class="page-header">
     <div>
-        <h1>🏫 مدیریت مدارس</h1>
+        <h1><i class="bi bi-building"></i>مدیریت مدارس</h1>
         <div class="subtitle">مجموع: @PersianDate.ToPersianDigits(Model.TotalCount.ToString()) مدرسه</div>
     </div>
     <div>
-        <a asp-action="ExportExcel" asp-route-search="@ViewBag.Search" class="btn btn-outline">📥 خروجی Excel</a>
-        <a asp-action="Create" class="btn btn-success">➕ افزودن مدرسه</a>
+        <a asp-action="ExportExcel" asp-route-search="@ViewBag.Search" class="btn btn-outline"><i class="bi bi-download"></i> خروجی Excel</a>
+        <a asp-action="Create" class="btn btn-success"><i class="bi bi-plus-lg"></i> افزودن مدرسه</a>
     </div>
 </div>
 
@@ -20,7 +20,7 @@
                 <label>جستجو</label>
                 <input name="search" value="@ViewBag.Search" class="form-control" placeholder="نام یا کد مدرسه..." />
             </div>
-            <button class="btn btn-primary">🔍 جستجو</button>
+            <button class="btn btn-primary"><i class="bi bi-search"></i> جستجو</button>
             @if (!string.IsNullOrEmpty(ViewBag.Search as string))
             {
                 <a asp-action="Index" class="btn btn-outline">پاک کردن</a>
@@ -60,11 +60,11 @@
                                 {<span class="badge badge-secondary">غیرفعال</span>}
                             </td>
                             <td>
-                                <a asp-action="Details" asp-route-id="@s.SchoolId" class="btn btn-outline btn-sm">👁</a>
-                                <a asp-action="Edit" asp-route-id="@s.SchoolId" class="btn btn-primary btn-sm">✏️</a>
+                                <a asp-action="Details" asp-route-id="@s.SchoolId" class="btn btn-outline btn-sm"><i class="bi bi-eye"></i></a>
+                                <a asp-action="Edit" asp-route-id="@s.SchoolId" class="btn btn-primary btn-sm"><i class="bi bi-pencil"></i></a>
                                 <form method="post" asp-action="Delete" asp-route-id="@s.SchoolId" style="display:inline" onsubmit="return confirm('حذف شود؟');">
                                     @Html.AntiForgeryToken()
-                                    <button class="btn btn-danger btn-sm">🗑</button>
+                                    <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i> </button>
                                 </form>
                             </td>
                         </tr>

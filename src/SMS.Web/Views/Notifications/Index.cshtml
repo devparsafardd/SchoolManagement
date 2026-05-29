@@ -3,7 +3,7 @@
 
 <div class="page-header">
     <div>
-        <h1>📲 ارسال نوتیفیکیشن‌های خودکار</h1>
+        <h1><i class="bi bi-broadcast"></i>ارسال نوتیفیکیشن‌های خودکار</h1>
         <div class="subtitle">یادآوری دسته‌جمعی به ولی‌ها از طریق پیامک و پیام داخلی</div>
     </div>
     <a asp-controller="Settings" asp-action="Index" class="btn btn-outline">⚙ تنظیمات</a>
@@ -17,7 +17,7 @@
 <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:16px">
 
     <div class="card">
-        <div class="card-header"><h2>💰 یادآوری معوقات</h2></div>
+        <div class="card-header"><h2><i class="bi bi-cash-stack"></i>یادآوری معوقات</h2></div>
         <div class="card-body">
             <p>ارسال پیامک به همه ولی‌هایی که فاکتور سررسید گذشته دارن.</p>
             <form method="post" asp-action="SendOverdueReminder">
@@ -32,24 +32,24 @@
                         }
                     </select>
                 </div>
-                <button class="btn btn-warning" onclick="return confirm('پیامک به همه بدهکاران ارسال شود؟')">📤 ارسال یادآوری</button>
+                <button class="btn btn-warning" onclick="return confirm('پیامک به همه بدهکاران ارسال شود؟')"><i class="bi bi-send"></i> ارسال یادآوری</button>
             </form>
         </div>
     </div>
 
     <div class="card">
-        <div class="card-header"><h2>📚 یادآوری تکالیف فردا</h2></div>
+        <div class="card-header"><h2><i class="bi bi-book-half"></i>یادآوری تکالیف فردا</h2></div>
         <div class="card-body">
             <p>ارسال پیام داخلی به ولی‌های دانش‌آموزانی که فردا تکلیف تحویل دارن.</p>
             <form method="post" asp-action="SendUpcomingHomeworks">
                 @Html.AntiForgeryToken()
-                <button class="btn btn-info">📤 ارسال یادآوری</button>
+                <button class="btn btn-info"><i class="bi bi-send"></i> ارسال یادآوری</button>
             </form>
         </div>
     </div>
 
     <div class="card" style="background:#f8f9fa">
-        <div class="card-header"><h2>📅 ارسال غیبت‌های امروز</h2></div>
+        <div class="card-header"><h2><i class="bi bi-calendar3"></i>ارسال غیبت‌های امروز</h2></div>
         <div class="card-body">
             <p class="text-muted">این قابلیت با Background Job در نسخه آینده ساخته میشه. الان غیبت‌های به‌صورت دستی توسط معلم در صفحه ثبت حضور قابل ارسال هستن.</p>
         </div>
@@ -57,7 +57,7 @@
 </div>
 
 <div class="card" style="margin-top:16px">
-    <div class="card-header"><h2>ℹ️ راهنمای پیامک خودکار</h2></div>
+    <div class="card-header"><h2><i class="bi bi-info-circle-fill"></i>راهنمای پیامک خودکار</h2></div>
     <div class="card-body">
         <h3>چه‌زمانی پیامک ارسال می‌شه؟</h3>
         <ul style="line-height:1.9">

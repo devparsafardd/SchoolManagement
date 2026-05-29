@@ -5,10 +5,10 @@
 
 <div class="page-header">
     <div>
-        <h1>📅 برنامه هفتگی کلاس‌ها</h1>
+        <h1><i class="bi bi-calendar3"></i>برنامه هفتگی کلاس‌ها</h1>
         <div class="subtitle">روی هر کلاس کلیک کنید تا برنامه‌اش را ببینید یا تغییر دهید</div>
     </div>
-    <a asp-action="Periods" class="btn btn-primary">⏰ مدیریت زنگ‌ها</a>
+    <a asp-action="Periods" class="btn btn-primary"><i class="bi bi-clock"></i> مدیریت زنگ‌ها</a>
 </div>
 
 <div class="card">
@@ -30,8 +30,8 @@
                             <td>@c.SchoolName</td>
                             <td>@PersianDate.ToPersianDigits((c.CurrentStudentCount).ToString())</td>
                             <td>
-                                <a asp-action="Classroom" asp-route-classroomId="@c.ClassroomId" class="btn btn-sm btn-primary">📅 برنامه</a>
-                                <a asp-controller="Analytics" asp-action="Classroom" asp-route-id="@c.ClassroomId" class="btn btn-sm btn-info">📊 گزارش</a>
+                                <a asp-action="Classroom" asp-route-classroomId="@c.ClassroomId" class="btn btn-sm btn-primary"><i class="bi bi-calendar"></i> برنامه</a>
+                                <a asp-controller="Analytics" asp-action="Classroom" asp-route-id="@c.ClassroomId" class="btn btn-sm btn-info"><i class="bi bi-bar-chart"></i> گزارش</a>
                             </td>
                         </tr>
                     }

@@ -3,7 +3,7 @@
 @{ ViewData["Title"] = "کلاس‌های من"; }
 
 <div class="page-header">
-    <h1>📚 کلاس‌های من</h1>
+    <h1><i class="bi bi-book-half"></i>کلاس‌های من</h1>
 </div>
 
 @if (!Model.Any())
@@ -37,11 +37,11 @@ else
                             <td>@PersianDate.ToPersianDigits(c.StudentCount.ToString())</td>
                             <td>@(c.WeeklyHours.HasValue ? PersianDate.ToPersianDigits(c.WeeklyHours.Value.ToString("0.#")) : "—")</td>
                             <td>
-                                <a class="btn btn-sm btn-primary" asp-action="ClassDetail" asp-route-id="@c.ClassSubjectId">🔍 جزئیات</a>
+                                <a class="btn btn-sm btn-primary" asp-action="ClassDetail" asp-route-id="@c.ClassSubjectId"><i class="bi bi-search"></i> جزئیات</a>
                                 <a class="btn btn-sm btn-success" asp-action="Attendance" asp-route-classSubjectId="@c.ClassSubjectId">✅ حضور</a>
-                                <a class="btn btn-sm btn-info" asp-action="Exams" asp-route-classSubjectId="@c.ClassSubjectId">📝 آزمون</a>
-                                <a class="btn btn-sm btn-outline" asp-action="Students" asp-route-classSubjectId="@c.ClassSubjectId">👥 دانش‌آموزان</a>
-                                <a class="btn btn-sm btn-info" asp-controller="Analytics" asp-action="Classroom" asp-route-id="@c.ClassroomId">📊 گزارش</a>
+                                <a class="btn btn-sm btn-info" asp-action="Exams" asp-route-classSubjectId="@c.ClassSubjectId"><i class="bi bi-pencil-square"></i> آزمون</a>
+                                <a class="btn btn-sm btn-outline" asp-action="Students" asp-route-classSubjectId="@c.ClassSubjectId"><i class="bi bi-people"></i> دانش‌آموزان</a>
+                                <a class="btn btn-sm btn-info" asp-controller="Analytics" asp-action="Classroom" asp-route-id="@c.ClassroomId"><i class="bi bi-bar-chart"></i> گزارش</a>
                             </td>
                         </tr>
                     }

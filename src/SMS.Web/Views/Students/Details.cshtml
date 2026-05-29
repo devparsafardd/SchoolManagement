@@ -4,13 +4,13 @@
 
 <div class="page-header">
     <div>
-        <h1>👤 @Model.FullName</h1>
+        <h1><i class="bi bi-person-fill"></i>@Model.FullName</h1>
         <div class="subtitle">@Model.StudentCode | @Model.CurrentClassName</div>
     </div>
     <div>
-        <a asp-action="Edit" asp-route-id="@Model.StudentId" class="btn btn-primary">✏️ ویرایش</a>
-        <a asp-controller="Discipline" asp-action="Create" asp-route-studentId="@Model.StudentId" class="btn btn-outline">⭐ ثبت انضباطی</a>
-        <a asp-controller="Finance" asp-action="Create" asp-route-studentId="@Model.StudentId" class="btn btn-outline">💰 صدور فاکتور</a>
+        <a asp-action="Edit" asp-route-id="@Model.StudentId" class="btn btn-primary"><i class="bi bi-pencil"></i> ویرایش</a>
+        <a asp-controller="Discipline" asp-action="Create" asp-route-studentId="@Model.StudentId" class="btn btn-outline"><i class="bi bi-star"></i> ثبت انضباطی</a>
+        <a asp-controller="Finance" asp-action="Create" asp-route-studentId="@Model.StudentId" class="btn btn-outline"><i class="bi bi-cash"></i> صدور فاکتور</a>
     </div>
 </div>
 
@@ -56,7 +56,7 @@
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="userId" value="@Model.UserId" />
                     <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
-                    <button class="btn btn-warning btn-sm">🔄 ریست رمز عبور</button>
+                    <button class="btn btn-warning btn-sm"><i class="bi bi-arrow-repeat"></i> ریست رمز عبور</button>
                 </form>
                 <form method="post" asp-controller="UserAccounts" asp-action="ToggleLock" style="display:inline">
                     @Html.AntiForgeryToken()
@@ -86,7 +86,7 @@
                     <label>رمز عبور</label>
                     <input name="password" value="Student@123" type="text" class="form-control" required minlength="6" />
                 </div>
-                <button class="btn btn-success">➕ ایجاد حساب</button>
+                <button class="btn btn-success"><i class="bi bi-plus-lg"></i> ایجاد حساب</button>
             </form>
         }
     </div>
@@ -95,7 +95,7 @@
 <div class="card">
     <div class="card-header">
         <h2>👨‍👩‍👧 اولیا و سرپرستان</h2>
-        <a asp-controller="Guardians" asp-action="Create" asp-route-studentId="@Model.StudentId" class="btn btn-success btn-sm">➕ افزودن ولی</a>
+        <a asp-controller="Guardians" asp-action="Create" asp-route-studentId="@Model.StudentId" class="btn btn-success btn-sm"><i class="bi bi-plus-lg"></i> افزودن ولی</a>
     </div>
     <div class="card-body">
         <table class="data-table">
@@ -115,7 +115,7 @@
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="studentId" value="@Model.StudentId" />
                                 <input type="hidden" name="guardianId" value="@g.GuardianId" />
-                                <button class="btn btn-danger btn-sm">🗑</button>
+                                <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i> </button>
                             </form>
                         </td>
                     </tr>

@@ -10,7 +10,7 @@
 
 <div class="page-header">
     <div>
-        <h1>📝 ورود نمرات: @exam.Title</h1>
+        <h1><i class="bi bi-pencil-square"></i>ورود نمرات: @exam.Title</h1>
         <div class="subtitle">
             @exam.ClassroomName | @exam.SubjectName | @exam.ExamTypeName | @PersianDate.ToPersian(exam.ExamDate)
             @if (exam.IsDescriptive) {<span class="badge badge-info">توصیفی</span>} else {<span class="badge badge-secondary">عددی (نمره کل: @exam.MaxScore)</span>}
@@ -23,7 +23,7 @@
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="id" value="@exam.ExamId" />
                 <input type="hidden" name="classSubjectId" value="@exam.ClassSubjectId" />
-                <button class="btn btn-danger">🔒 نهایی‌سازی</button>
+                <button class="btn btn-danger"><i class="bi bi-lock"></i> نهایی‌سازی</button>
             </form>
         }
         else
@@ -35,7 +35,7 @@
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="id" value="@exam.ExamId" />
                     <input type="hidden" name="classSubjectId" value="@exam.ClassSubjectId" />
-                    <button class="btn btn-warning" title="فقط مدیران می‌توانند بازگشایی کنند">🔓 بازگشایی</button>
+                    <button class="btn btn-warning" title="فقط مدیران می‌توانند بازگشایی کنند"><i class="bi bi-unlock"></i> بازگشایی</button>
                 </form>
             }
         }
@@ -51,7 +51,7 @@
         <div class="card-header"><h2>دانش‌آموزان</h2>
             @if (!exam.IsFinalized)
             {
-                <button type="submit" class="btn btn-success">💾 ذخیره نمرات</button>
+                <button type="submit" class="btn btn-success"><i class="bi bi-floppy"></i> ذخیره نمرات</button>
             }
         </div>
         <div class="card-body">

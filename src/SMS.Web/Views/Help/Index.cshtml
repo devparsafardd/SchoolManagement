@@ -1,7 +1,7 @@
 @{ ViewData["Title"] = "راهنما"; }
 
 <div class="page-header">
-    <h1>❓ راهنمای استفاده از سیستم</h1>
+    <h1><i class="bi bi-question-circle-fill"></i>راهنمای استفاده از سیستم</h1>
 </div>
 
 <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:16px">
@@ -20,7 +20,7 @@
     </div>
 
     <div class="card">
-        <div class="card-header"><h2>📅 برنامه هفتگی</h2></div>
+        <div class="card-header"><h2><i class="bi bi-calendar3"></i>برنامه هفتگی</h2></div>
         <div class="card-body">
             <ol>
                 <li>اول <a asp-controller="Schedules" asp-action="Periods">زنگ‌های مدرسه</a> را تعریف کنید</li>
@@ -39,7 +39,7 @@
     </div>
 
     <div class="card">
-        <div class="card-header"><h2>📝 آزمون و نمره</h2></div>
+        <div class="card-header"><h2><i class="bi bi-pencil-square"></i>آزمون و نمره</h2></div>
         <div class="card-body">
             <p>معلم از <a asp-controller="Teacher" asp-action="MyClasses">کلاس‌های من</a>، روی دکمه "آزمون" کلاس مورد نظر کلیک می‌کنه.</p>
             <p>سپس آزمون عددی یا توصیفی می‌سازه و نمرات رو وارد می‌کنه.</p>
@@ -47,7 +47,7 @@
     </div>
 
     <div class="card">
-        <div class="card-header"><h2>💰 مالی و شهریه</h2></div>
+        <div class="card-header"><h2><i class="bi bi-cash-stack"></i>مالی و شهریه</h2></div>
         <div class="card-body">
             <p>از منوی <a asp-controller="Finance" asp-action="Index">شهریه و فاکتور</a> برای هر دانش‌آموز فاکتور صادر کنید.</p>
             <p>پرداخت‌ها هم همانجا ثبت می‌شوند.</p>
@@ -55,7 +55,7 @@
     </div>
 
     <div class="card">
-        <div class="card-header"><h2>📊 گزارش‌ها</h2></div>
+        <div class="card-header"><h2><i class="bi bi-bar-chart-line-fill"></i>گزارش‌ها</h2></div>
         <div class="card-body">
             <ul>
                 <li><a asp-controller="Analytics" asp-action="Index">گزارش‌های جامع</a> - با نمودار</li>
@@ -67,7 +67,7 @@
     </div>
 
     <div class="card">
-        <div class="card-header"><h2>👥 نقش‌های کاربری</h2></div>
+        <div class="card-header"><h2><i class="bi bi-people-fill"></i>نقش‌های کاربری</h2></div>
         <div class="card-body">
             <ul style="line-height:1.8">
                 <li><strong>SuperAdmin</strong>: مدیر ارشد - دسترسی به همه</li>
@@ -80,7 +80,7 @@
     </div>
 
     <div class="card">
-        <div class="card-header"><h2>💬 پیام‌رسان</h2></div>
+        <div class="card-header"><h2><i class="bi bi-chat-dots-fill"></i>پیام‌رسان</h2></div>
         <div class="card-body">
             <p>همه کاربران می‌تونن از <a asp-controller="Messages" asp-action="Index">پیام‌های داخلی</a> با هم در ارتباط باشن.</p>
             <p>تعداد پیام‌های خوانده نشده در زنگوله 🔔 بالای صفحه نمایش داده میشه.</p>

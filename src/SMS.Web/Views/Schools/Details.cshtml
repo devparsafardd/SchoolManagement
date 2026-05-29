@@ -3,8 +3,8 @@
 
 <div class="card">
     <div class="card-header">
-        <h2>🏫 @Model.Name</h2>
-        <a asp-action="Edit" asp-route-id="@Model.SchoolId" class="btn btn-primary">✏️ ویرایش</a>
+        <h2><i class="bi bi-building"></i>@Model.Name</h2>
+        <a asp-action="Edit" asp-route-id="@Model.SchoolId" class="btn btn-primary"><i class="bi bi-pencil"></i> ویرایش</a>
     </div>
     <table>
         <tr><th style="width:200px">کد مدرسه:</th><td>@Model.Code</td></tr>
@@ -20,7 +20,7 @@
         </td></tr>
     </table>
     <br />
-    <a asp-controller="Classrooms" asp-action="Index" asp-route-schoolId="@Model.SchoolId" class="btn btn-primary">📚 مشاهده کلاس‌ها</a>
-    <a asp-controller="Students" asp-action="Index" asp-route-schoolId="@Model.SchoolId" class="btn btn-primary">👥 دانش‌آموزان</a>
+    <a asp-controller="Classrooms" asp-action="Index" asp-route-schoolId="@Model.SchoolId" class="btn btn-primary"><i class="bi bi-book"></i> مشاهده کلاس‌ها</a>
+    <a asp-controller="Students" asp-action="Index" asp-route-schoolId="@Model.SchoolId" class="btn btn-primary"><i class="bi bi-people"></i> دانش‌آموزان</a>
     <a asp-action="Index" class="btn" style="background:#95a5a6;color:white">بازگشت</a>
 </div>

@@ -3,7 +3,7 @@
 
 <div class="page-header">
     <h1>📖 دروس</h1>
-    <a asp-action="Create" class="btn btn-success">➕ افزودن درس</a>
+    <a asp-action="Create" class="btn btn-success"><i class="bi bi-plus-lg"></i> افزودن درس</a>
 </div>
 
 <div class="card">
@@ -22,7 +22,7 @@
                         <td>
                             <form method="post" asp-action="Delete" asp-route-id="@s.SubjectId" style="display:inline" onsubmit="return confirm('غیرفعال شود؟');">
                                 @Html.AntiForgeryToken()
-                                <button class="btn btn-danger btn-sm">🗑</button>
+                                <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i> </button>
                             </form>
                         </td>
                     </tr>

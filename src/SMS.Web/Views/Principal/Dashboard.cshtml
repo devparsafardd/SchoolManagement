@@ -9,7 +9,7 @@
 
 <div class="page-header">
     <div>
-        <h1>🏫 @Model.SchoolName</h1>
+        <h1><i class="bi bi-building"></i>@Model.SchoolName</h1>
         <div class="subtitle">
             کد مدرسه: @PersianDate.ToPersianDigits(Model.SchoolCode) | سال تحصیلی: @Model.AcademicYearTitle
         </div>
@@ -32,15 +32,15 @@
 <!-- دسترسی‌های سریع -->
 <div class="card" style="margin-bottom:14px">
     <div class="card-body" style="display:flex; gap:8px; flex-wrap:wrap; padding:14px">
-        <a asp-action="Classrooms" asp-route-schoolId="@Model.SchoolId" class="btn btn-outline btn-sm">📚 کلاس‌های مدرسه</a>
-        <a asp-controller="Students" asp-action="Index" asp-route-schoolId="@Model.SchoolId" class="btn btn-outline btn-sm">👥 دانش‌آموزان</a>
-        <a asp-controller="Staff" asp-action="Index" asp-route-schoolId="@Model.SchoolId" class="btn btn-outline btn-sm">👨‍🏫 کارکنان</a>
+        <a asp-action="Classrooms" asp-route-schoolId="@Model.SchoolId" class="btn btn-outline btn-sm"><i class="bi bi-book"></i> کلاس‌های مدرسه</a>
+        <a asp-controller="Students" asp-action="Index" asp-route-schoolId="@Model.SchoolId" class="btn btn-outline btn-sm"><i class="bi bi-people"></i> دانش‌آموزان</a>
+        <a asp-controller="Staff" asp-action="Index" asp-route-schoolId="@Model.SchoolId" class="btn btn-outline btn-sm"><i class="bi bi-person-workspace"></i> کارکنان</a>
         <a asp-controller="Attendance" asp-action="Index" asp-route-schoolId="@Model.SchoolId" class="btn btn-outline btn-sm">✅ حضور و غیاب</a>
-        <a asp-controller="Analytics" asp-action="Attendance" asp-route-schoolId="@Model.SchoolId" class="btn btn-outline btn-sm">📊 تحلیل حضور</a>
+        <a asp-controller="Analytics" asp-action="Attendance" asp-route-schoolId="@Model.SchoolId" class="btn btn-outline btn-sm"><i class="bi bi-bar-chart"></i> تحلیل حضور</a>
         <a asp-controller="Analytics" asp-action="Academic" asp-route-schoolId="@Model.SchoolId" class="btn btn-outline btn-sm">🎓 تحلیل تحصیلی</a>
-        <a asp-controller="Analytics" asp-action="Financial" asp-route-schoolId="@Model.SchoolId" class="btn btn-outline btn-sm">💰 تحلیل مالی</a>
-        <a asp-controller="Announcements" asp-action="Create" class="btn btn-success btn-sm">📢 اعلان جدید</a>
-        <a asp-controller="Sms" asp-action="SendBulk" class="btn btn-warning btn-sm">📱 پیامک گروهی</a>
+        <a asp-controller="Analytics" asp-action="Financial" asp-route-schoolId="@Model.SchoolId" class="btn btn-outline btn-sm"><i class="bi bi-cash"></i> تحلیل مالی</a>
+        <a asp-controller="Announcements" asp-action="Create" class="btn btn-success btn-sm"><i class="bi bi-megaphone"></i> اعلان جدید</a>
+        <a asp-controller="Sms" asp-action="SendBulk" class="btn btn-warning btn-sm"><i class="bi bi-phone"></i> پیامک گروهی</a>
     </div>
 </div>
 
@@ -55,7 +55,7 @@
                 دختر: @PersianDate.ToPersianDigits(Model.TotalFemaleStudents.ToString())
             </div>
         </div>
-        <div class="stat-icon bg-primary">👥</div>
+        <div class="stat-icon bg-primary"><i class="bi bi-people-fill"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
@@ -63,7 +63,7 @@
             <div class="stat-number">@PersianDate.ToPersianDigits(Model.TotalClassrooms.ToString())</div>
             <div class="stat-trend text-muted">@PersianDate.ToPersianDigits(Model.TotalSubjects.ToString()) درس</div>
         </div>
-        <div class="stat-icon bg-info">📚</div>
+        <div class="stat-icon bg-info"><i class="bi bi-book-half"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
@@ -71,7 +71,7 @@
             <div class="stat-number">@PersianDate.ToPersianDigits(Model.TotalTeachers.ToString())</div>
             <div class="stat-trend text-muted">مجموع کارکنان: @PersianDate.ToPersianDigits(Model.TotalStaff.ToString())</div>
         </div>
-        <div class="stat-icon bg-success">👨‍🏫</div>
+        <div class="stat-icon bg-success"><i class="bi bi-person-workspace"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
@@ -85,7 +85,7 @@
                 ⏰ @PersianDate.ToPersianDigits(Model.TodayTardy.ToString())
             </div>
         </div>
-        <div class="stat-icon bg-warning">✅</div>
+        <div class="stat-icon bg-warning"><i class="bi bi-check-circle-fill"></i></div>
     </div>
 </div>
 
@@ -97,7 +97,7 @@
             <div class="stat-number">@PersianDate.ToPersianDigits(Model.TotalRevenue.ToString("N0"))</div>
             <div class="stat-trend text-muted">تومان</div>
         </div>
-        <div class="stat-icon bg-success">💰</div>
+        <div class="stat-icon bg-success"><i class="bi bi-cash-stack"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
@@ -105,7 +105,7 @@
             <div class="stat-number text-success">@PersianDate.ToPersianDigits(Model.TotalPaid.ToString("N0"))</div>
             <div class="stat-trend text-muted">تومان</div>
         </div>
-        <div class="stat-icon bg-primary">💵</div>
+        <div class="stat-icon bg-primary"><i class="bi bi-coin"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
@@ -115,7 +115,7 @@
                 @PersianDate.ToPersianDigits(Model.OverdueInvoicesCount.ToString()) فاکتور سررسید گذشته
             </div>
         </div>
-        <div class="stat-icon bg-danger">⚠️</div>
+        <div class="stat-icon bg-danger"><i class="bi bi-exclamation-triangle-fill"></i></div>
     </div>
     <div class="stat-card">
         <div class="stat-info">
@@ -127,20 +127,20 @@
             </div>
             <div class="stat-trend text-muted">تشویق / تنبیه</div>
         </div>
-        <div class="stat-icon bg-info">⭐</div>
+        <div class="stat-icon bg-info"><i class="bi bi-star-fill"></i></div>
     </div>
 </div>
 
 <!-- نمودارها -->
 <div class="row" style="display:grid; grid-template-columns:2fr 1fr; gap:16px; margin-top:16px">
     <div class="card">
-        <div class="card-header"><h2>📊 روند حضور و غیاب ۷ روز اخیر</h2></div>
+        <div class="card-header"><h2><i class="bi bi-bar-chart-line-fill"></i>روند حضور و غیاب ۷ روز اخیر</h2></div>
         <div class="card-body">
             <canvas id="attendanceChart" height="100"></canvas>
         </div>
     </div>
     <div class="card">
-        <div class="card-header"><h2>🥧 توزیع دانش‌آموزان</h2></div>
+        <div class="card-header"><h2><i class="bi bi-pie-chart-fill"></i>توزیع دانش‌آموزان</h2></div>
         <div class="card-body">
             <canvas id="distributionChart" height="200"></canvas>
         </div>
@@ -150,7 +150,7 @@
 <!-- جدول کلاس‌های برتر -->
 <div class="card" style="margin-top:16px">
     <div class="card-header" style="display:flex; justify-content:space-between; align-items:center">
-        <h2>📚 کلاس‌های مدرسه</h2>
+        <h2><i class="bi bi-book-half"></i>کلاس‌های مدرسه</h2>
         <a asp-action="Classrooms" asp-route-schoolId="@Model.SchoolId" class="btn btn-sm btn-outline">مشاهده همه</a>
     </div>
     <div class="card-body">
@@ -184,7 +184,7 @@
 @if (Model.RecentActivities.Any())
 {
     <div class="card" style="margin-top:16px">
-        <div class="card-header"><h2>🕒 فعالیت‌های اخیر</h2></div>
+        <div class="card-header"><h2><i class="bi bi-clock-history"></i>فعالیت‌های اخیر</h2></div>
         <div class="card-body">
             <ul style="list-style:none; padding:0; margin:0">
                 @foreach (var a in Model.RecentActivities)

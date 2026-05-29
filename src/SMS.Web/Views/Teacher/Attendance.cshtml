@@ -11,7 +11,7 @@
         <h1>✅ ثبت حضور و غیاب</h1>
         <div class="subtitle">@ViewBag.ClassName | @ViewBag.PersianDate</div>
     </div>
-    <a class="btn btn-outline" asp-action="ClassDetail" asp-route-id="@ViewBag.ClassSubjectId">↩ بازگشت به کلاس</a>
+    <a class="btn btn-outline" asp-action="ClassDetail" asp-route-id="@ViewBag.ClassSubjectId"><i class="bi bi-arrow-return-left"></i> بازگشت به کلاس</a>
 </div>
 
 <div class="card">
@@ -37,8 +37,8 @@
         <div class="card-header" style="display:flex; justify-content:space-between; align-items:center">
             <h2>دانش‌آموزان (@PersianDate.ToPersianDigits(Model.Students.Count.ToString()))</h2>
             <div>
-                <button type="button" class="btn btn-outline btn-sm" onclick="setAll(1)">✓ همه حاضر</button>
-                <button type="submit" class="btn btn-success">💾 ذخیره</button>
+                <button type="button" class="btn btn-outline btn-sm" onclick="setAll(1)"><i class="bi bi-check-lg"></i> همه حاضر</button>
+                <button type="submit" class="btn btn-success"><i class="bi bi-floppy"></i> ذخیره</button>
             </div>
         </div>
         <div class="card-body">

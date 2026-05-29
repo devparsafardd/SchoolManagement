@@ -1,7 +1,7 @@
 @{ ViewData["Title"] = "مرور آزمون‌ها"; }
 
 <div class="page-header">
-    <h1>📝 آزمون‌ها و نمرات</h1>
+    <h1><i class="bi bi-pencil-square"></i>آزمون‌ها و نمرات</h1>
 </div>
 
 <div class="card">
@@ -46,7 +46,7 @@
                             <td><strong>@cs.SubjectName</strong></td>
                             <td>@cs.TeacherName</td>
                             <td>
-                                <a asp-action="Index" asp-route-classSubjectId="@cs.ClassSubjectId" class="btn btn-primary btn-sm">📝 مشاهده آزمون‌ها</a>
+                                <a asp-action="Index" asp-route-classSubjectId="@cs.ClassSubjectId" class="btn btn-primary btn-sm"><i class="bi bi-pencil-square"></i> مشاهده آزمون‌ها</a>
                             </td>
                         </tr>
                     }

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using SMS.Application.Common;
 using SMS.Application.DTOs;
 using SMS.Application.Services;
 using SMS.Infrastructure.Persistence;

@@ -4,10 +4,10 @@
 
 <div class="page-header">
     <div>
-        <h1>⭐ تشویق و تنبیه</h1>
+        <h1><i class="bi bi-star-fill"></i>تشویق و تنبیه</h1>
         <div class="subtitle">مجموع رکوردها: @PersianDate.ToPersianDigits(Model.TotalCount.ToString())</div>
     </div>
-    <a asp-action="Create" class="btn btn-success">➕ ثبت رکورد جدید</a>
+    <a asp-action="Create" class="btn btn-success"><i class="bi bi-plus-lg"></i> ثبت رکورد جدید</a>
 </div>
 
 <div class="card">
@@ -46,7 +46,7 @@
                     <option value="P" selected="@(ViewBag.Category == "P")">تنبیه</option>
                 </select>
             </div>
-            <button class="btn btn-primary">🔍</button>
+            <button class="btn btn-primary"><i class="bi bi-search"></i> </button>
         </form>
 
         <table class="data-table enhanced">
@@ -76,7 +76,7 @@
                         <td>
                             <form method="post" asp-action="Delete" asp-route-id="@r.RecordId" style="display:inline" onsubmit="return confirm('حذف شود؟');">
                                 @Html.AntiForgeryToken()
-                                <button class="btn btn-danger btn-sm">🗑</button>
+                                <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i> </button>
                             </form>
                         </td>
                     </tr>

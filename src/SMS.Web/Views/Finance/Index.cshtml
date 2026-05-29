@@ -4,12 +4,12 @@
 
 <div class="page-header">
     <div>
-        <h1>💰 مالی</h1>
+        <h1><i class="bi bi-cash-stack"></i>مالی</h1>
         <div class="subtitle">@PersianDate.ToPersianDigits(Model.TotalCount.ToString()) فاکتور</div>
     </div>
     <div>
         <a asp-action="FeeTypes" class="btn btn-outline">⚙ انواع شهریه</a>
-        <a asp-action="Create" class="btn btn-success">➕ صدور فاکتور</a>
+        <a asp-action="Create" class="btn btn-success"><i class="bi bi-plus-lg"></i> صدور فاکتور</a>
     </div>
 </div>
 
@@ -28,7 +28,7 @@
             <div class="stat-number">@PersianDate.ToPersianDigits(((decimal)ViewBag.TotalCollected).ToString("N0"))</div>
             <div class="stat-trend text-muted">تومان</div>
         </div>
-        <div class="stat-icon bg-success">💵</div>
+        <div class="stat-icon bg-success"><i class="bi bi-coin"></i></div>
     </div>
 </div>
 
@@ -55,7 +55,7 @@
                     <option value="پرداخت‌شده" selected="@(ViewBag.Status as string == "پرداخت‌شده")">پرداخت‌شده</option>
                 </select>
             </div>
-            <button class="btn btn-primary">🔍</button>
+            <button class="btn btn-primary"><i class="bi bi-search"></i> </button>
         </form>
 
         <table class="data-table enhanced">
